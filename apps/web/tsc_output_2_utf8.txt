@@ -1,0 +1,146 @@
+﻿SingleInputOnboarding.backup.tsx(18,26): error TS2307: Cannot find module '../lib/supabase' or its corresponding type declarations.
+SingleInputOnboarding.backup.tsx(19,24): error TS2307: Cannot find module '../context/AppContext' or its corresponding type declarations.
+SingleInputOnboarding.backup.tsx(20,25): error TS2307: Cannot find module '../context/AuthContext' or its corresponding type declarations.
+SingleInputOnboarding.backup.tsx(21,18): error TS2307: Cannot find module '../components/ui/Logo' or its corresponding type declarations.
+SingleInputOnboarding.backup.tsx(22,30): error TS2307: Cannot find module '../components/LanguageSwitcher' or its corresponding type declarations.
+SingleInputOnboarding.backup.tsx(23,40): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+SingleInputOnboarding.backup.tsx(113,62): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/components/Pricing/PlanUsageCard.tsx(15,21): error TS2367: This comparison appears to be unintentional because the types '"pro" | "trial" | "solo" | "agence"' and '"expired"' have no overlap.
+src/components/ReactApp/__tests__/leadActions.integration.test.ts(6,54): error TS2307: Cannot find module 'vitest' or its corresponding type declarations.
+src/components/ReactApp/components/inbox/ConversationList.tsx(29,9): error TS18048: 'conv.last_message.content' is possibly 'undefined'.
+src/components/ReactApp/components/KanbanBoard.tsx(6,27): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/components/layout/Sidebar.tsx(4,10): error TS2305: Module '"../../context/AppContext"' has no exported member 'useAppContext'.
+src/components/ReactApp/components/layout/Sidebar.tsx(21,30): error TS2304: Cannot find name 'useApp'.
+src/components/ReactApp/components/LeadDetailsDrawer.tsx(3,27): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/components/LeadDetailsDrawer.tsx(276,49): error TS2322: Type '{}' is not assignable to type 'ReactI18NextChildren | Iterable<ReactI18NextChildren>'.
+src/components/ReactApp/components/LeadSettingsDrawer.tsx(5,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/components/PhaseActionButton.tsx(10,34): error TS2307: Cannot find module '../lib/phaseConfig' or its corresponding type declarations.
+src/components/ReactApp/components/PreviewSidebar.tsx(5,33): error TS2307: Cannot find module './RealTimeFormPreview' or its corresponding type declarations.
+src/components/ReactApp/components/PreviewSidebar.tsx(6,45): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/components/PreviewSidebar.tsx(7,35): error TS2307: Cannot find module '../pages/FormBuilder' or its corresponding type declarations.
+src/components/ReactApp/components/PreviewSidebar.tsx(143,29): error TS2322: Type '{ profile: any; pageConfig: any; profileStructure: ProfileTab[] | undefined; socialNetworks: { id: string; url: string; platform: string; }[] | undefined; forms: any[]; device: "mobile" | "desktop"; previewStep: "forms" | ... 1 more ... | "social"; }' is not assignable to type 'IntrinsicAttributes & RealTimeProfilePreviewProps'.
+  Property 'profile' does not exist on type 'IntrinsicAttributes & RealTimeProfilePreviewProps'.
+src/components/ReactApp/components/profile/DesignModal.tsx(3,15): error TS2305: Module '"../../context/AppContext"' has no exported member 'PageConfig'.
+src/components/ReactApp/components/profile/ProfilePreview.tsx(6,15): error TS2305: Module '"../../context/AppContext"' has no exported member 'PageConfig'.
+src/components/ReactApp/components/profile/ProfilePreview.tsx(6,27): error TS2305: Module '"../../context/AppContext"' has no exported member 'ProfileTab'.
+src/components/ReactApp/components/profile/ProfilePreview.tsx(6,39): error TS2305: Module '"../../context/AppContext"' has no exported member 'ProfileItem'.
+src/components/ReactApp/components/profile/ProfilePreview.tsx(6,52): error TS2305: Module '"../../context/AppContext"' has no exported member 'ProfileSection'.
+src/components/ReactApp/components/profile/ProfilePreview.tsx(116,55): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfilePreview.tsx(125,68): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(9,15): error TS2305: Module '"../../context/AppContext"' has no exported member 'ProfileTab'.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(9,27): error TS2305: Module '"../../context/AppContext"' has no exported member 'ProfileSection'.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(9,43): error TS2305: Module '"../../context/AppContext"' has no exported member 'ProfileItem'.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(23,110): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(38,36): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(89,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(96,41): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(108,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(115,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(117,36): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(125,38): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(125,94): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(162,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(163,37): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(169,59): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(177,46): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(184,54): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(198,54): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(260,84): error TS7006: Parameter 'section' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(260,93): error TS7006: Parameter 'sectionIndex' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(307,121): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(307,127): error TS7006: Parameter 'itemIndex' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(487,94): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/components/profile/ProfileStructureBuilder.tsx(487,146): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/components/ReactApp/components/ProtectedRoute.tsx(4,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/components/settings/calendar/EventTypesList.tsx(6,13): error TS2339: Property 'forms' does not exist on type 'AppContextType'.
+src/components/ReactApp/components/settings/calendar/EventTypesList.tsx(9,45): error TS7006: Parameter 'f' implicitly has an 'any' type.
+src/components/ReactApp/components/settings/calendar/EventTypesList.tsx(24,36): error TS7006: Parameter 'type' implicitly has an 'any' type.
+src/components/ReactApp/components/settings/calendar/MeetingsHub.tsx(10,13): error TS2339: Property 'bookings' does not exist on type 'AppContextType'.
+src/components/ReactApp/components/settings/calendar/MeetingsHub.tsx(23,54): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/components/ReactApp/components/settings/calendar/MeetingsHub.tsx(35,43): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/components/ReactApp/components/settings/calendar/MeetingsHub.tsx(36,39): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/components/ReactApp/components/settings/calendar/MeetingsHub.tsx(37,44): error TS7006: Parameter 'm' implicitly has an 'any' type.
+src/components/ReactApp/components/settings/calendar/MeetingsHub.tsx(81,42): error TS7006: Parameter 'meeting' implicitly has an 'any' type.
+src/components/ReactApp/components/StepsConfigEditor.tsx(24,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/components/StepsConfigEditor.tsx(26,30): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/components/ui/AIEnhancer.tsx(3,44): error TS2307: Cannot find module '../../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/FullApp.tsx(11,19): error TS2307: Cannot find module './pages/Forms' or its corresponding type declarations.
+src/components/ReactApp/FullApp.tsx(18,25): error TS2307: Cannot find module './pages/FormBuilder' or its corresponding type declarations.
+src/components/ReactApp/hooks/useAutomationRules.ts(1,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/hooks/useBooking.ts(3,37): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/hooks/useCerveauInteractif.ts(2,37): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/hooks/useFileUpload.ts(2,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/hooks/useN8nWebhook.ts(2,64): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/hooks/usePhaseButton.ts(22,8): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/lib/auditLanding.ts(1,46): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/lib/leadActions.ts(12,8): error TS2307: Cannot find module './n8n' or its corresponding type declarations.
+src/components/ReactApp/pages/Agents.tsx(2,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Agents.tsx(137,41): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/components/ReactApp/pages/Agents.tsx(151,37): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/components/ReactApp/pages/Agents.tsx(241,31): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/ReactApp/pages/Agents.tsx(271,35): error TS7006: Parameter 'item' implicitly has an 'any' type.
+src/components/ReactApp/pages/Agents.tsx(500,28): error TS7006: Parameter 'agent' implicitly has an 'any' type.
+src/components/ReactApp/pages/Automations.tsx(3,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Automations.tsx(104,44): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/components/ReactApp/pages/Automations.tsx(105,46): error TS7006: Parameter 'w' implicitly has an 'any' type.
+src/components/ReactApp/pages/Automations.tsx(299,39): error TS7006: Parameter 'flow' implicitly has an 'any' type.
+src/components/ReactApp/pages/Automations.tsx(346,41): error TS7006: Parameter 'flow' implicitly has an 'any' type.
+src/components/ReactApp/pages/AvailabilitiesPage.tsx(7,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/ConsultationPage.tsx(5,47): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/pages/Dashboard.tsx(15,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Home.tsx(22,15): error TS2322: Type '{ onCTA: () => void | Promise<void>; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'onCTA' does not exist on type 'IntrinsicAttributes'.
+src/components/ReactApp/pages/LeadReview.tsx(16,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/LeadReview.tsx(20,30): error TS2307: Cannot find module '../lib/phaseConfig' or its corresponding type declarations.
+src/components/ReactApp/pages/LeadReview.tsx(39,8): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/pages/LeadReview.tsx(1830,17): error TS2322: Type '"delivery_contrat"' is not assignable to type 'AppEmailEventType'.
+src/components/ReactApp/pages/LeadReview.tsx(2466,68): error TS7006: Parameter 'btn' implicitly has an 'any' type.
+src/components/ReactApp/pages/LeadReview.tsx(2484,68): error TS7006: Parameter 'btn' implicitly has an 'any' type.
+src/components/ReactApp/pages/LeadReview.tsx(2484,98): error TS7006: Parameter 'btn' implicitly has an 'any' type.
+src/components/ReactApp/pages/LeadReview.tsx(2529,69): error TS7006: Parameter 'btn' implicitly has an 'any' type.
+src/components/ReactApp/pages/LeadReview.tsx(2555,68): error TS7006: Parameter 'btn' implicitly has an 'any' type.
+src/components/ReactApp/pages/LeadReview.tsx(2579,67): error TS7006: Parameter 'btn' implicitly has an 'any' type.
+src/components/ReactApp/pages/LeadReview.tsx(2600,67): error TS7006: Parameter 'btn' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(4,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Leads.tsx(6,27): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Leads.tsx(54,17): error TS7006: Parameter 'lead' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(60,16): error TS7006: Parameter 'a' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(60,19): error TS7006: Parameter 'b' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(78,34): error TS7006: Parameter 'lead' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(138,40): error TS7006: Parameter 'l' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(150,24): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(311,58): error TS7006: Parameter 'lead' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(311,64): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(435,54): error TS7006: Parameter 'lead' implicitly has an 'any' type.
+src/components/ReactApp/pages/Leads.tsx(435,60): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+src/components/ReactApp/pages/MyProfile.tsx(2,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/MyProfile.tsx(3,45): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Onboarding.tsx(31,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/PricingPage.tsx(3,29): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/PublicProfile.tsx(14,45): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Services.tsx(2,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Services.tsx(26,30): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/Services.tsx(203,46): error TS7006: Parameter 'service' implicitly has an 'any' type.
+src/components/ReactApp/pages/Services.tsx(256,99): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/pages/Services.tsx(260,99): error TS7006: Parameter 's' implicitly has an 'any' type.
+src/components/ReactApp/pages/Services.tsx(308,53): error TS7006: Parameter 'service' implicitly has an 'any' type.
+src/components/ReactApp/pages/Services.tsx(308,62): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+src/components/ReactApp/pages/Settings.tsx(11,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/SingleInputOnboarding.tsx(28,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/components/ReactApp/pages/SingleInputOnboarding.tsx(33,40): error TS2307: Cannot find module '../lib/n8n' or its corresponding type declarations.
+src/components/ReactApp/pages/Statistics.tsx(26,24): error TS2307: Cannot find module '../../context/AppContext' or its corresponding type declarations.
+src/tests/email-e2e.test.ts(169,5): error TS2740: Type 'AxiosInstance' is missing the following properties from type 'AxiosStatic': Cancel, CancelToken, Axios, AxiosError, and 12 more.
+supabase/functions/google-calendar-sync/index.ts(1,23): error TS2307: Cannot find module 'https://deno.land/std@0.168.0/http/server.ts' or its corresponding type declarations.
+supabase/functions/google-calendar-sync/index.ts(2,30): error TS2307: Cannot find module 'https://esm.sh/@supabase/supabase-js@2.39.7' or its corresponding type declarations.
+supabase/functions/google-calendar-sync/index.ts(4,26): error TS2304: Cannot find name 'Deno'.
+supabase/functions/google-calendar-sync/index.ts(5,30): error TS2304: Cannot find name 'Deno'.
+supabase/functions/google-calendar-sync/index.ts(6,22): error TS2304: Cannot find name 'Deno'.
+supabase/functions/google-calendar-sync/index.ts(7,35): error TS2304: Cannot find name 'Deno'.
+supabase/functions/google-calendar-sync/index.ts(247,53): error TS18046: 'error' is of type 'unknown'.
+supabase/functions/trigger-workflow/index.ts(17,23): error TS2307: Cannot find module 'https://deno.land/std@0.177.0/http/server.ts' or its corresponding type declarations.
+supabase/functions/trigger-workflow/index.ts(18,30): error TS2307: Cannot find module 'https://esm.sh/@supabase/supabase-js@2' or its corresponding type declarations.
+supabase/functions/trigger-workflow/index.ts(20,18): error TS2304: Cannot find name 'Deno'.
+supabase/functions/trigger-workflow/index.ts(58,14): error TS7006: Parameter 'req' implicitly has an 'any' type.
+supabase/functions/trigger-workflow/index.ts(75,7): error TS2304: Cannot find name 'Deno'.
+supabase/functions/trigger-workflow/index.ts(76,7): error TS2304: Cannot find name 'Deno'.
+../../packages/shared/types/conversation.ts(1,10): error TS1484: 'Message' is a type and must be imported using a type-only import when 'verbatimModuleSyntax' is enabled.

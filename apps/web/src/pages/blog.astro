@@ -1,0 +1,27 @@
+---
+import '../components/ReactApp/index.css';
+import Blog from '../components/Landing/pages/Blog';
+import LandingLayout from '../components/ReactApp/components/layout/LandingLayout';
+import { supabase } from '../components/ReactApp/lib/supabase';
+
+const { data: posts } = await supabase
+  .from('blog_posts')
+  .select('*, blog_categories(*)')
+  .eq('status', 'published')
+  .order('published_at', { ascending: false });
+---
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blog & Cas Clients - PreTalk</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-white text-black">
+    <LandingLayout client:load forceScrolled={true}>
+      <Blog client:load initialPosts={posts || []} showNewsletter={false} />
+    </LandingLayout>
+  </body>
+</html>

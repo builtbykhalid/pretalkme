@@ -1,0 +1,158 @@
+---
+import '../../components/ReactApp/index.css';
+import ProfileWrapper from '../../components/ReactApp/ProfileWrapper';
+
+const reservedUsernames = ['app', 'admin', 'login', 'onboarding', 'f', 'api', 'static', 'assets', 'home', 'dashboard', 'settings', 'agents', 'leads', 'forms'];
+
+const { username, slug } = Astro.params;
+
+if (!username || reservedUsernames.includes(username.toLowerCase())) {
+  return Astro.redirect('/app');
+}
+
+// SSR Data Fetching for SEO
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://htvtmrejzzwekztekzev.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+if (!supabaseAnonKey) {
+  console.error('[SSR] Missing VITE_SUPABASE_ANON_KEY for profile form page rendering');
+}
+
+// 1. Fetch Form
+let formTitle = '';
+let formDesc = '';
+
+try {
+  const rawSlug = (slug || '').trim();
+  const decodedSlug = (() => {
+    try { return decodeURIComponent(rawSlug); } catch { return rawSlug; }
+  })();
+  const normalizedSlug = decodedSlug.toLowerCase().trim();
+  const canonicalSlug = normalizedSlug
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  const slugCandidates = Array.from(new Set([
+    rawSlug,
+    decodedSlug,
+    normalizedSlug,
+    canonicalSlug,
+    normalizedSlug.replace(/_/g, '-'),
+    normalizedSlug.replace(/-/g, '_'),
+    canonicalSlug.replace(/_/g, '-'),
+    canonicalSlug.replace(/-/g, '_'),
+  ].filter(Boolean)));
+  const orFilter = `(${slugCandidates.flatMap((s) => [`slug.ilike.${s}`, `clean_slug.ilike.${s}`]).join(',')})`;
+
+  const formParams = new URLSearchParams({
+    select: 'id,title,description,form_description',
+    is_public: 'eq.true',
+    limit: '1',
+    or: orFilter,
+  });
+
+  const formRes = await fetch(`${supabaseUrl}/rest/v1/forms?${formParams.toString()}`, {
+    headers: {
+      'apikey': supabaseAnonKey,
+      'Authorization': `Bearer ${supabaseAnonKey}`,
+    }
+  });
+  
+  if (formRes.ok) {
+    const data = await formRes.json();
+    if (data && data.length > 0) {
+      formTitle = data[0].title;
+      formDesc = data[0].description || data[0].form_description;
+    } else {
+      const fallbackParams = new URLSearchParams({
+        select: 'id,title,description,form_description',
+        limit: '1',
+        status: 'in.(published,published_v1,Active)',
+        or: orFilter,
+      });
+
+      const fallbackRes = await fetch(`${supabaseUrl}/rest/v1/forms?${fallbackParams.toString()}`, {
+        headers: {
+          'apikey': supabaseAnonKey,
+          'Authorization': `Bearer ${supabaseAnonKey}`,
+        }
+      });
+
+      if (fallbackRes.ok) {
+        const fallbackData = await fallbackRes.json();
+        if (fallbackData && fallbackData.length > 0) {
+          formTitle = fallbackData[0].title;
+          formDesc = fallbackData[0].description || fallbackData[0].form_description;
+        }
+      }
+    }
+  }
+} catch (e) {
+  console.error("SSR Form Fetch Error:", e);
+}
+
+// 2. Fetch Profile for avatar
+let fallbackTitle = 'Consultant | Pretalk';
+let profileData = null;
+
+try {
+  const profileParams = new URLSearchParams({
+    username: `ilike.${username}`,
+    select: 'id,username,first_name,last_name,avatar_url',
+    limit: '1',
+  });
+
+  const profileRes = await fetch(`${supabaseUrl}/rest/v1/profiles?${profileParams.toString()}`, {
+    headers: {
+      'apikey': supabaseAnonKey,
+      'Authorization': `Bearer ${supabaseAnonKey}`,
+    }
+  });
+  
+  if (profileRes.ok) {
+    const data = await profileRes.json();
+    if (data && data.length > 0) {
+      profileData = data[0];
+      const fullName = [profileData.first_name, profileData.last_name].filter(Boolean).join(' ');
+      fallbackTitle = fullName || profileData.username;
+    }
+  }
+} catch (e) {
+  console.error("SSR Profile Fetch Error:", e);
+}
+
+const ogTitle = formTitle ? `${formTitle} | ${fallbackTitle}` : `${fallbackTitle} | Pretalk`;
+const ogDesc = formDesc || 'Découvrez mon formulaire sur Pretalk';
+const ogImage = profileData?.avatar_url || 'https://pretalk.me/default-og.png';
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <title>{ogTitle}</title>
+    
+    <!-- Open Graph / LinkedIn / Facebook -->
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDesc} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url.href} />
+    <meta property="twitter:title" content={ogTitle} />
+    <meta property="twitter:description" content={ogDesc} />
+    <meta property="twitter:image" content={ogImage} />
+  </head>
+  <body>
+    <div id="root">
+        <!-- React Island hydratation client-side -->
+        <ProfileWrapper client:only="react" />
+    </div>
+  </body>
+</html>

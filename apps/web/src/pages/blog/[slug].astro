@@ -1,0 +1,64 @@
+---
+import '../../components/ReactApp/index.css';
+import BlogPost from '../../components/Landing/pages/BlogPost';
+import LandingLayout from '../../components/ReactApp/components/layout/LandingLayout';
+import { supabase } from '../../components/ReactApp/lib/supabase';
+
+const { slug } = Astro.params;
+const preview = Astro.url.searchParams.get('preview') === 'true';
+
+// Check for admin if preview is requested
+let isAdmin = false;
+if (preview) {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', session.user.id)
+      .single();
+    isAdmin = profile?.role === 'admin';
+  }
+}
+
+let query = supabase
+  .from('blog_posts')
+  .select('*, blog_categories(*)')
+  .eq('slug', slug);
+
+// Only allow published posts unless the viewer is an admin in preview mode
+if (!preview || !isAdmin) {
+  query = query.eq('status', 'published');
+}
+
+const { data: post } = await query.single();
+
+if (!post) {
+  return Astro.redirect('/blog');
+}
+
+// SEO
+const title = post.seo_title || post.title;
+const description = post.seo_description || post.excerpt;
+---
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} - PreTalk Blog</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    {post.cover_image_url && <meta property="og:image" content={post.cover_image_url} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-white text-black">
+    <LandingLayout client:load forceScrolled={true}>
+      <BlogPost client:load post={post} />
+    </LandingLayout>
+  </body>
+</html>

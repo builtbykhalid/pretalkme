@@ -1,0 +1,880 @@
+{
+  "name": "Pretalk - Analyste V2 (Gemini Nodes + Parallèle + Agent Library)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-lead-analysis",
+        "options": {}
+      },
+      "id": "d305620d-1291-49ad-b137-7c5177c735da",
+      "name": "Webhook - New Lead",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -2448,
+        4112
+      ],
+      "webhookId": "091792d3-91b5-49de-bb52-c4c1df29c7c0"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "regenerate-audit",
+        "options": {}
+      },
+      "id": "b5c37170-f229-451c-87aa-92a4f6b4230c",
+      "name": "Webhook - Regenerate",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        -2448,
+        4304
+      ],
+      "webhookId": "eb7939cf-69ef-4139-ba24-75c63f24868a"
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all();"
+      },
+      "id": "312ed5e7-7e82-48bc-9305-30ae7fd4e17a",
+      "name": "Merge Triggers",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2256,
+        4208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Merge Triggers').first().json.body?.record?.id || $('Merge Triggers').first().json.body?.lead_id }}"
+            }
+          ]
+        }
+      },
+      "id": "5e40868f-0972-4a4b-a819-3ad7499899fa",
+      "name": "Get Lead Details",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -2048,
+        4208
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "forms",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.form_id }}"
+            }
+          ]
+        }
+      },
+      "id": "634461b7-c83a-4e1b-9814-067b88e4a73a",
+      "name": "Get Form Context",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1856,
+        4208
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !!($('Get Form Context').first().json.ai_config?.agentId || $('Merge Triggers').first().json.body?.agent_id) }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "5c784a3e-e288-461b-a485-507620f27fb7",
+      "name": "Has Agent Component?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1648,
+        4208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "agents_library",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Merge Triggers').first().json.body?.agent_id || $('Get Form Context').first().json.ai_config?.agentId }}"
+            }
+          ]
+        }
+      },
+      "id": "f2aba46e-41c5-4802-b687-b734ca863456",
+      "name": "Get Agent Focus",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1440,
+        4112
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all();"
+      },
+      "id": "6e030e6f-717f-42b9-a84f-0e49c780e9e3",
+      "name": "Merge Agent Path",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1216,
+        4208
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "profiles",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Get Lead Details').first().json.user_id }}"
+            }
+          ]
+        }
+      },
+      "id": "ec261cfe-e29b-4d9b-8325-908a9412d8a5",
+      "name": "Get Consultant Profile",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        4208
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const formData    = $('Get Form Context').first().json || {};\nconst leadData    = $('Get Lead Details').first().json || {};\nconst profileData = $('Get Consultant Profile').first().json || {};\nconst webhookData = $('Merge Triggers').first().json.body || {};\n\nlet agentData = null;\ntry { agentData = $('Get Agent Focus').first()?.json; } catch(e) {}\n\n// ── Persona assembly (v2) ──\n// Layer 1: Consultant identity\nlet persona = `<consultant_identity>\\nNom : ${profileData.full_name || 'le consultant'}\\nMétier : ${profileData.job_title || 'Business Consultant'}\\nSite : ${profileData.website || 'Non renseigné'}\\n</consultant_identity>\\n`;\n\n// Layer 2: Consultant custom directives (from form ai_config)\nif (formData.ai_config?.systemPrompt) {\n  persona += `<consultant_directives>\\n${formData.ai_config.systemPrompt}\\n</consultant_directives>\\n`;\n}\n\n// Layer 3: Agent mission (from agents_library.base_prompt) — overrides generic if present\nif (agentData?.base_prompt) {\n  persona += `<agent_mission>\\n${agentData.base_prompt}\\n</agent_mission>\\n`;\n} else {\n  persona += `<agent_mission>\\nTu es un consultant stratégique généraliste. Analyse la situation du prospect avec rigueur, identifie les risques concrets liés à l\\'inaction, et structure un audit qui démontre ton expertise sectorielle. Adapte ton vocabulaire et tes KPIs au domaine du consultant.\\n</agent_mission>\\n`;\n}\n\n// ── Input quality signal (for anti-bullshit protocol) ──\nconst staticStr = JSON.stringify(leadData.static_answers || {});\nconst dynamicStr = JSON.stringify(leadData.dynamic_answers || {});\nconst totalInputWords = (staticStr + ' ' + dynamicStr).split(/\\s+/).length;\nconst inputQuality = totalInputWords < 30 ? 'LOW' : totalInputWords < 80 ? 'MEDIUM' : 'HIGH';\n\n// ── Website URL extraction ──\nlet website_url = leadData.website_url || '';\nif (!website_url && leadData.static_answers) {\n  for (const [key, value] of Object.entries(leadData.static_answers)) {\n    if (typeof value === 'string' && (value.includes('http') || value.includes('www.'))) {\n      website_url = value; break;\n    }\n  }\n}\n\n// ── Sector extraction — multi-language keys ──\nconst sectorKeys = ['secteur', 'sector', 'industry', 'industrie', 'domaine', 'domain', 'قطاع', 'branche'];\nlet sector = leadData.sector || 'B2B Services';\nif (leadData.static_answers) {\n  for (const key of sectorKeys) {\n    if (leadData.static_answers[key]) { sector = leadData.static_answers[key]; break; }\n  }\n  if (sector === 'B2B Services') {\n    for (const [k, v] of Object.entries(leadData.static_answers)) {\n      if (typeof v === 'string' && v.length < 60 && !v.includes('http') && \n          (k.toLowerCase().includes('sect') || k.toLowerCase().includes('ind') || k.toLowerCase().includes('dom'))) {\n        sector = v; break;\n      }\n    }\n  }\n}\n\n// ── Service name ──\nconst serviceName = agentData?.name || formData.title || 'the service';\n\n// ── Consultant contact ──\nconst consultantName    = profileData.full_name    || 'the consultant';\nconst consultantWebsite = profileData.website      || '';\nconst consultantLanguage = profileData.language    || 'Français';\nconst consultantJob     = profileData.job_title    || 'Consultant';\n\nreturn [{\n  json: {\n    lead_id:           leadData.id,\n    lead_email:        leadData.email        || '',\n    lead_company:      leadData.company      || leadData.full_name || 'the prospect',\n    website_url,\n    sector,\n    service_name:      serviceName,\n    static_answers:    staticStr,\n    dynamic_answers:   dynamicStr,\n    input_quality:     inputQuality,\n    action:            webhookData.action,\n    feedback:          webhookData.feedback  || '',\n    consultant_language: consultantLanguage,\n    consultant_job:    consultantJob,\n    consultant_name:   consultantName,\n    consultant_website: consultantWebsite,\n    consultant_booking_url: profileData.booking_config?.external_url || profileData.website || '',\n    persona,\n    history:           leadData.ai_generation_history || []\n  }\n}];"
+      },
+      "id": "a62474c7-b939-4966-a0a4-1b171032598d",
+      "name": "Extract & Prepare Variables",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -816,
+        4208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.website_url }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "2aa4ce1c-8b11-448d-ac90-6d07ab6604d7",
+      "name": "Has Website URL?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        4016
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.website_url }}",
+        "options": {},
+        "requestOptions": {}
+      },
+      "id": "ac1b9444-4317-4845-a93b-57c768cba6eb",
+      "name": "Jina AI (Reader)",
+      "type": "n8n-nodes-base.jinaAi",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        3904
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "jinaAiApi": {
+          "id": "yWPzQwiaf7jvMqIo",
+          "name": "Jina AI account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ `<s>You are an expert business analyst. Extract maximum strategic intelligence from this website. Be factual — base every observation strictly on the provided content. Never invent.</s>\n\nAnalyze and report in 6-8 sentences:\n1. Core business activity and primary value proposition\n2. Target audience and market positioning\n3. Visible strengths (credibility markers, social proof, content quality)\n4. Visible weaknesses or gaps (missing elements, unclear messaging, UX issues)\n5. Any pricing, service, or product information found\n\nIf individual/freelancer: focus on their positioning, credibility, and gaps.\nIf company: focus on market position and weak points.\n\n<website_content>${$('Jina AI (Reader)').first().json.content ? $('Jina AI (Reader)').first().json.content.substring(0, 12000) : 'No content available'}</website_content>` }}"
+      },
+      "id": "c446b85f-03d9-4f37-b7b7-2beed9ab34cb",
+      "name": "Gemini Flash (Site Summary)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        -128,
+        3904
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "94cbed51-446e-4d1c-9ecb-a7084a510c62",
+      "name": "Gemini Flash Model (Site)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        3696
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{ json: { text: \"Aucun site web fourni par le prospect pour l'analyse.\" } }];"
+      },
+      "id": "efdef352-6a29-474d-a7d1-255d799b90d1",
+      "name": "Dummy Site Summary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -352,
+        4112
+      ],
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ `<s>You are an expert lead qualification specialist working for a ${$('Extract & Prepare Variables').first().json.consultant_job}.\nYou evaluate prospects ONLY on observable signals from their answers. Never invent data.</s>\n\n<scoring_grid>\nScore each on 0-25:\n1. Budget/Capacity (0-25): 25=clear budget or obvious capacity | 15=willing but no figure | 5=vague/missing\n2. Urgency/Timeline (0-25): 25=active pain + specific deadline | 15=wants to move in months | 5=exploratory\n3. Needs Clarity (0-25): 25=precise specific problem | 15=general awareness | 5=vague/unclear\n4. Engagement Quality (0-25): 25=detailed thoughtful answers | 15=standard answers | 5=very short/passive\nDefault 5/25 for any category with no usable signal.\n</scoring_grid>\n\n<context>\nProspect: ${$('Extract & Prepare Variables').first().json.lead_company}\nSector: ${$('Extract & Prepare Variables').first().json.sector}\nService: ${$('Extract & Prepare Variables').first().json.service_name}\nWebsite provided: ${$('Extract & Prepare Variables').first().json.website_url ? 'Yes — ' + $('Extract & Prepare Variables').first().json.website_url : 'No'}\nForm answers: ${$('Extract & Prepare Variables').first().json.static_answers}\nConversation: ${$('Extract & Prepare Variables').first().json.dynamic_answers}\n</context>\n\nOUTPUT: One valid raw JSON object. No markdown. No preamble.\n{\"score\":<0-100>,\"breakdown\":{\"budget\":<0-25>,\"urgency\":<0-25>,\"clarity\":<0-25>,\"engagement\":<0-25>},\"justification\":\"<2-3 sentences: explain the score and #1 opportunity for first call>\",\"first_call_angle\":\"<1 sentence: best opening question for discovery call>\"}\nWrite justification and first_call_angle in ${$('Extract & Prepare Variables').first().json.consultant_language}.` }}"
+      },
+      "id": "bd50b528-c176-4490-b8b9-93fe109fb8c6",
+      "name": "Gemini Flash (Scoring)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        -576,
+        4272
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "da7bc726-4e77-47b4-9f27-61c325b5481e",
+      "name": "Gemini Flash Model (Score)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        4464
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ `<s>You are a senior market intelligence analyst. Your output arms a consultant for a sales conversation.</s>\n\n<mission>\nAnalyze the current market reality for this prospect profile.\nBe SPECIFIC to this prospect — not generic sector theory.\n\nDeliver:\n1. The 2-3 most pressing challenges this type of prospect faces RIGHT NOW\n2. The 1-2 most actionable opportunities they are likely missing\n3. One urgent market dynamic (competition, regulation, technology) creating a window of opportunity\n\nWrite 10-14 lines of flowing analytical prose. NO bullet points. NO headers.\nEvery insight must feel directly applicable to ${$('Extract & Prepare Variables').first().json.lead_company}.\nWrite in ${$('Extract & Prepare Variables').first().json.consultant_language}.\n</mission>\n\n<prospect_profile>\nCompany: ${$('Extract & Prepare Variables').first().json.lead_company}\nSector: ${$('Extract & Prepare Variables').first().json.sector}\nService of interest: ${$('Extract & Prepare Variables').first().json.service_name}\nKey signals: ${$('Extract & Prepare Variables').first().json.static_answers}\n</prospect_profile>` }}"
+      },
+      "id": "966d6acd-1497-4b1e-b8c8-ba5c8021dba0",
+      "name": "Gemini Pro (Market Search)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        -576,
+        4624
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.3
+        }
+      },
+      "id": "15594779-d777-49d1-9ea5-070f8141e657",
+      "name": "Gemini Pro Model (Market)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        4832
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const leadData = $('Extract & Prepare Variables').first().json;\n\n// ── Read site summary — whichever branch executed ──\nlet site_summary = \"Aucune analyse de site disponible. Le prospect n'a pas fourni d'URL.\";\ntry {\n  const ss = $('Gemini Flash (Site Summary)').first()?.json?.text;\n  if (ss && ss.trim().length > 20) site_summary = ss;\n} catch(e) {\n  try {\n    const ds = $('Dummy Site Summary').first()?.json?.text;\n    if (ds) site_summary = ds;\n  } catch(e2) {}\n}\n\n// ── Read scoring ──\nlet score_data = { score: 50, breakdown: { budget: 12, urgency: 12, clarity: 12, engagement: 12 }, justification: 'Score par défaut.', first_call_angle: 'Explorer la situation actuelle du prospect.' };\ntry {\n  let st = $('Gemini Flash (Scoring)').first()?.json?.text || '{}';\n  st = st.replace(/```\\s*json\\s*\\n?/gi,'').replace(/```\\s*\\n?/g,'').trim();\n  const si = st.indexOf('{'); const ei = st.lastIndexOf('}');\n  if (si !== -1 && ei > si) {\n    const parsed = JSON.parse(st.substring(si, ei + 1));\n    if (typeof parsed.score === 'number') score_data = { ...score_data, ...parsed };\n  }\n} catch(e) {}\n\n// ── Read market ──\nlet market_study = 'Données de marché non disponibles.';\ntry {\n  const ms = $('Gemini Pro (Market Search)').first()?.json?.text;\n  if (ms && ms.trim().length > 30) market_study = ms;\n} catch(e) {}\n\nconst bd = score_data.breakdown || {};\nconst scoringContext = `Score: ${score_data.score}/100 | Budget: ${bd.budget ?? '?'}/25 | Urgence: ${bd.urgency ?? '?'}/25 | Clarté: ${bd.clarity ?? '?'}/25 | Engagement: ${bd.engagement ?? '?'}/25\\nAnalyse: ${score_data.justification || ''}\\nAngle d'ouverture: ${score_data.first_call_angle || ''}`;\n\n// ── Regeneration context ──\nlet regenContext = '';\nif (leadData.action === 'regenerate') {\n  let historyCtx = '';\n  try {\n    const h = leadData.history;\n    if (h && h.length > 0) {\n      const last = h[h.length - 1];\n      historyCtx = `\\nVersion précédente (v${last.version || h.length}) — Retour consultant: \\\"${last.consultant_feedback || 'Aucun'}\\\"\\n`;\n    }\n  } catch(e) {}\n  regenContext = `\\n<regeneration>\\nModifications demandées: \\\"${leadData.feedback}\\\"\\nApplique STRICTEMENT. Chaque section doit refléter ce feedback.\\n${historyCtx}\\n</regeneration>`;\n}\n\n// ══════════════════════════════════════════════════════════════\n// MASTER PROMPT V2 — Landing Page Audit (Plan05-aligned)\n// Architecture: <consultant_persona> + <prompt_systeme_global> + <prospect_context> + <output_schema_v2>\n// ══════════════════════════════════════════════════════════════\n\nconst masterPrompt = `\n${leadData.persona}\n\n<prompt_systeme_global>\nTu es le moteur de rédaction stratégique de PreTalk. Tu génères des audits qui se lisent comme des landing pages de conversion.\nTu agis comme l'extension intellectuelle de ${leadData.consultant_name} (${leadData.consultant_job}).\n\n═══ PRINCIPES DE CONVERSION (NON NÉGOCIABLES) ═══\n\nPRINCIPE 1 — AUTORITÉ PAR LE DIAGNOSTIC\nTu ne fais pas de résumé. Tu poses un diagnostic. Chaque observation doit démontrer que ${leadData.consultant_name} voit ce que le prospect ne voit pas.\nRègle : identifie les vrais problèmes à partir des symptômes donnés. Si le prospect dit \"je veux plus de clients\", tu diagnostiques le mécanisme cassé (acquisition, conversion, rétention, pricing).\n\nPRINCIPE 2 — COÛT DE L'INACTION (MOTEUR ÉMOTIONNEL)\nChaque problème identifié DOIT être accompagné d'une estimation chiffrée de ce que coûte chaque mois d'inaction.\nExemples de formulations : \"Chaque mois sans action = X€ de CA non capté\", \"Ce retard accumule X heures/semaine de travail superflu\".\nSi tu n'as pas de données exactes, utilise des fourchettes sectorielles réalistes. JAMAIS de chiffres ronds parfaits (utilise 4 700€, pas 5 000€).\n\nPRINCIPE 3 — LEVIER D'AMBIGUÏTÉ\nLes réponses courtes ou vagues du prospect = \"zones de risque non cartographiées\". Tu les cites explicitement comme des points qui nécessitent un audit humain approfondi.\nFormulation type : \"Votre réponse sur [sujet] laisse entrevoir une zone d'ombre que seul un diagnostic en direct permettra de quantifier.\"\n\nPRINCIPE 4 — LE QUOI ET LE POURQUOI, JAMAIS LE COMMENT\nTu expliques QUOI ne va pas et POURQUOI c'est dangereux. La méthodologie de résolution est le produit du consultant — elle se vend, pas se donne.\nDans le bloc solutions : tu décris le résultat attendu et pourquoi c'est urgent, tu éveilles la curiosité sur l'approche sans la révéler.\nFormulation type : \"Il existe un cadre méthodologique en X étapes pour résoudre ce type de blocage — c'est précisément l'objet de notre échange.\"\n\nPRINCIPE 5 — CTA PERSONNALISÉ\nLe CTA mentionne ${leadData.consultant_name} par son prénom/nom. Il rappelle la promesse de valeur spécifique.${leadData.consultant_website ? ` Réfère à ${leadData.consultant_website}.` : ''}\n\n═══ PROTOCOLE ANTI-BULLSHIT ═══\n\nNIVEAU DE DONNÉES PROSPECT : ${leadData.input_quality}\n\nSI input_quality = \"LOW\" (moins de 30 mots de réponses) :\n- INTERDIT d'inventer des problèmes spécifiques à l'entreprise du prospect.\n- INTERDIT de remplir avec du jargon littéraire creux.\n- ACTION OBLIGATOIRE : Bascule sur les \"Douleurs Standards\" du secteur fournies par l'agent_mission.\n- FORMULATION EXIGÉE dans context_block : \"Dans votre marché (${leadData.sector}), la majorité des acteurs font face à [douleur standard sectorielle], ce qui représente en moyenne [KPI sectoriel] de manque à gagner mensuel. L'objectif de notre échange sera de mesurer précisément votre exposition à cette fuite.\"\n- Les blocs problems_block et solutions_block utilisent des benchmarks sectoriels comme référence, pas des inventions.\n\nSI input_quality = \"MEDIUM\" :\n- Tu peux faire des déductions à partir des réponses mais tu signales explicitement quand tu extrapoles : \"D'après vos indications sur [X], on peut raisonnablement déduire que...\"\n\nSI input_quality = \"HIGH\" :\n- Tu exploites les données à fond. Chaque insight est ancré dans une réponse spécifique du prospect.\n\n═══ RÈGLES RÉDACTIONNELLES ═══\n\nLANGUE : Tout le contenu en ${leadData.consultant_language}.\nTON : Expert, clinique, direct. Pas de flatterie. Pas de \"Cher client\". Diagnostique comme un médecin.\nHTML : Uniquement <p>, <ul>, <li>, <strong>. Pas de <h1>/<h2> (les titres sont dans les champs JSON). Pas de longs blocs de texte — 2-3 phrases par <p> max.\nPERSONNALISATION : Cite ${leadData.lead_company} au moins une fois dans hero, context_block, problems_block et cta.\nEMOJIS DANS LES TITRES : Un emoji par titre UNIQUEMENT quand il ajoute un signal émotionnel (⚠️ pour un risque, pas 📊 pour des chiffres). Pas d'emoji décoratif. Pas d'emoji sur les titres de graphiques. Maximum 4 emojis sur l'ensemble de l'audit.\n</prompt_systeme_global>\n\n<prospect_context>\nEntreprise : ${leadData.lead_company}\nSecteur : ${leadData.sector}\nService demandé : ${leadData.service_name}\nEmail : ${leadData.lead_email || 'Non fourni'}\nQualité des réponses : ${leadData.input_quality}\n\n<lead_intelligence>\\n${scoringContext}\\n</lead_intelligence>\n<form_answers>${leadData.static_answers}</form_answers>\n<dynamic_conversation>${leadData.dynamic_answers}</dynamic_conversation>\n<website_analysis>${site_summary}</website_analysis>\n<market_intelligence>${market_study}</market_intelligence>\n</prospect_context>\n${regenContext}\n\n<output_schema_v2>\nOUTPUT : Un seul objet JSON valide. Pas de markdown. Pas de texte avant ou après. Pas de \\`\\`\\`json.\n\nSTRUCTURE EXACTE À RESPECTER :\n\n{\n  \"version\": 2,\n  \"hero\": {\n    \"headline\": \"[Titre percutant avec le nom de l'entreprise — max 12 mots]\",\n    \"subline\": \"Préparé par ${leadData.consultant_name}, ${leadData.consultant_job}\",\n    \"score\": [ENTIER 0-100 repris du scoring],\n    \"score_label\": \"[Label court du score adapté au domaine, ex: Score de maturité digitale, Indice de performance commerciale]\"\n  },\n  \"context_block\": {\n    \"title\": \"[Titre montrant qu'on comprend la situation — max 8 mots]\",\n    \"content\": \"<p>[2-3 paragraphes montrant que le consultant a compris le contexte, le marché et les enjeux spécifiques du prospect. Cite des éléments des réponses du formulaire.]</p>\",\n    \"highlights\": [\"[Signal clé 1 extrait du formulaire ou site]\", \"[Signal clé 2]\", \"[Signal clé 3]\"]\n  },\n  \"checklist\": {\n    \"title\": \"[Titre orienté action — les fondamentaux à vérifier]\",\n    \"items\": [\n      {\"label\": \"[Élément stratégique 1]\", \"status\": \"missing|partial|ok\"},\n      {\"label\": \"[Élément stratégique 2]\", \"status\": \"missing|partial|ok\"},\n      {\"label\": \"[Élément 3]\", \"status\": \"missing|partial|ok\"},\n      {\"label\": \"[Élément 4]\", \"status\": \"missing|partial|ok\"},\n      {\"label\": \"[Élément 5]\", \"status\": \"missing|partial|ok\"},\n      {\"label\": \"[Élément 6]\", \"status\": \"missing|partial|ok\"}\n    ]\n  },\n  \"visualizations\": [\n    {\n      \"id\": \"viz-cost\",\n      \"type\": \"bar\",\n      \"title\": \"[Titre orienté décision — coût inaction vs potentiel]\",\n      \"label_unite\": \"[€ ou $ ou unité sectorielle]\",\n      \"enabled\": true,\n      \"points\": [\n        {\"label\": \"Coût de l'inaction (6 mois)\", \"value\": [ENTIER réaliste]},\n        {\"label\": \"Potentiel optimisé (6 mois)\", \"value\": [ENTIER réaliste]}\n      ]\n    },\n    {\n      \"id\": \"viz-maturity\",\n      \"type\": \"radar\",\n      \"title\": \"[Titre — maturité ou performance par axe]\",\n      \"label_unite\": \"/100\",\n      \"enabled\": true,\n      \"points\": [\n        {\"label\": \"[Axe 1 adapté au domaine]\", \"value\": [0-100]},\n        {\"label\": \"[Axe 2]\", \"value\": [0-100]},\n        {\"label\": \"[Axe 3]\", \"value\": [0-100]},\n        {\"label\": \"[Axe 4]\", \"value\": [0-100]}\n      ]\n    }\n  ],\n  \"analysis_block\": {\n    \"title\": \"[Titre — résultats de l'analyse]\",\n    \"content\": \"<p>[Prose analytique 3-5 paragraphes. Analyse de marché croisée avec les données prospect. Chaque paragraphe = un insight actionable. Pas de bullet points ici — rédaction fluide orientée diagnostic.]</p>\"\n  },\n  \"problems_block\": {\n    \"title\": \"[Titre — problèmes centraux identifiés]\",\n    \"items\": [\n      {\"title\": \"[Problème 1]\", \"description\": \"<p>[Description factuelle + coût de l'inaction chiffré]</p>\", \"severity\": \"critical|high|medium\"},\n      {\"title\": \"[Problème 2]\", \"description\": \"<p>[Description + impact]</p>\", \"severity\": \"critical|high|medium\"},\n      {\"title\": \"[Problème 3]\", \"description\": \"<p>[Description + impact]</p>\", \"severity\": \"high|medium\"}\n    ]\n  },\n  \"solutions_block\": {\n    \"title\": \"[Titre — axes de résolution recommandés]\",\n    \"items\": [\n      {\"title\": \"[Solution 1 — orientée résultat, pas méthode]\", \"description\": \"<p>[Décris le RÉSULTAT attendu et POURQUOI c'est urgent. Éveille la curiosité sans révéler la méthode.]</p>\", \"impact\": \"Fort|Moyen\"},\n      {\"title\": \"[Solution 2]\", \"description\": \"<p>[Idem]</p>\", \"impact\": \"Fort|Moyen\"},\n      {\"title\": \"[Solution 3]\", \"description\": \"<p>[Idem]</p>\", \"impact\": \"Fort|Moyen\"}\n    ]\n  },\n  \"cta\": {\n    \"headline\": \"[Phrase d'accroche CTA avec le nom du consultant]\",\n    \"sublabel\": \"[Sous-titre rassurant — durée de l'appel, gratuité, ce qu'on y gagne]\",\n    \"cta_label\": \"[Texte du bouton — verbe d'action]\",\n    \"booking_url\": \"${leadData.consultant_booking_url || ''}\"\n  },\n  \"consultant_edits\": {\n    \"block_images\": {},\n    \"block_visibility\": {},\n    \"block_order\": [\"hero\", \"context_block\", \"checklist\", \"visualizations\", \"analysis_block\", \"problems_block\", \"solutions_block\", \"cta\"]\n  }\n}\n\nRÈGLES JSON STRICTES :\n- Chaque valeur entre crochets [...] doit être remplacée par du contenu réel.\n- Les valeurs numériques sont des entiers, JAMAIS des strings.\n- severity : uniquement \"critical\", \"high\" ou \"medium\".\n- status dans checklist : uniquement \"missing\", \"partial\" ou \"ok\".\n- impact dans solutions : uniquement \"Fort\" ou \"Moyen\".\n- visualizations[].type : uniquement \"bar\" ou \"radar\".\n- Minimum 6 items dans checklist, 3 dans problems_block, 3 dans solutions_block.\n- Les highlights dans context_block : exactement 3 strings courtes (max 10 mots chacune).\n</output_schema_v2>`;\n\nreturn [{ json: { master_prompt: masterPrompt, score_json: JSON.stringify(score_data), lead_id: leadData.lead_id } }];\n"
+      },
+      "id": "d337ab3d-8c5a-4b7e-a996-53bed1d8ea99",
+      "name": "Prepare Master Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        576,
+        4304
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.master_prompt }}"
+      },
+      "id": "bffdae3c-0ba9-49e6-b504-5600b13ce0eb",
+      "name": "Gemini Pro (Master Copywriter)",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        800,
+        4304
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "fe6a28a3-f51f-4989-8502-bc5173728666",
+      "name": "Gemini Pro Model (Master)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        800,
+        4512
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nlet content = response.text || '{}';\n\n// Strip reasoning tags and markdown fences\ncontent = content.replace(/<thinking>[\\s\\S]*?<\\/thinking>/gi, '').trim();\ncontent = content.replace(/```\\s*json\\s*\\n?/gi, '').replace(/```\\s*\\n?/g, '').trim();\n\n// Robust JSON extraction\nconst s = content.indexOf('{');\nconst e = content.lastIndexOf('}');\nif (s !== -1 && e > s) content = content.substring(s, e + 1);\n\nlet analysis;\ntry {\n  analysis = JSON.parse(content);\n} catch (err) {\n  throw new Error('AUDIT_PARSE_ERROR: Gemini returned invalid JSON. Raw: ' + content.substring(0, 500));\n}\n\n// ══════════════════════════════════════════════════\n// V2 SCHEMA VALIDATION & NORMALIZATION\n// ══════════════════════════════════════════════════\n\n// Force version\nanalysis.version = 2;\n\n// ── hero ──\nif (!analysis.hero || typeof analysis.hero !== 'object') {\n  throw new Error('AUDIT_SCHEMA_ERROR: hero block missing in output.');\n}\nanalysis.hero.score = typeof analysis.hero.score === 'number' ? Math.min(100, Math.max(0, Math.round(analysis.hero.score))) : 50;\nanalysis.hero.headline = String(analysis.hero.headline || 'Votre audit personnalisé');\nanalysis.hero.subline = String(analysis.hero.subline || '');\nanalysis.hero.score_label = String(analysis.hero.score_label || 'Score global');\n\n// ── context_block ──\nif (!analysis.context_block || typeof analysis.context_block !== 'object') {\n  analysis.context_block = { title: 'Votre situation', content: '<p>Analyse en cours...</p>', highlights: [] };\n}\nif (!Array.isArray(analysis.context_block.highlights)) analysis.context_block.highlights = [];\nanalysis.context_block.highlights = analysis.context_block.highlights.slice(0, 3).map(h => String(h));\n\n// ── checklist ──\nif (!analysis.checklist || !Array.isArray(analysis.checklist.items)) {\n  analysis.checklist = { title: 'Points de contrôle', items: [] };\n}\nanalysis.checklist.items = analysis.checklist.items\n  .filter(i => i && i.label)\n  .map(i => ({ label: String(i.label), status: ['missing','partial','ok'].includes(i.status) ? i.status : 'partial' }));\n\n// ── visualizations ──\nif (!Array.isArray(analysis.visualizations)) analysis.visualizations = [];\nanalysis.visualizations = analysis.visualizations\n  .filter(v => v && typeof v === 'object')\n  .map((v, idx) => ({\n    id: String(v.id || `viz-${idx + 1}`),\n    type: ['bar','radar','line','table'].includes(String(v.type || '').toLowerCase()) ? String(v.type).toLowerCase() : 'bar',\n    title: String(v.title || `Visualisation ${idx + 1}`),\n    label_unite: String(v.label_unite || '€'),\n    enabled: v.enabled !== false,\n    points: Array.isArray(v.points)\n      ? v.points.filter(p => p && typeof p.label === 'string').map(p => ({ label: String(p.label), value: Number.isFinite(Number(p.value)) ? Number(p.value) : 0 }))\n      : []\n  }))\n  .filter(v => v.points.length > 0);\n\n// Ensure at least 2 visualizations with safe defaults\nif (analysis.visualizations.length === 0) {\n  analysis.visualizations = [\n    { id: 'viz-cost', type: 'bar', title: 'Impact financier estimé', label_unite: '€', enabled: true, points: [{ label: 'Coût inaction (6 mois)', value: 8500 }, { label: 'Potentiel optimisé', value: 28000 }] },\n    { id: 'viz-maturity', type: 'radar', title: 'Maturité par axe', label_unite: '/100', enabled: true, points: [{ label: 'Stratégie', value: 50 }, { label: 'Exécution', value: 50 }, { label: 'Ressources', value: 50 }, { label: 'Opportunités', value: 50 }] }\n  ];\n}\n\n// ── analysis_block ──\nif (!analysis.analysis_block || typeof analysis.analysis_block !== 'object') {\n  analysis.analysis_block = { title: 'Résultats de l\\'analyse', content: '<p>Analyse non disponible.</p>' };\n}\n\n// ── problems_block ──\nif (!analysis.problems_block || !Array.isArray(analysis.problems_block.items)) {\n  analysis.problems_block = { title: 'Problèmes identifiés', items: [] };\n}\nanalysis.problems_block.items = analysis.problems_block.items\n  .filter(i => i && i.title)\n  .map(i => ({\n    title: String(i.title),\n    description: String(i.description || ''),\n    severity: ['critical','high','medium'].includes(i.severity) ? i.severity : 'medium'\n  }));\n\n// ── solutions_block ──\nif (!analysis.solutions_block || !Array.isArray(analysis.solutions_block.items)) {\n  analysis.solutions_block = { title: 'Axes de résolution', items: [] };\n}\nanalysis.solutions_block.items = analysis.solutions_block.items\n  .filter(i => i && i.title)\n  .map(i => ({\n    title: String(i.title),\n    description: String(i.description || ''),\n    impact: ['Fort','Moyen'].includes(i.impact) ? i.impact : 'Moyen'\n  }));\n\n// ── cta ──\nif (!analysis.cta || typeof analysis.cta !== 'object') {\n  analysis.cta = { headline: 'Passez à l\\'action', sublabel: '', cta_label: 'Réserver mon appel', booking_url: '' };\n}\n\n// ── consultant_edits (initialized empty for consultant-side editing) ──\nif (!analysis.consultant_edits || typeof analysis.consultant_edits !== 'object') {\n  analysis.consultant_edits = {\n    block_images: {},\n    block_visibility: {},\n    block_order: ['hero', 'context_block', 'checklist', 'visualizations', 'analysis_block', 'problems_block', 'solutions_block', 'cta']\n  };\n}\n\n// ── Backward compat: remove deprecated v1 fields if LLM still generates them ──\ndelete analysis.audit_blocks;\ndelete analysis.chart_data;\ndelete analysis.client_graph;\n\n// ── Extract score from scoring branch ──\nlet final_score = analysis.hero.score;\ntry {\n  let st = $('Prepare Master Prompt').first().json.score_json || '{}';\n  st = st.replace(/```\\s*json\\s*\\n?/gi,'').replace(/```\\s*\\n?/g,'').trim();\n  const si = st.indexOf('{'); const ei = st.lastIndexOf('}');\n  if (si !== -1 && ei > si) {\n    const so = JSON.parse(st.substring(si, ei+1));\n    if (typeof so.score === 'number' && so.score >= 0 && so.score <= 100) {\n      final_score = so.score;\n      analysis.hero.score = final_score;\n    }\n  }\n} catch(e) {}\n\nreturn [{\n  json: {\n    ai_analysis_json: JSON.stringify(analysis),\n    score: final_score,\n    id: $('Prepare Master Prompt').first().json.lead_id\n  }\n}];"
+      },
+      "id": "a7deccd4-8317-45d6-8124-67708cdc513d",
+      "name": "Parse Final JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1136,
+        4304
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.id }}",
+              "condition": "eq"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ai_analysis_json",
+              "fieldValue": "={{ $json.ai_analysis_json }}"
+            },
+            {
+              "fieldId": "score",
+              "fieldValue": "={{ $json.score }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "to_review"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            },
+            {
+              "fieldId": "ai_generation_history",
+              "fieldValue": "={{ JSON.stringify([...($('Get Lead Details').first().json.ai_generation_history || []), { version: ($('Get Lead Details').first().json.ai_generation_history || []).length + 1, generated_at: new Date().toISOString(), score: $('Parse Final JSON').first().json.score, consultant_feedback: null }]) }}"
+            }
+          ]
+        }
+      },
+      "id": "fc8d91ff-e21a-42f5-b9f2-9d1079f1513d",
+      "name": "Update Lead DB",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1360,
+        4304
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Architecture v2.1 — Audit Generator\n\n**Trigger logic:**\n- New Lead: payload `{ record: { id } }` via Supabase trigger or React app\n- Regenerate: payload `{ lead_id, feedback, action: \"regenerate\" }`\n\n**Agent / ai_config behavior:**\n- If `agentId` exists → loads agent persona from `agents_library` → audit is service-specific\n- If `agentId` missing → generic audit persona used — still functional\n\n**Parallel branches:**\n1. Site analysis (Jina + Flash) — skipped gracefully if no URL\n2. Lead scoring (Flash 0.2) — returns score + breakdown + first_call_angle\n3. Market research (Pro 0.3) — prospect-specific, not generic\n\n**History:** ai_generation_history appended on every generation (version tracking for regen)\n\n**Output:** JSON saved to `leads.ai_analysis_json` + HTTP response to caller",
+        "width": 1088
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        352,
+        4048
+      ],
+      "typeVersion": 1,
+      "id": "09d59c94-7e56-4c9e-bf8e-00f9a8397370",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, lead_id: $('Parse Final JSON').first().json.id, score: $('Parse Final JSON').first().json.score, status: 'to_review', message: 'Audit generated and saved successfully.', timestamp: new Date().toISOString() } }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "audit-respond-ok-node-001",
+      "name": "Respond — Audit Ready",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1584,
+        4304
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, error: 'AUDIT_GENERATION_ERROR', message: $input.first().json?.error?.message || 'Audit generation failed. Please retry.', lead_id: $('Merge Triggers').first().json.body?.record?.id || $('Merge Triggers').first().json.body?.lead_id || null } }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "audit-respond-err-node-001",
+      "name": "Respond — Audit Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1360,
+        4512
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook - New Lead": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Regenerate": {
+      "main": [
+        [
+          {
+            "node": "Merge Triggers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Triggers": {
+      "main": [
+        [
+          {
+            "node": "Get Lead Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Lead Details": {
+      "main": [
+        [
+          {
+            "node": "Get Form Context",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Form Context": {
+      "main": [
+        [
+          {
+            "node": "Has Agent Component?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Agent Component?": {
+      "main": [
+        [
+          {
+            "node": "Get Agent Focus",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge Agent Path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Agent Focus": {
+      "main": [
+        [
+          {
+            "node": "Merge Agent Path",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Agent Path": {
+      "main": [
+        [
+          {
+            "node": "Get Consultant Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Consultant Profile": {
+      "main": [
+        [
+          {
+            "node": "Extract & Prepare Variables",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract & Prepare Variables": {
+      "main": [
+        [
+          {
+            "node": "Has Website URL?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Has Website URL?": {
+      "main": [
+        [
+          {
+            "node": "Jina AI (Reader)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Dummy Site Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jina AI (Reader)": {
+      "main": [
+        [
+          {
+            "node": "Gemini Flash (Site Summary)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash (Site Summary)": {
+      "main": [
+        [
+          {
+            "node": "Gemini Flash (Scoring)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dummy Site Summary": {
+      "main": [
+        [
+          {
+            "node": "Gemini Flash (Scoring)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash (Scoring)": {
+      "main": [
+        [
+          {
+            "node": "Gemini Pro (Market Search)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Pro (Market Search)": {
+      "main": [
+        [
+          {
+            "node": "Prepare Master Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Master Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini Pro (Master Copywriter)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Pro (Master Copywriter)": {
+      "main": [
+        [
+          {
+            "node": "Parse Final JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Final JSON": {
+      "main": [
+        [
+          {
+            "node": "Update Lead DB",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond — Audit Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Lead DB": {
+      "main": [
+        [
+          {
+            "node": "Respond — Audit Ready",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash Model (Site)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini Flash (Site Summary)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash Model (Score)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini Flash (Scoring)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Pro Model (Market)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini Pro (Market Search)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Pro Model (Master)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini Pro (Master Copywriter)",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "c3e36ba3-bc49-40c1-a94d-3112d1fa9dcf",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "cjT7UHqE2wmDpS4U",
+  "tags": []
+}

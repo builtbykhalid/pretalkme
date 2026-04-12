@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HackerRank Clone</title>
+    <style>
+        /* --- Variables et Reset --- */
+        :root {
+            --brand-green: #00ea64;
+            --bg-black: #000000;
+            --bg-white: #ffffff;
+            --text-grey: #a0a0a0;
+            --card-dark: #111111;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-black);
+            color: var(--bg-white);
+            overflow-x: hidden;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 40px;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .logo-icon {
+            color: var(--brand-green);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-grey);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-links a:hover { color: var(--bg-white); }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-actions a {
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .link-dev { color: var(--bg-white); display: flex; align-items: center; gap: 5px;}
+        .btn-demo { color: var(--bg-white); border: 1px solid #333; padding: 10px 16px; border-radius: 4px; }
+        .btn-signup { background: var(--brand-green); color: var(--bg-black); padding: 10px 16px; border-radius: 4px; }
+
+        /* --- Section Hero (Fond Noir) --- */
+        /* C'est ici que la magie du scroll se passe */
+        .hero-wrapper {
+            height: 100vh;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: var(--bg-black);
+        }
+
+        .hero-content h1 {
+            font-size: 5.5rem;
+            line-height: 1;
+            font-weight: 600;
+            color: #555;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+        }
+
+        .hero-content h1 span {
+            color: var(--bg-white);
+        }
+
+        .hero-content h1 .icon {
+            color: var(--brand-green);
+            vertical-align: middle;
+        }
+
+        .hero-content p {
+            color: var(--text-grey);
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+            line-height: 1.5;
+        }
+
+        .btn-community {
+            background: transparent;
+            color: var(--bg-white);
+            border: 1px solid rgba(0, 234, 100, 0.3);
+            padding: 16px 32px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 234, 100, 0.1);
+            transition: all 0.3s;
+        }
+
+        .btn-community:hover {
+            border-color: var(--brand-green);
+            box-shadow: 0 0 30px rgba(0, 234, 100, 0.3);
+        }
+
+        /* --- Bannière Cookies --- */
+        .cookie-banner {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111;
+            border: 1px solid #333;
+            padding: 20px 30px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            z-index: 100;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .cookie-banner p {
+            font-size: 12px;
+            color: var(--text-grey);
+            line-height: 1.4;
+        }
+
+        .cookie-banner a { color: var(--brand-green); text-decoration: none; }
+
+        .cookie-actions { display: flex; gap: 15px; }
+        .cookie-btn { padding: 8px 24px; border-radius: 4px; font-size: 14px; cursor: pointer; border: none;}
+        .btn-decline { background: transparent; color: var(--text-grey); }
+        .btn-accept { background: var(--brand-green); color: var(--bg-black); font-weight: 500;}
+
+        /* --- Contenu Principal (Fond Blanc qui glisse par dessus) --- */
+        .main-content {
+            position: relative;
+            z-index: 2;
+            background-color: var(--bg-white);
+            color: var(--bg-black);
+            border-radius: 40px 40px 0 0;
+            padding: 100px 20px;
+            box-shadow: 0 -20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* --- Section 1: Choose Your Adventure --- */
+        .adventure-section {
+            max-width: 1100px;
+            margin: 0 auto 150px auto;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: #222;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: #666;
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cards-grid {
+            display: flex;
+            gap: 30px;
+        }
+
+        .card {
+            flex: 1;
+            background: var(--card-dark);
+            border-radius: 20px;
+            padding: 40px;
+            color: var(--bg-white);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Simulation des images de fond des cartes */
+        .card-bg-1 {
+            position: absolute; right: -50px; bottom: -50px; width: 200px; height: 200px;
+            background: linear-gradient(135deg, rgba(0,234,100,0.1), transparent);
+            border-radius: 10px; border: 1px solid #333;
+        }
+        .card-bg-2 {
+            position: absolute; right: -20px; bottom: 30px; width: 150px; height: 100px;
+            background: linear-gradient(45deg, rgba(0,234,100,0.2), transparent);
+            border-radius: 10px; border: 1px solid var(--brand-green);
+        }
+
+        .card h3 { font-size: 1.8rem; margin-bottom: 15px; position: relative; z-index: 2;}
+        .card p { color: #aaa; margin-bottom: 30px; position: relative; z-index: 2;}
+        
+        .card ul { list-style: none; margin-bottom: 40px; position: relative; z-index: 2;}
+        .card ul li { margin-bottom: 15px; color: #ccc; font-size: 15px; display: flex; gap: 10px; }
+        .card ul li::before { content: '✓'; color: var(--brand-green); }
+
+        .card-btn {
+            display: inline-block;
+            background: rgba(0, 234, 100, 0.1);
+            color: var(--brand-green);
+            border: 1px solid var(--brand-green);
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* --- Section 2: AI Changing Software Development --- */
+        .ai-changing-section {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .ai-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--brand-green);
+            margin-bottom: 10px;
+        }
+
+        .ai-subtitle {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #222;
+            margin-bottom: 80px;
+        }
+
+        .feature-row {
+            display: flex;
+            align-items: center;
+            gap: 60px;
+            margin-bottom: 100px;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-text h4 {
+            font-size: 2.2rem;
+            color: #222;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .feature-text h4 span {
+            color: var(--brand-green);
+        }
+
+        .feature-text p {
+            color: #666;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .feature-visual {
+            flex: 1;
+            position: relative;
+            height: 400px;
+            background-color: #f0f0f0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        /* Placeholders pour les images complexes de la vidéo */
+        .visual-placeholder-1 {
+            background: url('https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;
+            width: 100%; height: 100%;
+            position: relative;
+        }
+        
+        .floating-card-1 {
+            position: absolute; bottom: -20px; right: 20px; width: 80%; height: 60%;
+            background: #222; border-radius: 12px; border: 1px solid #444;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            padding: 20px; color: white;
+        }
+
+        .visual-placeholder-2 {
+            background: url('https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;
+            width: 100%; height: 100%;
+            position: relative;
+        }
+
+        .floating-card-2 {
+            position: absolute; top: 20px; left: -20px; width: 70%; height: 50%;
+            background: #222; border-radius: 12px; border: 1px solid #444;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            padding: 20px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">
+            <span class="logo-icon">|</span> HackerRank
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Products</a></li>
+            <li><a href="#">Solutions</a></li>
+            <li><a href="#">Resources</a></li>
+            <li><a href="#">Pricing</a></li>
+        </ul>
+        <div class="nav-actions">
+            <a href="#" class="link-dev">For Developers ↗</a>
+            <a href="#" class="btn-demo">Request Demo</a>
+            <a href="#" class="btn-signup">Sign Up</a>
+        </div>
+    </nav>
+
+    <div class="hero-wrapper">
+        <div class="hero-content">
+            <h1>
+                The future<br>
+                of development<br>
+                is <span><span class="icon">◎</span>human + <span class="icon">✦</span>AI</span>
+            </h1>
+            <p>We help you map the skills you need, track the skills you have, and close your gaps to thrive in a GenAI world.</p>
+            <button class="btn-community">Join The Community</button>
+        </div>
+    </div>
+
+    <div class="cookie-banner" id="cookieBanner">
+        <p>We set essential cookies to help run our websites and services. By clicking Accept, you consent to the use of additional cookies for analytics and marketing. Feel free to update your settings at any time. Read more in our <a href="#">Cookie Policy</a>.</p>
+        <div class="cookie-actions">
+            <button class="cookie-btn btn-decline" onclick="document.getElementById('cookieBanner').style.display='none'">Decline</button>
+            <button class="cookie-btn btn-accept" onclick="document.getElementById('cookieBanner').style.display='none'">Accept</button>
+        </div>
+    </div>
+
+    <main class="main-content">
+        
+        <section class="adventure-section">
+            <div class="section-title">
+                <h2>Choose Your Adventure</h2>
+                <p>We build elite tech teams for companies and enhance candidates' tech skills and job prospects</p>
+            </div>
+
+            <div class="cards-grid">
+                <div class="card">
+                    <div class="card-bg-1"></div>
+                    <h3>For developers</h3>
+                    <p>HackerRank helps you hone your developer skills and become GenAI ready.</p>
+                    <ul>
+                        <li>Track your skill proficiency</li>
+                        <li>Prepare for technical interviews</li>
+                        <li>Learn the latest GenAI skills</li>
+                    </ul>
+                    <a href="#" class="card-btn">Explore HackerRank Community</a>
+                </div>
+
+                <div class="card">
+                    <div class="card-bg-2"></div>
+                    <h3>For business</h3>
+                    <p>Get your company GenAI ready.</p>
+                    <ul>
+                        <li>Attract and hire the right developers</li>
+                        <li>Upskill your team with the latest GenAI skills</li>
+                        <li>Build out your AI platform team</li>
+                    </ul>
+                    <a href="#" class="card-btn">Explore HackerRank Community</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="ai-changing-section">
+            <h2 class="ai-title">AI Changing</h2>
+            <h2 class="ai-subtitle">Software Development</h2>
+
+            <div class="feature-row">
+                <div class="feature-text">
+                    <h4><span>GenAI</span> advances daily.</h4>
+                    <p>AI's ability to write code is evolving at a dizzying pace.</p>
+                </div>
+                <div class="feature-visual">
+                    <div class="visual-placeholder-1">
+                        <div class="floating-card-1">
+                            <div style="display:flex; gap:15px; align-items:center; margin-bottom:15px;">
+                                <div style="width:50px; height:50px; background:#444; border-radius:50%;"></div>
+                                <div>
+                                    <h5 style="font-size:18px;">Ada</h5>
+                                    <span style="color:#aaa; font-size:12px;">Machine Learning Engineer</span>
+                                </div>
+                            </div>
+                            <div style="font-size:12px; color:#888; margin-bottom:10px;">Certifications</div>
+                            <div style="height:30px; background:#333; border-radius:4px; margin-bottom:10px;"></div>
+                            <div style="height:30px; background:#333; border-radius:4px;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-row">
+                <div class="feature-text">
+                    <h4><span>GenAI</span> will execute more mundane development tasks</h4>
+                    <p>Developers will orchestrate the work of AI agents while focusing on higher-level problem solving</p>
+                </div>
+                <div class="feature-visual">
+                    <div class="visual-placeholder-2">
+                        <div class="floating-card-2">
+                            <h5 style="color:white; margin-bottom:10px;">Backlog</h5>
+                            <p style="color:#aaa; font-size:14px; margin-bottom:15px;">Making API requests and handling responses</p>
+                            <div style="display:flex; gap:10px;">
+                                <span style="background:#444; color:white; padding:4px 8px; border-radius:4px; font-size:12px;">AI Help</span>
+                                <span style="background:#444; color:white; padding:4px 8px; border-radius:4px; font-size:12px;">Maria P.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+</body>
+</html>

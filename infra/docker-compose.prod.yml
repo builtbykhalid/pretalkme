@@ -1,0 +1,94 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      - VITE_SUPABASE_URL=${SUPABASE_URL}
+      - VITE_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - VITE_API_URL=${API_PUBLIC_URL}
+      - VITE_WS_URL=${WS_PUBLIC_URL}
+    ports:
+      - "3000:3000"
+    networks:
+      - pretalk_net
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - META_VERIFY_TOKEN=${META_VERIFY_TOKEN}
+      - META_APP_SECRET=${META_APP_SECRET}
+      - RESEND_API_KEY=${RESEND_API_KEY}
+      - PORT=4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      - redis
+      - rabbitmq
+    networks:
+      - pretalk_net
+    restart: unless-stopped
+
+  ai:
+    build:
+      context: .
+      dockerfile: services/ai/Dockerfile
+    environment:
+      - RABBITMQ_URL=amqp://${RABBITMQ_USER}:${RABBITMQ_PASS}@rabbitmq:5672
+      - REDIS_URL=redis://redis:6379
+      - QDRANT_URL=http://qdrant:6333
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ELEVENLABS_API_KEY=${ELEVENLABS_API_KEY}
+      - PORT=8000
+    ports:
+      - "8000:8000"
+    depends_on:
+      - rabbitmq
+      - qdrant
+    networks:
+      - pretalk_net
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    networks:
+      - pretalk_net
+    restart: unless-stopped
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+    ports:
+      - "15672:15672"
+    networks:
+      - pretalk_net
+    restart: unless-stopped
+
+  qdrant:
+    image: qdrant/qdrant
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - pretalk_net
+    restart: unless-stopped
+
+networks:
+  pretalk_net:
+    driver: bridge
+
+volumes:
+  qdrant_data:

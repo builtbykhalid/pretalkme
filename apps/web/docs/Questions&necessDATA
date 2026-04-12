@@ -1,0 +1,39 @@
+INFORMATIONS DU PROFIL CONSULTANT (Table profiles & ai_config)
+Ces données alimentent le contexte système (<role>, <global_directives>) pour orienter l'IA.
+
+Intitulé exact du poste (job_title) : Détermine le prisme de l'analyse (ex: "Coach RH", "Architecte", "Consultant M&A").
+
+Langue de restitution (language) : Impose la langue de sortie de l'audit.
+
+Directives Globales / Ton (systemPrompt) : Vouvoiement/tutoiement, style direct ou empathique, focus sur le ROI ou sur l'humain.
+
+Mission Spécifique (agent_prompt - optionnel) : Le focus particulier si le consultant utilise un agent ciblé (ex: "Concentre-toi uniquement sur la dette technique").
+
+QUESTIONS INDISPENSABLES DU FORMULAIRE (Table leads & forms)
+Pour que le Master Prompt et le système de Scoring (sur 100 points) fonctionnent parfaitement, le formulaire de qualification adressé au prospect doit impérativement couvrir les 4 piliers de votre grille.
+
+1. Identification & Base (Pour le Webhook & Jina AI)
+
+Nom / Prénom & Email : Obligatoire pour le suivi.
+
+Nom de l'entreprise ou du projet : Pour personnaliser l'audit.
+
+Secteur d'activité (sector) : Crucial pour le nœud "Market Search". Doit idéalement être une liste déroulante ou un champ texte précis.
+
+URL du site web (Optionnel mais recommandé) : Nourrit le scraper Jina AI pour contextualiser l'entreprise.
+
+2. Le Besoin & La Clarté (Score : 0-25 pts)
+
+"Quel est votre objectif principal ou le problème urgent que vous souhaitez résoudre ?" (Champ texte libre, obligatoire). C'est la matière première pour l'analyse des "Zones d'ombre" et des "Points forts".
+
+3. L'Urgence / Timing (Score : 0-25 pts)
+
+"Quelle est l'échéance idéale pour la réalisation de ce projet/objectif ?" (Choix multiple ou texte court). Permet à l'IA d'appuyer sur le "Coût de l'inaction".
+
+Exemples : "Dès que possible", "D'ici 1 à 3 mois", "Dans l'année", "En simple réflexion".
+
+4. Le Budget / Capacité d'investissement (Score : 0-25 pts)
+
+"Quelle est l'enveloppe budgétaire allouée à ce projet ?" (Choix multiple avec tranches adaptées au métier du consultant). Détermine la viabilité commerciale du lead.
+
+(Note : Le 4ème critère du score, "Engagement", est calculé automatiquement par l'IA en analysant la longueur et la précision des réponses textuelles ci-dessus).

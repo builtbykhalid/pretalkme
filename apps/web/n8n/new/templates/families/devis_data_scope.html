@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Devis Data Scope</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:{{accentColor}};--line:#d6dfec;--ink:#111b2c;--muted:#5c6a82}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Trebuchet MS",Arial,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;position:relative;background:#fff;padding-bottom:.38in}
+.h{padding:.28in .5in;background:var(--ac);color:#fff}
+.h .r{display:flex;justify-content:space-between;align-items:flex-end}
+.h .b{font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:#d6e6ff}
+.h .n{font-size:18px;font-weight:700;margin-top:4px}
+.meta{padding:.14in .5in;background:#f2f7ff;border-bottom:1px solid var(--line);font-size:8px;color:#657691;display:flex;justify-content:space-between}
+.body{padding:.2in .5in}
+.scope{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.scope .x{border:1px solid var(--line);border-radius:8px;padding:8px;background:#fbfdff}
+.scope .x small{display:block;font-size:6px;letter-spacing:.1em;text-transform:uppercase;color:#7788a3;margin-bottom:4px}
+.scope .x p{font-size:8px;line-height:1.6;color:#334259}
+.t{width:100%;border-collapse:collapse;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.t th{background:#e9f1fe;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;color:#667a98;padding:7px;text-align:left}
+.t td{padding:7px;font-size:8px;border-top:1px solid var(--line);color:#2f3f58}
+.t .r{text-align:right}
+.total{margin-top:10px;width:2.25in;margin-left:auto;border:1px solid var(--line);border-radius:8px;padding:8px}
+.total .row{display:flex;justify-content:spaace-between;font-size:8px;color:#3b4a62;padding:3px 0}
+.total .g{margin-top:5px;padding-top:7px;border-top:1px solid var(--line);font-size:10px;font-weight:700;color:var(--ac)}
+.pack{display:flex;gap:8px;margin-top:10px}
+.pack .p{flex:1;border:1px solid var(--line);border-radius:8px;padding:8px;background:#f7fbff}
+.pack .p h4{font-size:8px;color:var(--ac);margin-bottom:4px}
+.pack .p p{font-size:7.8px;line-height:1.55;color:#44526a}
+.ft{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--line);padding:8px .5in;display:flex;justify-content:space-between;font-size:7px;color:#7c8ba3}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="h">{{logoTag}}<div class="r"><div><div class="b">Data Scope Quote</div><div class="n">{{quoteNumber}}</div></div><div style="font-size:8px">{{date}}</div></div></div>
+  <div class="meta"><span>{{consultantName}} - {{companyName}}</span><span>{{clientName}} - {{clientCompany}}</span></div>
+  <div class="body">
+    <div class="scope"><div class="x"><small>Perimetre</small><p>{{quoteSubject}}</p></div><div class="x"><small>Validite</small><p>Jusqu'au {{validUntil}}</p></div></div>
+    <table class="t"><thead><tr><th>Deliverable</th><th class="r">Charge</th><th class="r">Total</th></tr></thead><tbody>{{lineItemsHtml}}</tbody></table>
+    <div class="total"><div class="row"><span>Sous-total</span><span>{{subtotal}}</span></div><div class="row"><span>TVA</span><span>{{taxAmount}}</span></div><div class="row g"><span>Total</span><span>{{totalAmount}}</span></div></div>
+    <div class="pack"><div class="p"><h4>Hypotheses</h4><p>{{assumptions}}</p></div><div class="p"><h4>Exclusions</h4><p>{{exclusions}}</p></div><div class="p"><h4>Risques</h4><p>{{risks}}</p></div></div>
+  </div>
+  <div class="ft"><span>{{companyName}} - Devis Data</span><span>{{consultantEmail}}</span></div>
+</div>
+</body>
+</html>

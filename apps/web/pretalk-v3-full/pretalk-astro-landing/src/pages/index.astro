@@ -1,0 +1,812 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const NAV = [
+  { label: 'Comment ça marche', href: '#how' },
+  { label: 'Tarifs',            href: '#pricing' },
+  { label: 'Fonctionnalités',   href: '#features' },
+  { label: 'Blog',              href: '#blog' },
+];
+
+const LOGOS = ['Oracle','Morpheus','Samsung','monday.com','Segment'];
+
+const FEATURES = [
+  {
+    id: 'audit',
+    style: 'dark',
+    badge: 'IA ✦',
+    title: 'Audit IA — 90 secondes',
+    desc:  "Avant chaque appel, Pretalk analyse le site, LinkedIn et actualités de votre prospect. Vous arrivez avec plus d'infos que lui.",
+    icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="M16.5 16.5 21 21"/><path stroke-linecap="round" d="M11 8v3h3"/></svg>`,
+  },
+  {
+    id: 'scoring',
+    style: 'light',
+    badge: 'Auto',
+    title: 'Lead Scoring 0–100',
+    desc:  'Chaque prospect scoré en temps réel. Budget, maturité, timing. Concentrez-vous sur ceux qui valent votre temps.',
+    icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17l4-5 3 3 5-8 4 4"/></svg>`,
+  },
+  {
+    id: 'forms',
+    style: 'green',
+    badge: 'IA ✦',
+    title: 'Form Builder IA',
+    desc:  'Décrivez votre offre. Pretalk génère le formulaire qui qualifie vraiment — en 30 secondes.',
+    icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path stroke-linecap="round" d="M7 9h10M7 13h6"/></svg>`,
+  },
+  {
+    id: 'proposals',
+    style: 'image',
+    badge: 'Post-appel',
+    title: 'Devis & Contrats en 1 clic',
+    desc:  "Après le call, Pretalk génère une proposition en 3 options Anchor Pricing + contrat juridique adapté.",
+    img: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=600&h=400&fit=crop',
+    icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V8l-6-5z"/><path stroke-linecap="round" d="M14 3v5h5M9 13h6M9 17h4"/></svg>`,
+  },
+  {
+    id: 'crm',
+    style: 'light',
+    badge: 'CRM',
+    title: 'Pipeline Kanban',
+    desc:  'Gérez leads, calls, propositions et relances depuis un seul tableau de bord.',
+    icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="16" rx="1"/><rect x="17" y="4" width="5" height="16" rx="1"/></svg>`,
+  },
+  {
+    id: 'analytics',
+    style: 'dark-green',
+    badge: 'ROI',
+    title: 'Analytics & ROI',
+    desc:  'MRR, pipeline, heures sauvées par l\'IA, taux de conversion. Pilotez comme une entreprise.',
+    icon: `<svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15l5-7 4 4 4-6 5 4"/><path stroke-linecap="round" d="M3 20h18"/></svg>`,
+  },
+];
+
+const FAQS = [
+  { q: 'Faut-il des compétences techniques ?',         a: 'Aucune. Décrivez votre offre en une phrase, Pretalk construit le formulaire, le scoring et votre profil public. Setup en 10 minutes.' },
+  { q: 'Pretalk remplace-t-il Calendly, Typeform et Notion ?', a: 'Oui. Formulaires intelligents, prise de RDV, CRM pipeline, devis et suivi client — un seul abonnement à la place de quatre.' },
+  { q: "En quoi l'audit IA diffère d'une recherche Google ?", a: "Pretalk scrappe le site, LinkedIn, actualités et signaux d'intention, puis génère un brief actionnable avec les arguments de vente adaptés — en 90 secondes." },
+  { q: 'Mes données sont-elles sécurisées ?',          a: 'Hébergé en Europe, conforme RGPD. Vos données ne sont jamais vendues ni utilisées pour entraîner des modèles tiers.' },
+  { q: 'Les contrats IA sont-ils juridiquement valides ?', a: 'Les templates sont rédigés par des juristes. Pour les missions complexes (+€10k), nous recommandons une validation par votre avocat.' },
+];
+---
+
+<Layout title="Pretalk — Win deals before they start">
+
+<!-- ═══════════════════════════════════════════
+     NAVBAR
+═══════════════════════════════════════════ -->
+<nav id="navbar" class="fixed top-0 inset-x-0 z-50 transition-all duration-300">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="flex items-center justify-between h-[70px]">
+
+      <!-- Logo -->
+      <a href="/" class="flex items-center gap-2.5 group">
+        <div class="w-9 h-9 bg-pt-dark rounded-xl flex items-center justify-center shadow-sm group-hover:bg-pt-darker transition-colors">
+          <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none">
+            <path d="M4 10h12M10 4l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <span class="font-display font-bold text-[18px] text-pt-dark tracking-tight">pretalk</span>
+      </a>
+
+      <!-- Nav links -->
+      <div class="hidden md:flex items-center gap-0.5">
+        {NAV.map((n, i) => (
+          <a href={n.href}
+             class={`text-[13.5px] font-medium px-4 py-2 rounded-lg transition-all duration-150 ${i === 0 ? 'text-pt-dark border-b-2 border-pt-dark' : 'text-gray-500 hover:text-pt-dark hover:bg-pt-bg'}`}>
+            {n.label}
+          </a>
+        ))}
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center gap-3">
+        <a href="#" class="hidden sm:block text-[13.5px] font-medium text-gray-600 hover:text-pt-dark transition-colors px-2">Se connecter</a>
+        <a href="#pricing" class="bg-pt-dark text-white text-[13.5px] font-semibold px-5 py-2.5 rounded-full hover:bg-pt-darker transition-all hover:-translate-y-px hover:shadow-lg shadow-pt-dark/20">
+          Démarrer
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<section class="relative min-h-screen bg-gradient-to-b from-pt-bg via-pt-bg/40 to-white pt-[70px] overflow-hidden">
+
+  <!-- Background blobs -->
+  <div class="absolute top-20 right-[5%] w-[500px] h-[500px] bg-pt-green/8 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute bottom-0 left-[10%] w-[400px] h-[400px] bg-pt-dark/5 rounded-full blur-[100px] pointer-events-none"></div>
+
+  <div class="relative max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="grid lg:grid-cols-[1.1fr_1fr] gap-8 xl:gap-16 items-center min-h-[calc(100vh-70px)] py-14 lg:py-0">
+
+      <!-- ── LEFT: Text ── -->
+      <div class="order-2 lg:order-1 space-y-7">
+
+        <!-- Eyebrow -->
+        <div class="inline-flex items-center gap-2.5 bg-white border border-pt-border rounded-full px-4 py-2 shadow-sm animate-slide-up">
+          <span class="w-2 h-2 rounded-full bg-pt-green animate-pulse flex-shrink-0"></span>
+          <span class="text-[13px] font-medium text-gray-600">Agents IA disponibles maintenant</span>
+        </div>
+
+        <!-- H1 -->
+        <h1 class="font-display font-extrabold text-[52px] sm:text-[62px] xl:text-[72px] leading-[1.03] tracking-[-2.5px] text-pt-dark animate-slide-up" style="animation-delay:0.08s">
+          Win every deal<br>
+          <span class="relative inline-block">
+            <span class="relative z-10 px-3 text-pt-dark">before</span>
+            <span class="absolute inset-0 bg-pt-green rounded-[10px] -rotate-[0.8deg] z-0"></span>
+          </span>
+          <br>they start.
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-[17px] text-gray-500 leading-relaxed max-w-[480px] animate-slide-up" style="animation-delay:0.16s">
+          Your AI-powered system for consultants, freelancers &amp; solopreneurs. Qualify leads, close deals, and automate everything else — before the first call.
+        </p>
+
+        <!-- CTAs -->
+        <div class="flex flex-wrap items-center gap-3 animate-slide-up" style="animation-delay:0.24s">
+          <a href="#pricing"
+             class="bg-pt-dark text-white font-display font-semibold text-[15px] px-7 py-3.5 rounded-full hover:bg-pt-darker transition-all hover:-translate-y-0.5 shadow-lg shadow-pt-dark/25 flex items-center gap-2">
+            Démarrer gratuitement
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#how"
+             class="flex items-center gap-2 text-pt-dark font-medium text-[15px] px-6 py-3.5 rounded-full border border-pt-border bg-white hover:border-pt-dark transition-all hover:-translate-y-0.5 shadow-sm">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/><path d="M6.5 5.5l3.5 2.5-3.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Voir la démo
+          </a>
+        </div>
+
+        <!-- Social proof -->
+        <div class="flex items-center gap-3.5 animate-slide-up pt-2" style="animation-delay:0.32s">
+          <div class="flex -space-x-2">
+            {[
+              'photo-1507003211169-0a1dd7228f2d',
+              'photo-1494790108377-be9c29b29330',
+              'photo-1500648767791-00dcc994a43e',
+              'photo-1580489944761-15a19d654956',
+            ].map(id => (
+              <img src={`https://images.unsplash.com/${id}?w=64&h=64&fit=crop&crop=face`}
+                   alt="" class="w-9 h-9 rounded-full border-2 border-white object-cover shadow-sm"/>
+            ))}
+          </div>
+          <div>
+            <div class="text-amber-400 text-sm leading-none mb-1">★★★★★</div>
+            <span class="text-[13px] text-gray-500"><strong class="text-pt-dark font-semibold">+340 consultants</strong> closent mieux ce mois-ci</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Image + floating cards ── -->
+      <div class="order-1 lg:order-2 relative animate-slide-up" style="animation-delay:0.12s">
+
+        <!-- Main image frame -->
+        <div class="relative h-[540px] sm:h-[600px] rounded-[36px] overflow-hidden bg-gradient-to-b from-pt-bg-2 to-pt-bg shadow-[0_20px_80px_rgba(34,26,64,0.12)]">
+          <img
+            src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=700&h=900&fit=crop&crop=top"
+            alt="Consultant professionnel"
+            class="absolute inset-0 w-full h-full object-cover object-top"
+          />
+          <div class="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-pt-bg to-transparent"></div>
+          <!-- Top gradient overlay -->
+          <div class="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-pt-bg/30 to-transparent"></div>
+        </div>
+
+        <!-- ── Floating card 1: Stats (top-left) ── -->
+        <div class="absolute -left-6 top-10 z-20 bg-white rounded-2xl shadow-float p-3.5 min-w-[210px] animate-float border border-white/80">
+          <div class="flex items-center gap-3">
+            <div class="flex -space-x-1.5 flex-shrink-0">
+              {['photo-1472099645785-5658abf4ff4e','photo-1544005313-94ddf0286df2','photo-1531746020798-e6953c6e8e04'].map(id => (
+                <img src={`https://images.unsplash.com/${id}?w=40&h=40&fit=crop&crop=face`}
+                     alt="" class="w-7 h-7 rounded-full border-2 border-white object-cover"/>
+              ))}
+            </div>
+            <div>
+              <p class="font-display font-bold text-pt-dark text-sm leading-tight">340+</p>
+              <p class="text-[11px] text-gray-400 leading-tight">Consultants actifs</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Floating card 2: Lead Score (middle-left) ── -->
+        <div class="absolute -left-8 top-[45%] -translate-y-1/2 z-20 bg-white rounded-2xl shadow-float p-4 w-[230px] animate-float2 border border-white/80">
+          <div class="flex items-center justify-between mb-2.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">Score IA</span>
+            <span class="bg-pt-green text-pt-dark text-[10px] font-bold px-2.5 py-0.5 rounded-full">Qualifié ✓</span>
+          </div>
+          <div class="flex items-baseline gap-1.5 mb-2">
+            <span class="font-display font-extrabold text-2xl text-pt-dark leading-none">87</span>
+            <span class="text-gray-300 text-sm">/ 100</span>
+          </div>
+          <p class="text-[11px] text-gray-500 mb-2.5">Thomas D. · CFO · Techify SAS</p>
+          <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div class="h-full bg-gradient-to-r from-pt-green to-pt-green-dark rounded-full" style="width:87%"></div>
+          </div>
+        </div>
+
+        <!-- ── Floating card 3: Audit done (bottom-right) ── -->
+        <div class="absolute right-4 bottom-14 z-20 bg-white rounded-2xl shadow-float p-3.5 w-[210px] animate-float3 border border-white/80">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 bg-pt-dark rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-pt-green" fill="none" viewBox="0 0 16 16"><path d="M3 8.5l3.5 3.5 6.5-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+              <p class="text-[12px] font-bold text-pt-dark leading-tight">Audit généré ✓</p>
+              <p class="text-[10.5px] text-gray-400 leading-tight">PDF envoyé · il y a 2 min</p>
+            </div>
+          </div>
+          <div class="mt-2.5 pt-2.5 border-t border-gray-100 flex items-center justify-between">
+            <span class="text-[10.5px] text-gray-500">Techify SAS · 14 pages</span>
+            <span class="bg-pt-green/15 text-pt-green-dark text-[10px] font-bold px-2 py-0.5 rounded-full">IA ✦</span>
+          </div>
+        </div>
+
+        <!-- ── Floating card 4: Proposal (top-right) ── -->
+        <div class="absolute -right-4 top-10 z-20 bg-pt-dark rounded-2xl shadow-float p-4 w-[190px] animate-float border border-white/10">
+          <p class="text-[10.5px] font-bold text-white/50 uppercase tracking-wider mb-1.5">Proposition</p>
+          <p class="font-display font-extrabold text-2xl text-white leading-tight">€12 500</p>
+          <p class="text-[11px] text-white/40 mt-1">3 options · ROI estimé ×4</p>
+          <div class="mt-3 flex items-center gap-1.5">
+            <div class="flex-1 h-1 bg-pt-green rounded-full"></div>
+            <div class="flex-1 h-1 bg-white/20 rounded-full"></div>
+            <div class="flex-1 h-1 bg-white/20 rounded-full"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     TRUST BAR
+═══════════════════════════════════════════ -->
+<section class="border-y border-pt-border bg-white py-8 px-5">
+  <div class="max-w-6xl mx-auto">
+    <p class="text-center text-[13px] text-gray-400 font-medium mb-7">
+      Utilisé par des consultants travaillant avec des organisations de référence
+    </p>
+    <div class="flex items-center justify-center gap-10 sm:gap-14 flex-wrap">
+      {LOGOS.map(l => (
+        <span class="text-gray-300 font-display font-extrabold text-[15px] sm:text-[18px] uppercase tracking-widest select-none hover:text-gray-400 transition-colors cursor-default">{l}</span>
+      ))}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     STATS SECTION
+═══════════════════════════════════════════ -->
+<section id="stats" class="py-20 sm:py-28 px-5 bg-white">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid lg:grid-cols-2 gap-6 items-end">
+
+      <!-- Left: Photo -->
+      <div class="relative h-[440px] sm:h-[520px] rounded-4xl overflow-hidden reveal">
+        <img
+          src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=700&h=700&fit=crop&crop=top"
+          alt="Consultante Pretalk"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-pt-dark/30 to-transparent"></div>
+        <!-- Overlay badge -->
+        <div class="absolute bottom-6 left-6 bg-white/90 backdrop-blur-sm rounded-2xl px-4 py-3 shadow-card">
+          <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-0.5">Closing rate</p>
+          <p class="font-display font-extrabold text-2xl text-pt-dark">×3 <span class="text-pt-green">↑</span></p>
+        </div>
+      </div>
+
+      <!-- Right: Stat cards -->
+      <div class="flex flex-col gap-5 reveal" style="animation-delay:0.1s">
+
+        <!-- Big dark card -->
+        <div class="relative bg-pt-dark rounded-4xl p-7 sm:p-9 overflow-hidden group">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-pt-green/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3 group-hover:bg-pt-green/15 transition-colors"></div>
+          <div class="relative z-10">
+            <div class="flex items-start justify-between mb-4">
+              <p class="text-[12px] font-bold text-white/40 uppercase tracking-wider">Total généré</p>
+              <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center">
+                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 16 16"><path d="M3 13L13 3M13 3H7M13 3v6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+            </div>
+            <p class="font-display font-extrabold text-[56px] sm:text-[72px] text-white leading-none tracking-tight mb-3">€2.1M</p>
+            <p class="text-[14px] text-white/50 leading-relaxed">
+              Générés par les utilisateurs Pretalk<br>depuis le lancement.
+            </p>
+            <div class="mt-6 h-1 bg-white/10 rounded-full overflow-hidden">
+              <div class="h-full w-[78%] bg-pt-green rounded-full"></div>
+            </div>
+            <p class="text-[11px] text-white/30 mt-1.5">78% YoY growth</p>
+          </div>
+        </div>
+
+        <!-- Two small stat cards -->
+        <div class="grid grid-cols-2 gap-5">
+          <div class="bg-pt-bg rounded-3xl p-6 hover:shadow-card transition-shadow reveal">
+            <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Consultants actifs</p>
+            <p class="font-display font-extrabold text-[40px] text-pt-dark leading-none">340<span class="text-pt-green">+</span></p>
+            <p class="text-[12px] text-gray-400 mt-1.5">dans 20 pays</p>
+          </div>
+          <div class="bg-pt-dark rounded-3xl p-6 flex flex-col justify-between hover:shadow-card transition-shadow reveal">
+            <p class="text-[11px] font-bold text-white/40 uppercase tracking-wider">Temps économisé</p>
+            <div>
+              <p class="font-display font-extrabold text-[40px] text-white leading-none">38h</p>
+              <p class="text-[12px] text-white/40 mt-1.5">par mois / consultant</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FEATURES SECTION
+═══════════════════════════════════════════ -->
+<section id="features" class="py-20 sm:py-28 px-5 bg-pt-bg/40">
+  <div class="max-w-7xl mx-auto">
+
+    <!-- Section header -->
+    <div class="grid lg:grid-cols-2 gap-8 items-end mb-14 reveal">
+      <div>
+        <p class="text-[11.5px] font-bold uppercase tracking-[0.12em] text-pt-green-dark mb-4">AUTOMATISEZ VOTRE CLOSING</p>
+        <h2 class="font-display font-extrabold text-[38px] sm:text-[48px] leading-[1.08] tracking-[-1.5px] text-pt-dark">
+          Des outils qui vendent<br>pendant que vous consultez.
+        </h2>
+      </div>
+      <div>
+        <p class="text-[16px] text-gray-500 leading-relaxed">
+          De l'audit pré-call à la fidélisation automatique. Pretalk gère le cycle commercial complet — vous, vous gérez vos clients.
+        </p>
+        <a href="#pricing" class="inline-flex items-center gap-2 mt-5 text-[14px] font-semibold text-pt-dark border-b-2 border-pt-green pb-0.5 hover:text-pt-green-dark transition-colors">
+          Voir toutes les fonctionnalités
+          <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 14 14"><path d="M2.5 7h9M7.5 3.5l3.5 3.5-3.5 3.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- Feature cards grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5" id="feat-grid">
+
+      <!-- Card 1: Audit IA — tall dark card (row-span-2) -->
+      <div class="bg-pt-dark rounded-4xl p-7 flex flex-col gap-4 lg:row-span-2 group hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 reveal">
+        <div class="w-11 h-11 bg-white/10 rounded-2xl flex items-center justify-center group-hover:bg-pt-green/20 transition-colors">
+          <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path stroke-linecap="round" d="m16.5 16.5 4.5 4.5"/><path stroke-linecap="round" d="M11 8v3h3"/></svg>
+        </div>
+        <span class="inline-block bg-pt-green/20 text-pt-green text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider self-start">IA ✦</span>
+        <h3 class="font-display font-bold text-[20px] text-white leading-snug">Audit IA — 90 secondes</h3>
+        <p class="text-[13.5px] text-white/50 leading-relaxed flex-1">
+          Avant chaque appel, votre agent IA analyse le site, LinkedIn et actualités du prospect. Vous arrivez avec un dossier complet — avant même de décrocher.
+        </p>
+        <ul class="space-y-2 mt-2">
+          {['Scraping site + LinkedIn','Signaux d\'intention d\'achat','Brief envoyé 15 min avant'].map(item => (
+            <li class="flex items-center gap-2 text-[12.5px] text-white/60">
+              <span class="w-1.5 h-1.5 rounded-full bg-pt-green flex-shrink-0"></span>
+              {item}
+            </li>
+          ))}
+        </ul>
+        <!-- Mini mockup -->
+        <div class="mt-4 bg-white/5 rounded-2xl p-4 border border-white/10">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-[10px] text-white/40 font-semibold uppercase tracking-wide">Rapport Techify SAS</span>
+            <span class="bg-pt-green/20 text-pt-green text-[9px] font-bold px-2 py-0.5 rounded-full">Complet ✓</span>
+          </div>
+          <div class="space-y-1.5">
+            {['Budget estimé: €15-25k','Maturité: Haute','Timing: Court terme'].map(line => (
+              <div class="h-6 bg-white/5 rounded-lg flex items-center px-2.5">
+                <span class="text-[10px] text-white/40">{line}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Lead Scoring -->
+      <div class="bg-white rounded-4xl p-6 shadow-card flex flex-col gap-3 group hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 reveal" style="animation-delay:0.1s">
+        <div class="flex items-start justify-between">
+          <div class="w-11 h-11 bg-pt-bg rounded-2xl flex items-center justify-center">
+            <svg class="w-5 h-5 text-pt-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17l4-5 3 3 5-8 4 4"/></svg>
+          </div>
+          <span class="bg-pt-bg text-pt-dark text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">Auto</span>
+        </div>
+        <h3 class="font-display font-bold text-[18px] text-pt-dark leading-snug">Lead Scoring 0–100</h3>
+        <p class="text-[13px] text-gray-500 leading-relaxed">Budget, maturité, timing, fit sectoriel — calculés en temps réel pendant le formulaire.</p>
+        <!-- Score bar visual -->
+        <div class="mt-2 space-y-2">
+          {[{label:'Budget',v:88},{label:'Maturité',v:72},{label:'Timing',v:95}].map(s => (
+            <div>
+              <div class="flex justify-between text-[10.5px] text-gray-400 mb-1">
+                <span>{s.label}</span><span class="font-semibold text-pt-dark">{s.v}</span>
+              </div>
+              <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-pt-green to-pt-green-dark rounded-full transition-all duration-700" style={`width:${s.v}%`}></div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Card 3: Devis & Contrats — featured (row-span-2) -->
+      <div class="bg-white rounded-4xl overflow-hidden shadow-card flex flex-col group hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 lg:row-span-2 reveal" style="animation-delay:0.2s">
+        <div class="relative h-44 overflow-hidden flex-shrink-0">
+          <img
+            src="https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=700&h=400&fit=crop"
+            alt="Devis professionnel"
+            class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+          <div class="absolute inset-0 bg-gradient-to-b from-transparent to-white/10"></div>
+          <span class="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-pt-dark text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">Post-appel</span>
+        </div>
+        <div class="p-6 flex flex-col gap-3 flex-1">
+          <h3 class="font-display font-bold text-[18px] text-pt-dark leading-snug">Devis &amp; Contrats en 1 clic</h3>
+          <p class="text-[13px] text-gray-500 leading-relaxed flex-1">Proposition en 3 options Anchor Pricing avec ROI estimé. Le contrat juridique suit automatiquement.</p>
+          <div class="grid grid-cols-3 gap-2 mt-2">
+            {['Starter','Pro','Premium'].map((p, i) => (
+              <div class={`rounded-xl p-2.5 text-center border ${i === 1 ? 'border-pt-dark bg-pt-dark text-white' : 'border-gray-200 text-gray-600'}`}>
+                <p class="text-[10px] font-bold uppercase tracking-wider mb-1 opacity-70">{p}</p>
+                <p class={`font-display font-extrabold text-[15px] ${i === 1 ? 'text-pt-green' : ''}`}>{['€5k','€12k','€22k'][i]}</p>
+              </div>
+            ))}
+          </div>
+          <a href="#" class="mt-2 inline-flex items-center gap-2 text-[13px] font-semibold text-pt-dark hover:text-pt-dark/70 transition-colors">
+            Voir un exemple
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 12 12"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Card 4: Form Builder -->
+      <div class="bg-pt-green rounded-4xl p-6 flex flex-col gap-3 group hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 reveal" style="animation-delay:0.15s">
+        <div class="w-11 h-11 bg-pt-dark/15 rounded-2xl flex items-center justify-center">
+          <svg class="w-5 h-5 text-pt-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="14" rx="2"/><path stroke-linecap="round" d="M7 9h10M7 13h6"/><circle cx="18" cy="5" r="3" fill="currentColor" class="text-pt-dark" stroke="none"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-[18px] text-pt-dark leading-snug">Form Builder IA</h3>
+        <p class="text-[13px] text-pt-dark/60 leading-relaxed">Décrivez votre offre. Pretalk génère les 5 questions qui qualifient vraiment — en 30 secondes.</p>
+        <span class="inline-block bg-pt-dark/10 text-pt-dark text-[10px] font-bold px-2.5 py-1 rounded-full self-start mt-1">IA ✦</span>
+      </div>
+
+      <!-- Card 5: CRM dark -->
+      <div class="bg-pt-dark rounded-4xl p-6 flex flex-col gap-3 group hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 reveal" style="animation-delay:0.25s">
+        <div class="flex items-start justify-between">
+          <div class="w-11 h-11 bg-white/10 rounded-2xl flex items-center justify-center">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="5" height="16" rx="1"/><rect x="10" y="4" width="5" height="16" rx="1"/><rect x="17" y="4" width="5" height="16" rx="1"/></svg>
+          </div>
+          <svg class="w-8 h-8 text-white/20 group-hover:text-pt-green/40 transition-colors" fill="none" viewBox="0 0 32 32"><path d="M6 26L26 6M26 6H14M26 6v12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <h3 class="font-display font-bold text-[18px] text-white leading-snug">Pipeline Kanban</h3>
+        <p class="text-[13px] text-white/50 leading-relaxed">Leads → Appel → Proposition → Gagné. Même les refus sont nurtués automatiquement.</p>
+      </div>
+
+      <!-- Card 6: Analytics — spans 2 cols -->
+      <div class="sm:col-span-2 lg:col-span-1 bg-white rounded-4xl p-6 shadow-card flex flex-col gap-3 group hover:shadow-card-hover transition-all duration-300 hover:-translate-y-1 reveal" style="animation-delay:0.3s">
+        <div class="flex items-start justify-between">
+          <div class="w-11 h-11 bg-pt-bg rounded-2xl flex items-center justify-center">
+            <svg class="w-5 h-5 text-pt-dark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 15l5-7 4 4 4-6 5 4"/><path stroke-linecap="round" d="M3 20h18"/></svg>
+          </div>
+          <span class="bg-pt-bg text-pt-dark text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">ROI</span>
+        </div>
+        <h3 class="font-display font-bold text-[18px] text-pt-dark leading-snug">Analytics &amp; ROI</h3>
+        <p class="text-[13px] text-gray-500 leading-relaxed">MRR, pipeline prévisionnel, heures sauvées par l'IA. Pilotez votre activité comme une vraie entreprise.</p>
+        <!-- Mini chart -->
+        <div class="flex items-end gap-1.5 h-10 mt-1">
+          {[40,65,45,80,60,90,75,100,85,95].map((h, i) => (
+            <div class="flex-1 rounded-sm transition-all" style={`height:${h}%; background:${i >= 7 ? '#48D951' : '#EDE9FF'}`}></div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     HOW IT WORKS
+═══════════════════════════════════════════ -->
+<section id="how" class="py-20 sm:py-28 px-5 bg-white">
+  <div class="max-w-5xl mx-auto text-center">
+    <p class="text-[11.5px] font-bold uppercase tracking-[0.12em] text-pt-green-dark mb-4 reveal">COMMENT ÇA MARCHE</p>
+    <h2 class="font-display font-extrabold text-[36px] sm:text-[46px] leading-[1.08] tracking-[-1.5px] text-pt-dark mb-14 reveal">
+      Du prospect inconnu<br>à la signature. Automatiquement.
+    </h2>
+
+    <!-- Steps -->
+    <div class="relative">
+      <!-- Connector line -->
+      <div class="hidden lg:block absolute top-8 left-[calc(10%+24px)] right-[calc(10%+24px)] h-px bg-gradient-to-r from-pt-bg via-pt-green to-pt-bg z-0"></div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-6 relative z-10">
+        {[
+          { n:'01', t:'Prospect arrive',       d:'Via profil, QR code ou lien partagé.' },
+          { n:'02', t:'L\'IA qualifie',         d:'Formulaire + scoring 0–100 en temps réel.' },
+          { n:'03', t:'Brief pré-call',         d:'Dossier complet 15 min avant le RDV.' },
+          { n:'04', t:'Devis & contrat',        d:'Proposition 3 options après le call.' },
+          { n:'05', t:'Fidélisation auto',      d:'Relances, avis, retainer — automatiquement.' },
+        ].map((s, i) => (
+          <div class="flex flex-col items-center text-center gap-3 group reveal" style={`animation-delay:${i*0.07}s`}>
+            <div class="w-14 h-14 rounded-full bg-white border-2 border-pt-border flex items-center justify-center shadow-sm group-hover:border-pt-green group-hover:shadow-[0_0_0_6px_rgba(72,217,81,0.12)] transition-all duration-250">
+              <span class="font-display font-extrabold text-sm text-pt-dark">{s.n}</span>
+            </div>
+            <p class="font-display font-bold text-[14px] text-pt-dark">{s.t}</p>
+            <p class="text-[12px] text-gray-400 leading-snug">{s.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FAQ + NEWSLETTER SPLIT
+═══════════════════════════════════════════ -->
+<section id="faq" class="py-20 sm:py-28 px-5 bg-pt-bg/40">
+  <div class="max-w-7xl mx-auto grid lg:grid-cols-[1.1fr_1fr] gap-12 items-start">
+
+    <!-- Left: FAQ -->
+    <div class="reveal">
+      <p class="text-[11.5px] font-bold uppercase tracking-[0.12em] text-pt-green-dark mb-4">FAQ</p>
+      <h2 class="font-display font-extrabold text-[34px] sm:text-[42px] leading-[1.1] tracking-[-1.2px] text-pt-dark mb-10">
+        Questions fréquentes.<br>Réponses honnêtes.
+      </h2>
+
+      <div class="space-y-0 divide-y divide-pt-border" id="faq-list">
+        {FAQS.map((f, i) => (
+          <details class="group py-1" id={`faq-${i}`}>
+            <summary class="flex items-center justify-between gap-4 cursor-pointer select-none list-none py-4 hover:text-pt-dark transition-colors">
+              <span class="font-display font-semibold text-[15px] text-pt-dark leading-snug">{f.q}</span>
+              <span class="w-7 h-7 flex-shrink-0 bg-white border border-pt-border rounded-full flex items-center justify-center group-open:bg-pt-dark group-open:border-pt-dark group-open:rotate-45 transition-all duration-200 shadow-sm">
+                <svg class="w-3 h-3 group-open:text-white text-gray-400 transition-colors" fill="none" viewBox="0 0 12 12">
+                  <path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </summary>
+            <div class="pb-5 pr-10">
+              <p class="text-[14px] text-gray-500 leading-relaxed">{f.a}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+
+    <!-- Right: Newsletter + CTA stack -->
+    <div class="flex flex-col gap-5 reveal" style="animation-delay:0.1s">
+
+      <!-- Newsletter dark card -->
+      <div class="bg-pt-dark rounded-4xl p-8 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-pt-green/10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3"></div>
+        <div class="relative z-10">
+          <div class="w-10 h-10 bg-white/10 rounded-2xl flex items-center justify-center mb-5">
+            <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 20 20"><path d="M3 6a2 2 0 012-2h10a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V6z" stroke="currentColor" stroke-width="1.5"/><path d="M3 6l7 5 7-5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <h3 class="font-display font-bold text-[22px] text-white mb-2 leading-snug">Restez à jour</h3>
+          <p class="text-[13px] text-white/50 mb-6 leading-relaxed">Nouveaux templates, tips de closing et cas clients. Une fois par semaine, pas plus.</p>
+          <div class="flex gap-2">
+            <input type="email" placeholder="votre@email.com"
+                   class="flex-1 bg-white/10 border border-white/15 rounded-xl px-4 py-3 text-[13px] text-white placeholder-white/30 focus:outline-none focus:border-pt-green transition-colors" />
+            <button class="bg-pt-green text-pt-dark font-semibold text-[13px] px-5 py-3 rounded-xl hover:bg-pt-green-dark transition-colors flex-shrink-0">
+              S'abonner
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial card -->
+      <div class="bg-white rounded-4xl p-7 shadow-card">
+        <div class="text-amber-400 text-base mb-4">★★★★★</div>
+        <p class="text-[14.5px] text-gray-700 italic leading-relaxed mb-5">
+          "J'arrive maintenant au call avec un dossier complet sur le prospect. La réaction du client quand il voit ça… c'est du closing avant même de commencer."
+        </p>
+        <div class="flex items-center gap-3">
+          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face"
+               alt="Thomas R." class="w-10 h-10 rounded-full object-cover" />
+          <div>
+            <p class="font-display font-semibold text-[13.5px] text-pt-dark">Thomas R.</p>
+            <p class="text-[11.5px] text-gray-400">Consultant Stratégie · Paris</p>
+          </div>
+          <span class="ml-auto bg-pt-bg text-pt-dark text-[10px] font-bold px-2.5 py-1 rounded-full">+€18k MRR</span>
+        </div>
+      </div>
+
+      <!-- Integration logos card -->
+      <div class="bg-white rounded-4xl p-6 shadow-card">
+        <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-4">Intègre vos outils existants</p>
+        <div class="flex items-center gap-4 flex-wrap">
+          {['Stripe','WhatsApp','Brevo','Notion','Calendly'].map(t => (
+            <span class="text-[12px] font-bold text-gray-300 uppercase tracking-widest">{t}</span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     NEED MORE — CTA
+═══════════════════════════════════════════ -->
+<section id="pricing" class="py-10 sm:py-16 px-5 bg-white">
+  <div class="max-w-5xl mx-auto">
+    <div class="bg-pt-dark rounded-5xl p-10 sm:p-14 relative overflow-hidden text-center reveal">
+      <!-- Glow blobs -->
+      <div class="absolute top-0 left-1/4 w-64 h-64 bg-pt-green/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 right-1/4 w-64 h-64 bg-pt-green/8 rounded-full blur-3xl"></div>
+
+      <div class="relative z-10">
+        <p class="text-[11.5px] font-bold uppercase tracking-[0.12em] text-pt-green mb-4">COMMENCEZ MAINTENANT</p>
+        <h2 class="font-display font-extrabold text-[36px] sm:text-[52px] leading-[1.06] tracking-[-1.5px] text-white mb-5">
+          Votre prochain prospect<br>mérite mieux qu'une improvisation.
+        </h2>
+        <p class="text-[16px] text-white/50 max-w-[480px] mx-auto mb-10 leading-relaxed">
+          340 consultants closent plus vite avec Pretalk. Le 341ème, c'est peut-être vous.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-4">
+          <a href="#"
+             class="bg-pt-green text-pt-dark font-display font-bold text-[15px] px-8 py-4 rounded-full hover:bg-pt-green-dark transition-all hover:-translate-y-0.5 shadow-lg shadow-pt-green/25 flex items-center gap-2">
+            Démarrer gratuitement
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+          <a href="#"
+             class="flex items-center gap-2 text-white/60 hover:text-white font-medium text-[15px] px-6 py-4 rounded-full border border-white/15 hover:border-white/30 transition-all">
+            Voir une démo live
+          </a>
+        </div>
+        <p class="text-[12px] text-white/25 mt-7">
+          ✓ Aucune carte bancaire &nbsp;·&nbsp; ✓ Activation en 5 min &nbsp;·&nbsp; ✓ Annulez à tout moment
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<footer class="bg-pt-dark border-t border-white/5 pt-14 pb-0">
+  <div class="max-w-7xl mx-auto px-5 sm:px-8">
+    <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-10 pb-14">
+
+      <!-- Brand col -->
+      <div class="col-span-2 sm:col-span-4 lg:col-span-2">
+        <a href="/" class="flex items-center gap-2.5 mb-5">
+          <div class="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center">
+            <svg class="w-5 h-5" viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="font-display font-bold text-[18px] text-white tracking-tight">pretalk</span>
+        </a>
+        <p class="text-[13px] text-white/35 leading-relaxed max-w-[220px] mb-5">
+          L'OS du consultant moderne. Qualifiez, closez, fidélisez — automatiquement.
+        </p>
+        <span class="inline-flex items-center gap-2 bg-pt-green/15 text-pt-green text-[11px] font-semibold px-3 py-1.5 rounded-full">
+          <span class="w-1.5 h-1.5 rounded-full bg-pt-green animate-pulse"></span>
+          Statut : Opérationnel
+        </span>
+      </div>
+
+      <!-- Links cols -->
+      {[
+        { title: 'Produit',    links: ['Fonctionnalités','Comment ça marche','Tarifs','Changelog','Roadmap'] },
+        { title: 'Ressources', links: ['Blog & Cas clients','Documentation','Affiliation 40%','Support'] },
+        { title: 'Légal',      links: ['Mentions légales','CGU','RGPD','Cookies'] },
+      ].map(col => (
+        <div>
+          <p class="text-[10.5px] font-bold uppercase tracking-widest text-white/25 mb-4">{col.title}</p>
+          <ul class="space-y-3">
+            {col.links.map(l => (
+              <li><a href="#" class="text-[13.5px] text-white/45 hover:text-white transition-colors">{l}</a></li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+
+    <!-- Bottom bar -->
+    <div class="border-t border-white/[0.07] py-6 flex items-center justify-between text-[12px] text-white/20">
+      <span>© 2025 Pretalk. Tous droits réservés.</span>
+      <span>Made with ♥ pour les consultants exigeants.</span>
+    </div>
+
+    <!-- Giant blur watermark -->
+    <div class="text-center overflow-hidden pointer-events-none select-none -mb-4">
+      <p class="font-display font-black text-[clamp(80px,14vw,180px)] leading-none tracking-tighter text-white/[0.02] blur-sm">
+        pretalk
+      </p>
+    </div>
+  </div>
+</footer>
+
+</Layout>
+
+<!-- ═══════════════════════════════════════════
+     STYLES
+═══════════════════════════════════════════ -->
+<style>
+  /* Scroll-reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Navbar scroll state */
+  nav.scrolled {
+    background: rgba(255,255,255,0.90);
+    backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: 0 1px 0 rgba(34,26,64,0.06);
+  }
+
+  /* FAQ details animation */
+  details > div {
+    overflow: hidden;
+    animation: faqOpen 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  @keyframes faqOpen {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Hero word highlight */
+  h1 .relative span.absolute {
+    transform-origin: center;
+  }
+
+  /* Shimmer text utility */
+  .text-shimmer {
+    background: linear-gradient(90deg, #35A83C, #48D951, #35A83C);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 2.5s linear infinite;
+  }
+</style>
+
+<!-- ═══════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════ -->
+<script>
+  // Navbar scroll state
+  const nav = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    nav?.classList.toggle('scrolled', window.scrollY > 24);
+  }, { passive: true });
+
+  // Scroll progress bar
+  const prog = document.createElement('div');
+  prog.style.cssText = 'position:fixed;top:0;left:0;height:2px;background:#48D951;z-index:9999;transition:width 0.1s;pointer-events:none;';
+  document.body.appendChild(prog);
+  window.addEventListener('scroll', () => {
+    const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+    prog.style.width = pct + '%';
+  }, { passive: true });
+
+  // Scroll reveal (IntersectionObserver)
+  const revObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -48px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => revObs.observe(el));
+
+  // Smooth anchor scrolling
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const id = a.getAttribute('href');
+      if (!id || id === '#') return;
+      const el = document.querySelector(id);
+      if (el) {
+        e.preventDefault();
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+</script>

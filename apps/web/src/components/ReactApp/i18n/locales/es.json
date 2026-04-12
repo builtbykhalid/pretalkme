@@ -1,0 +1,992 @@
+{
+    "common": {
+        "save": "Guardar",
+        "cancel": "Cancelar",
+        "delete": "Eliminar",
+        "edit": "Editar",
+        "create": "Crear",
+        "close": "Cerrar",
+        "confirm": "Confirmar",
+        "search": "Buscar",
+        "filter": "Filtrar",
+        "loading": "Cargando...",
+        "error": "Error",
+        "success": "Éxito",
+        "warning": "Advertencia",
+        "info": "Información",
+        "yes": "Sí",
+        "no": "No",
+        "back": "Volver",
+        "next": "Siguiente",
+        "previous": "Anterior",
+        "submit": "Enviar",
+        "reset": "Restablecer",
+        "view": "Ver",
+        "download": "Descargar",
+        "upload": "Subir",
+        "copy": "Copiar",
+        "copied": "¡Copiado!",
+        "share": "Compartir",
+        "settings": "Configuración",
+        "help": "Ayuda",
+        "logout": "Cerrar sesión",
+        "login": "Iniciar sesión",
+        "signup": "Registrarse",
+        "email": "Correo",
+        "password": "Contraseña",
+        "name": "Nombre",
+        "phone": "Teléfono",
+        "company": "Empresa",
+        "website": "Sitio web",
+        "message": "Mensaje",
+        "date": "Fecha",
+        "time": "Hora",
+        "status": "Estado",
+        "action": "Acción",
+        "actions": "Acciones",
+        "all": "Todo",
+        "none": "Ninguno",
+        "other": "Otro",
+        "more": "Más",
+        "less": "Menos",
+        "showMore": "Ver más",
+        "showLess": "Ver menos",
+        "noResults": "Sin resultados",
+        "comingSoon": "Próximamente",
+        "beta": "Beta",
+        "new": "Nuevo",
+        "viewAll": "Ver todo",
+        "consultant": "Consultor",
+        "active": "Activo",
+        "inactive": "Inactivo",
+        "soon": "Pronto",
+        "today": "hoy",
+        "saving": "Guardando...",
+        "update": "Actualizar",
+        "or": "o",
+        "install": "Instalar",
+        "installed": "Instalado",
+        "uninstall": "Desinstalar",
+        "send": "Enviar",
+        "sending": "Enviando...",
+        "proPlan": "Plan Pro",
+        "notifications": "Notificaciones",
+        "noNotifications": "Sin notificaciones",
+        "justNow": "Hace un momento",
+        "markAllAsRead": "Marcar todo como leído",
+        "configureNotifications": "Configurar notificaciones",
+        "clearAll": "Limpiar todo"
+    },
+    "nav": {
+        "dashboard": "Panel de control",
+        "agents": "Mis Agentes",
+        "leads": "Leads y Scoring",
+        "forms": "Mis Formularios",
+        "automations": "Automatizaciones",
+        "settings": "Configuración",
+        "features": "Funcionalidades",
+        "testimonials": "Testimonios",
+        "pricing": "Precios",
+        "demo": "Demo"
+    },
+    "auth": {
+        "welcomeBack": "Bienvenido",
+        "createAccount": "Crear cuenta",
+        "loginTitle": "Inicia sesión en tu espacio de consultor",
+        "signupTitle": "Comienza gratis ahora",
+        "emailPlaceholder": "tu@ejemplo.com",
+        "passwordPlaceholder": "••••••••",
+        "fullNamePlaceholder": "Juan García",
+        "forgotPassword": "¿Olvidaste tu contraseña?",
+        "noAccount": "¿No tienes cuenta?",
+        "hasAccount": "¿Ya tienes una cuenta?",
+        "continueWithGoogle": "Continuar con Google",
+        "orContinueWith": "o",
+        "termsAgree": "Al iniciar sesión, aceptas nuestros",
+        "termsOfService": "Términos de servicio",
+        "and": "y",
+        "privacyPolicy": "Política de privacidad",
+        "loginButton": "Iniciar sesión",
+        "signupButton": "Crear mi cuenta",
+        "magicLinkButton": "Enviar enlace mágico",
+        "loggingIn": "Cargando...",
+        "signingUp": "Registrando...",
+        "loginTab": "Iniciar sesión",
+        "registerTab": "Registrarse",
+        "magicLinkTab": "Enlace mágico",
+        "fullName": "Nombre completo",
+        "emailAddress": "Dirección de correo",
+        "password": "Contraseña",
+        "minChars": "Mínimo 6 caracteres",
+        "magicLinkSent": "¡Enlace mágico enviado! Revisa tu bandeja",
+        "accountCreated": "¡Cuenta creada! Revisa tu correo para confirmar tu registro.",
+        "enterFullName": "Por favor ingresa tu nombre completo",
+        "errorOccurred": "Ocurrió un error",
+        "heroTitle": "Califica tus prospectos",
+        "heroHighlight": "con IA",
+        "heroSubtitle": "Crea formularios inteligentes que hacen las preguntas correctas y generan auditorías personalizadas automáticamente.",
+        "feature1": "Formularios inteligentes con preguntas dinámicas",
+        "feature2": "Scoring automático de prospectos",
+        "feature3": "Generación de auditorías personalizadas por IA",
+        "feature4": "Integraciones CRM y automatizaciones"
+    },
+    "home": {
+        "accessEarly": "Acceso anticipado",
+        "hero": {
+            "title": "Deja de perder 30 minutos intentando entender la necesidad.",
+            "highlight": "Deja que la IA lo haga por ti.",
+            "subtitle": "La herramienta de precalificación que reemplaza largas entrevistas con clientes por un diagnóstico instantáneo. Tu asistente IA recibe a los prospectos, hace las preguntas correctas y prepara el expediente. Tú solo intervienes para cerrar la venta."
+        },
+        "cta": {
+            "start": "Comenzar gratis",
+            "demo": "Demo"
+        },
+        "checkline": "No se requiere tarjeta • Listo en 120 segundos — Únete a consultores que dejaron de perder tiempo en llamadas de descubrimiento.",
+        "stats": {
+            "consultants": "Consultores activos",
+            "diagnostics": "Diagnósticos generados",
+            "satisfaction": "Tasa de satisfacción",
+            "time": "Tiempo medio de generación"
+        },
+        "dashboardLabel": "Pretalk Dashboard",
+        "dashboard": {
+            "title": "Interfaz intuitiva",
+            "subtitle": "Genera tus diagnósticos IA en unos pocos clics"
+        },
+        "features": {
+            "sectionTitle": "Por qué tus procesos actuales te hacen perder ventas.",
+            "sectionSubtitle": "Comparación Antes / Después — Lo que pierdes hoy y lo que Pretalk te devuelve.",
+            "items": [
+                {
+                    "title": "El método clásico (Doloroso)",
+                    "description": "Tiempo perdido: 20 min de llamada solo para entender el contexto básico."
+                },
+                {
+                    "title": "El método Pretalk (Fluido)",
+                    "description": "Tiempo ahorrado: Llegas a la reunión con contexto, presupuesto y necesidad ya analizados."
+                },
+                {
+                    "title": "El método clásico (Doloroso)",
+                    "description": "Cero reactividad: El cliente espera 3 días tu hueco disponible."
+                },
+                {
+                    "title": "El método Pretalk (Fluido)",
+                    "description": "Inmediatez: El cliente recibe su diagnóstico y presupuesto estimado a las 2 a. m."
+                },
+                {
+                    "title": "El método clásico (Doloroso)",
+                    "description": "Manos vacías: El cliente cuelga sin nada tangible."
+                },
+                {
+                    "title": "El método Pretalk (Fluido)",
+                    "description": "Efecto wow: El cliente recibe un PDF con su auditoría antes de hablar contigo. Filtrado: La IA valida el presupuesto de antemano."
+                }
+            ]
+        },
+        "how": {
+            "title": "Cómo funciona",
+            "subtitle": "Activa tu agente, comparte tu enlace, deja que la IA cualifique y te notifique.",
+            "steps": [
+                {
+                    "title": "Activa tu Agente",
+                    "description": "Habla con Pretalk para describir tu oferta. La IA crea tu formulario y configura el escenario de venta al instante."
+                },
+                {
+                    "title": "Comparte tu Enlace",
+                    "description": "Añade pretalk.me/tu-nombre en LinkedIn, Instagram o tu web. Es tu nueva tarjeta de visita activa."
+                },
+                {
+                    "title": "Deja que la IA trabaje",
+                    "description": "La IA realiza la entrevista, genera el diagnóstico y te notifica solo cuando un prospecto está cualificado. Tú validas el informe."
+                }
+            ]
+        },
+        "pricing": {
+            "title": "Precios",
+            "titleAccent": "transparentes",
+            "subtitle": "Elige el plan que se adapte a tus necesidades. Cambia en cualquier momento.",
+            "plans": {
+                "free": {
+                    "name": "FREE",
+                    "description": "Prueba interna",
+                    "features": [
+                        "Leads / mes: 5 (Prueba)",
+                        "Agentes activos simultáneos: 1",
+                        "Generador Chat-to-Form: ✅",
+                        "Lead Scoring: ✅"
+                    ],
+                    "cta": "Probar"
+                },
+                "starter": {
+                    "name": "STARTER",
+                    "description": "Freelancers",
+                    "features": [
+                        "Leads / mes: 50",
+                        "Agentes activos simultáneos: Ilimitado",
+                        "Acceso a plantillas: ✅",
+                        "Validación Humana: ✅"
+                    ],
+                    "cta": "Comenzar"
+                },
+                "pro": {
+                    "name": "PRO",
+                    "description": "Expertos",
+                    "features": [
+                        "Leads / mes: 500",
+                        "Formularios ilimitados",
+                        "Preguntas IA en tiempo real: ✅",
+                        "Modelo IA Premium: ✅"
+                    ],
+                    "cta": "Probar"
+                },
+                "agency": {
+                    "name": "AGENCY",
+                    "description": "Equipos",
+                    "features": [
+                        "Leads / mes: Ilimitado",
+                        "Agentes personalizados incluidos",
+                        "White-label y personalización PDF: ✅",
+                        "Acceso API y cuentas multiusuario"
+                    ],
+                    "cta": "Contactar"
+                }
+            }
+        },
+        "ctaSection": {
+            "title": "¿Listo para impulsar tu negocio?",
+            "subtitle": "Únete a más de 1000 consultores que ya generan diagnósticos profesionales en 30 segundos",
+            "placeholder": "Tu email profesional",
+            "footnote": "✓ Comenzar gratis • ✓ Sin tarjeta • ✓ Configuración en 2 minutos"
+        },
+        "waitlist": {
+            "title": "Únete a la lista de espera",
+            "subtitle": "Sé el primero en saber cuando abramos el acceso.",
+            "placeholder": "Tu correo electrónico",
+            "success": "Gracias — te avisaremos cuando abramos el acceso.",
+            "errors": {
+                "invalidEmail": "Por favor introduce un correo válido",
+                "failed": "Error al suscribirse, inténtalo más tarde"
+            },
+            "actions": {
+                "join": "Unirse",
+                "loading": "Cargando..."
+            }
+        },
+        "transform": {
+            "title": "Convierte una tarea administrativa en una oportunidad de negocio.",
+            "subtitle": "Tarjetas visuales: Constructor Mágico, Agente de Diagnóstico, Informe PDF y Lead Scoring automático.",
+            "cards": [
+                {
+                    "title": "Constructor Mágico (Chat-to-Form)",
+                    "description": "Olvídate de la configuración manual tediosa. Describe tu negocio y nuestra IA genera automáticamente las preguntas de cualificación perfectas para tu nicho."
+                },
+                {
+                    "title": "El Agente de Diagnóstico",
+                    "description": "No solo evalúa respuestas: audita la madurez del cliente para que no pierdas tiempo explicando lo básico."
+                },
+                {
+                    "title": "El Informe PDF (Human-in-the-loop)",
+                    "description": "Pretalk redacta el borrador, tú apruebas el envío. Mantén el control total mientras ahorras un 90% del tiempo de redacción."
+                }
+            ]
+        }
+    },
+    "footer": {
+        "productTitle": "Producto",
+        "product": {
+            "features": "Funcionalidades",
+            "agents": "Biblioteca de Agentes",
+            "sampleReport": "Ejemplo de informe PDF",
+            "pricing": "Precios"
+        },
+        "resourcesTitle": "Recursos",
+        "resources": {
+            "guide": "Guía: Triunfa en tu llamada de descubrimiento",
+            "tools": "Herramientas para consultores",
+            "blog": "Blog"
+        },
+        "supportTitle": "Soporte",
+        "support": {
+            "helpCenter": "Centro de ayuda",
+            "contact": "Contacto",
+            "legal": "Aviso legal",
+            "privacy": "Privacidad"
+        },
+        "copyright": "© 2026 Pretalk. Todos los derechos reservados.",
+        "terms": "Términos de uso",
+        "privacyPolicy": "Política de privacidad",
+        "cookies": "Cookies"
+        ,"tagline": "La plataforma de IA que convierte tus informes en máquinas de conversión."
+    },
+    "dashboard": {
+        "title": "Panel de control",
+        "greeting": "Hola, {{name}}",
+        "subtitle": "Esto es lo que está pasando en tus formularios hoy.",
+        "leadsThisMonth": "Leads Este Mes",
+        "activeForms": "Formularios Activos",
+        "automations": "Automatizaciones",
+        "conversionRate": "Tasa de Conversión",
+        "recentLeads": "Leads Recientes",
+        "quickActions": "Acciones rápidas",
+        "optimizeConversion": "Optimiza tu conversión",
+        "optimizeDescription": "Crea nuevos formularios y sigue tus leads en tiempo real para maximizar tus resultados.",
+        "createForm": "Crear un formulario",
+        "newForm": "Nuevo Formulario",
+        "stats": {
+            "totalLeads": "Total Leads",
+            "qualifiedLeads": "Leads Calificados",
+            "thisWeek": "esta semana",
+            "vsLastWeek": "vs semana pasada"
+        },
+        "viewAll": "Ver todo",
+        "noRecentLeads": "Sin leads recientes",
+        "viewLeads": "Ver leads",
+        "configureAgent": "Configurar un agente"
+    },
+    "leads": {
+        "title": "Leads y Scoring",
+        "subtitle": "Gestiona tus prospectos y analiza su potencial de conversión.",
+        "searchPlaceholder": "Buscar por nombre, empresa...",
+        "filterByStatus": "Filtrar por estado",
+        "filterByScore": "Filtrar por puntuación",
+        "allStatuses": "Todos los estados",
+        "allScores": "Todas las puntuaciones",
+        "export": "Exportar",
+        "exportCSV": "Exportar CSV",
+        "newLead": "Nuevo lead",
+        "prospect": "Prospecto",
+        "project": "Proyecto",
+        "projectInsight": "Proyecto e Insights",
+        "aiScore": "Puntuación IA",
+        "topScore": "Mejor Puntuación",
+        "mostRecent": "Más recientes",
+        "noResults": "No se encontraron leads para esta búsqueda.",
+        "resetFilters": "Restablecer filtros",
+        "showingResults": "Mostrando {{count}} resultados",
+        "editAudit": "Editar auditoría",
+        "viewDetails": "Ver detalles",
+        "statusNew": "Nuevos",
+        "statusReviewed": "Por revisar",
+        "statusQualified": "Calificados / Enviados",
+        "statusRejected": "Rechazados",
+        "columns": {
+            "contact": "Contacto",
+            "source": "Fuente",
+            "score": "Puntuación",
+            "status": "Estado",
+            "date": "Fecha",
+            "actions": "Acciones"
+        },
+        "status": {
+            "new": "Nuevo",
+            "contacted": "Contactado",
+            "qualified": "Calificado",
+            "proposal": "Propuesta",
+            "won": "Ganado",
+            "lost": "Perdido"
+        },
+        "score": {
+            "hot": "Caliente",
+            "warm": "Tibio",
+            "cold": "Frío"
+        },
+        "noLeads": "Sin leads por ahora",
+        "noLeadsDesc": "Los leads aparecerán aquí cuando los prospectos completen tus formularios.",
+        "details": {
+            "title": "Detalles del lead",
+            "contactInfo": "Información de contacto",
+            "responses": "Respuestas del formulario",
+            "aiAnalysis": "Análisis IA",
+            "timeline": "Historial",
+            "notes": "Notas",
+            "addNote": "Agregar nota"
+        }
+    },
+    "forms": {
+        "title": "Mis Formularios",
+        "subtitle": "Gestiona tus puntos de entrada y analiza su rendimiento.",
+        "newForm": "Nuevo Formulario",
+        "createForm": "Crear un formulario",
+        "searchPlaceholder": "Buscar un formulario...",
+        "loading": "Cargando tus formularios...",
+        "noForms": "Sin formularios creados",
+        "noFormsDesc": "Crea tu primer formulario para comenzar a recopilar leads.",
+        "createFirst": "Crear mi primer formulario",
+        "startFromScratch": "Empezar desde cero o usar una plantilla",
+        "online": "En línea",
+        "draft": "Borrador",
+        "modified": "Modificado",
+        "views": "Vistas",
+        "leads": "Leads",
+        "conv": "Conv.",
+        "copyPublicLink": "Copiar enlace público",
+        "confirmDelete": "¿Estás seguro de que quieres eliminar este formulario?",
+        "card": {
+            "leads": "leads",
+            "views": "vistas",
+            "conversion": "conversión",
+            "lastEdit": "Modificado",
+            "draft": "Borrador",
+            "active": "Activo"
+        },
+        "actions": {
+            "edit": "Editar",
+            "preview": "Vista previa",
+            "duplicate": "Duplicar",
+            "share": "Compartir",
+            "delete": "Eliminar",
+            "viewLeads": "Ver leads"
+        },
+        "builder": {
+            "title": "Editor de formulario",
+            "untitled": "Nuevo Formulario",
+            "save": "Guardar",
+            "publish": "Publicar",
+            "online": "En línea",
+            "draft": "Borrador",
+            "yourQuestions": "Tus Preguntas",
+            "generateWithAI": "Generar preguntas con IA",
+            "websiteUrl": "URL del sitio web",
+            "customerJourney": "Zona de Intercambio IA",
+            "tabs": {
+                "structure": "Estructura",
+                "steps": "Recorrido",
+                "intelligence": "IA",
+                "design": "Diseño"
+            },
+            "saved": "Guardado exitosamente",
+            "structure": {
+                "title": "Preguntas",
+                "addQuestion": "Agregar pregunta",
+                "generateAI": "Generar con IA",
+                "questionTypes": {
+                    "text": "Texto corto",
+                    "textarea": "Texto largo",
+                    "email": "Correo",
+                    "phone": "Teléfono",
+                    "url": "URL",
+                    "number": "Número",
+                    "select": "Lista desplegable",
+                    "radio": "Opción única",
+                    "checkbox": "Casillas de verificación",
+                    "date": "Fecha"
+                },
+                "questionLabel": "Etiqueta de la pregunta",
+                "placeholder": "Marcador de posición",
+                "required": "Obligatorio",
+                "options": "Opciones (una por línea)"
+            },
+            "steps": {
+                "title": "Recorrido del cliente",
+                "subtitle": "Configura los pasos del formulario y activa la reserva de citas tipo Calendly.",
+                "stepsOrder": "Orden de los pasos",
+                "stepsInfo": "Reordena los pasos según desees.",
+                "calendar": "Reserva de cita",
+                "calendarDesc": "El cliente elige un horario de tu calendario",
+                "form": "Formulario de calificación",
+                "formDesc": "El cliente responde tus preguntas de calificación",
+                "ai": "Preguntas inteligentes (IA)",
+                "aiDesc": "La IA hace preguntas personalizadas según las respuestas",
+                "bookingConfig": {
+                    "title": "Configuración del calendario",
+                    "subtitle": "Disponibilidad y tipo de cita",
+                    "connectGoogle": "Conecta tu Google Calendar",
+                    "connectGoogleDesc": "Para usar la reserva de citas, primero debes conectar tu cuenta de Google Calendar.",
+                    "goToIntegrations": "Ir a Integraciones",
+                    "googleMeetInfo": "Reuniones vía Google Meet",
+                    "googleMeetDesc": "Se creará automáticamente un enlace de Google Meet para cada cita",
+                    "duration": "Duración de la cita",
+                    "minNotice": "Aviso mínimo",
+                    "maxAdvance": "Reserva máxima anticipada",
+                    "timezone": "Zona horaria",
+                    "availability": "Tu disponibilidad",
+                    "addSlot": "Agregar"
+                },
+                "days": {
+                    "monday": "Lunes",
+                    "tuesday": "Martes",
+                    "wednesday": "Miércoles",
+                    "thursday": "Jueves",
+                    "friday": "Viernes",
+                    "saturday": "Sábado",
+                    "sunday": "Domingo"
+                }
+            },
+            "ai": {
+                "title": "Cerebro del Agente",
+                "subtitle": "Configura cómo la IA debe interactuar con tus prospectos.",
+                "systemPrompt": "Prompt del Sistema (Instrucciones)",
+                "systemPromptPlaceholder": "Eres un consultor experto...",
+                "tone": "Tono de conversación",
+                "tones": {
+                    "professional": "Profesional",
+                    "friendly": "Amigable",
+                    "strict": "Estricto",
+                    "empathetic": "Empático"
+                },
+                "numberOfQuestions": "Número de preguntas",
+                "complexity": "Complejidad de las preguntas",
+                "complexities": {
+                    "simple": "Simple",
+                    "intermediate": "Intermedio",
+                    "expert": "Experto"
+                },
+                "context": "Contexto del negocio",
+                "contextPlaceholder": "Describe tu actividad, tus servicios...",
+                "model": "Modelo IA"
+            },
+            "design": {
+                "title": "Apariencia",
+                "subtitle": "Personaliza el estilo de tu formulario.",
+                "primaryColor": "Color principal",
+                "buttonStyle": "Estilo de botones",
+                "font": "Fuente",
+                "backgroundColor": "Fondo"
+            },
+            "preview": "Vista previa",
+            "save": "Guardar",
+            "publish": "Publicar",
+            "saving": "Guardando...",
+            "saved": "¡Guardado!"
+        }
+    },
+    "agents": {
+        "title": "Mis Agentes IA",
+        "subtitle": "Activa expertos virtuales o solicita tu propio clon.",
+        "tabs": {
+            "store": "Biblioteca",
+            "custom": "Personalizado"
+        },
+        "loading": "Cargando agentes...",
+        "noAgentsInLibrary": "No hay agentes disponibles en la biblioteca por el momento.",
+        "createCustomAgent": "Crear Agente Personalizado",
+        "createCustomAgentDesc": "Entrenado con tus propios datos y metodologías.",
+        "category": "Categoría",
+        "custom": {
+            "title": "Solicita Tu Agente Personalizado",
+            "subtitle": "Un clon IA entrenado con tus metodologías y datos para recomendaciones ultra-personalizadas.",
+            "benefits": {
+                "title": "Lo que obtienes:",
+                "training": "Entrenamiento en tus procesos y datos",
+                "methodology": "Tu metodología integrada",
+                "branding": "Personalización a tu imagen",
+                "support": "Soporte dedicado"
+            },
+            "form": {
+                "title": "Cuéntanos qué buscas",
+                "agentName": "Nombre del agente",
+                "agentNamePlaceholder": "Ej: Agente Auditoría SEO",
+                "objective": "Objetivo principal",
+                "objectivePlaceholder": "Describe lo que el agente debe lograr...",
+                "budget": "Presupuesto estimado",
+                "timeline": "Plazo deseado",
+                "timelineStandard": "Estándar (2-3 semanas)",
+                "timelineUrgent": "Urgente (1 semana)",
+                "timelineFlexible": "Flexible",
+                "submit": "Enviar solicitud"
+            },
+            "successMessage": "¡Solicitud enviada con éxito! Te contactaremos en 24h.",
+            "errorMessage": "Error al enviar la solicitud."
+        }
+    },
+    "automations": {
+        "title": "Automatizaciones",
+        "subtitle": "Conecta tus herramientas y deja que la IA maneje las tareas repetitivas.",
+        "newWorkflow": "Nuevo Workflow",
+        "tabs": {
+            "integrations": "Integraciones",
+            "workflows": "Workflows"
+        },
+        "integrations": {
+            "title": "Integraciones",
+            "googleCalendar": {
+                "desc": "Sincroniza tus citas y crea automáticamente eventos con Google Meet."
+            },
+            "googleSheets": {
+                "desc": "Exporta automáticamente tus leads a una hoja de cálculo."
+            },
+            "slack": {
+                "desc": "Recibe notificaciones en tiempo real sobre tus nuevos leads."
+            },
+            "webhook": {
+                "desc": "Conecta cualquier aplicación mediante webhooks personalizados."
+            }
+        },
+        "googleCalendarIntegration": "Integración Google Calendar",
+        "googleCalendarIntegrationDesc": "Conecta tu Google Calendar para permitir a los prospectos reservar citas directamente en tu agenda.",
+        "connected": "Conectado",
+        "notConnected": "No conectado",
+        "connect": "Conectar",
+        "configure": "Configurar",
+        "comingSoon": "Próximamente",
+        "fillAllFields": "Por favor, rellena todos los campos",
+        "confirmDelete": "¿Estás seguro de que deseas eliminar?",
+        "activeWorkflows": "Flujos de Trabajo Activos",
+        "inactiveWorkflows": "Flujos de Trabajo Inactivos",
+        "configuration": "Configuración",
+        "noWorkflows": "Sin flujo de trabajo creado",
+        "createFirstWorkflow": "Crea tu primer flujo de trabajo",
+        "createWorkflow": "Crear un flujo de trabajo",
+        "editWorkflow": "Editar flujo de trabajo",
+        "workflowName": "Nombre del flujo de trabajo",
+        "workflowNamePlaceholder": "Ej: Enviar correo a clientes calificados",
+        "trigger": "Disparador (SI...)",
+        "triggerPlaceholder": "Ej: El cliente se convierte en calificado",
+        "action": "Acción (ENTONCES...)",
+        "actionPlaceholder": "Ej: Enviar correo de seguimiento",
+        "if": "SI",
+        "then": "ENTONCES",
+        "lastRun": "Última ejecución",
+        "workflows": {
+            "title": "Workflows",
+            "active": "Activo",
+            "inactive": "Inactivo",
+            "activeWorkflows": "Workflows Activos",
+            "inactiveWorkflows": "Workflows Inactivos",
+            "noWorkflows": "Sin workflows creados",
+            "noWorkflowsDesc": "Crea tu primer workflow para automatizar tus tareas",
+            "createFirst": "Crear un workflow",
+            "if": "SI",
+            "then": "ENTONCES",
+            "lastRun": "Última ejecución",
+            "today": "hoy"
+        },
+        "modal": {
+            "createTitle": "Crear un workflow",
+            "editTitle": "Editar workflow",
+            "workflowName": "Nombre del workflow",
+            "workflowNamePlaceholder": "Ej: Enviar email a leads calificados",
+            "trigger": "Disparador (SI...)",
+            "triggerPlaceholder": "Ej: Lead se vuelve calificado",
+            "action": "Acción (ENTONCES...)",
+            "actionPlaceholder": "Ej: Enviar email de seguimiento",
+            "create": "Crear",
+            "update": "Actualizar",
+            "saving": "Guardando..."
+        }
+    },
+    "settings": {
+        "title": "Configuración",
+        "subtitle": "Gestiona tu perfil, suscripción y marca blanca.",
+        "tabs": {
+            "profile": "Mi Perfil",
+            "billing": "Suscripción",
+            "domain": "Marca Blanca",
+            "notifications": "Notificaciones"
+        },
+        "profile": {
+            "title": "Información Personal",
+            "subtitle": "Actualiza tu foto y datos de contacto.",
+            "firstName": "Nombre",
+            "lastName": "Apellido",
+            "email": "Correo",
+            "phone": "Teléfono",
+            "role": "Puesto",
+            "avatar": "Foto de perfil",
+            "changeAvatar": "Cambiar foto",
+            "dragDrop": "Arrastra y suelta una imagen o haz clic para explorar",
+            "save": "Guardar",
+            "saveSuccess": "¡Cambios guardados!"
+        },
+        "billing": {
+            "title": "Suscripción",
+            "subtitle": "Gestiona tu plan y revisa tus facturas.",
+            "currentPlan": "Plan actual",
+            "freePlan": "Gratis",
+            "proPlan": "Pro",
+            "upgradePro": "Pasar a Pro",
+            "invoices": "Facturas",
+            "noInvoices": "Sin facturas"
+        },
+        "domain": {
+            "title": "Marca Blanca",
+            "subtitle": "Personaliza la experiencia para tus clientes.",
+            "customDomain": "Dominio personalizado",
+            "customDomainPlaceholder": "auditorias.tusitio.com",
+            "customDomainHelp": "Configura tu propio dominio para formularios públicos.",
+            "logo": "Logo de la empresa",
+            "logoHelp": "Este logo aparecerá en tus formularios e informes PDF.",
+            "dragDropLogo": "Arrastra y suelta tu logo aquí",
+            "save": "Guardar"
+        },
+        "notifications": {
+            "title": "Preferencias de notificación",
+            "subtitle": "Elige cómo quieres ser notificado.",
+            "newLead": "Nuevo lead",
+            "newLeadDesc": "Recibir un correo cuando un prospecto complete un formulario",
+            "weeklyReport": "Informe semanal",
+            "weeklyReportDesc": "Resumen de tu rendimiento cada lunes",
+            "marketing": "Noticias y consejos",
+            "marketingDesc": "Recibe nuestras mejores prácticas y novedades del producto",
+            "save": "Guardar"
+        },
+        "logout": "Cerrar sesión"
+    },
+    "publicForm": {
+        "poweredBy": "Potenciado por",
+        "step": "Paso",
+        "of": "de",
+        "continueButton": "Continuar",
+        "submitButton": "Enviar",
+        "submitting": "Enviando...",
+        "aiThinking": "La IA está pensando...",
+        "errorLoading": "Error al cargar el formulario",
+        "formNotFound": "Formulario no encontrado",
+        "slugMissing": "Slug faltante",
+        "calendar": {
+            "title": "Reserva tu horario",
+            "selectSlot": "Selecciona un horario",
+            "noSlots": "Sin horarios disponibles",
+            "duration": "Duración",
+            "timezone": "Zona horaria",
+            "googleMeet": "Reunión Google Meet"
+        },
+        "bookingInfo": {
+            "title": "Tus datos",
+            "name": "Tu nombre completo",
+            "email": "Tu correo",
+            "phone": "Tu teléfono",
+            "company": "Tu empresa"
+        },
+        "success": {
+            "title": "¡Gracias!",
+            "subtitle": "Tus respuestas han sido registradas.",
+            "message": "Te contactaremos muy pronto.",
+            "withBooking": "Tu cita ha sido confirmada.",
+            "bookingDetails": "Detalles de la cita",
+            "meetingLink": "Enlace de la reunión"
+        },
+        "loading": {
+            "form": "Cargando formulario...",
+            "questions": "Generando preguntas..."
+        }
+    },
+    "onboarding": {
+        "title": "¡Bienvenido a Pretalk!",
+        "subtitle": "Configuremos tu herramienta en unos pasos.",
+        "steps": {
+            "expertise": {
+                "title": "Área de expertise",
+                "description": "Configuremos tu persona IA"
+            },
+            "service": {
+                "title": "Tu servicio",
+                "description": "Personaliza tu oferta"
+            },
+            "testDrive": {
+                "title": "Prueba de manejo",
+                "description": "Descubre la magia de la IA"
+            },
+            "ready": {
+                "title": "¡Listo!",
+                "description": "Tu herramienta está operativa"
+            }
+        },
+        "expertise": {
+            "title": "¿Cuál es tu área de expertise?",
+            "subtitle": "Elige el área que mejor se adapta a tus servicios",
+            "marketing": {
+                "title": "Marketing / SEO",
+                "desc": "Auditorías de visibilidad, estrategias digitales, SEO"
+            },
+            "tech": {
+                "title": "Tech / Desarrollo",
+                "desc": "Auditorías técnicas, rendimiento, arquitectura"
+            },
+            "sales": {
+                "title": "Ventas / Negocios",
+                "desc": "Diagnósticos comerciales, procesos de venta"
+            },
+            "other": {
+                "title": "Otro",
+                "desc": "Dominio especializado o personalizado"
+            }
+        },
+        "service": {
+            "title": "Describe tu servicio principal",
+            "serviceName": "Nombre de tu servicio estrella",
+            "serviceNamePlaceholder": "Ej: Auditoría SEO Completa, Diagnóstico Comercial...",
+            "logoUpload": "Logo de tu empresa (opcional)",
+            "dragDrop": "Arrastra y suelta tu logo o haz clic para explorar"
+        },
+        "testDrive": {
+            "title": "¡Probemos la IA juntos!",
+            "subtitle": "Responde estas preguntas como si fueras un prospecto:",
+            "challenge": "¿Cuál es tu principal desafío ahora mismo?",
+            "challengePlaceholder": "Describe tu problema actual...",
+            "goal": "¿Qué resultado esperas?",
+            "goalPlaceholder": "¿Qué sería ideal para ti?",
+            "generate": "Generar mis preguntas IA",
+            "generating": "La IA está analizando tus respuestas...",
+            "result": "Aquí están las preguntas que la IA haría a tus prospectos:",
+            "tryAgain": "Intentar con otras respuestas"
+        },
+        "ready": {
+            "title": "¡Estás listo!",
+            "subtitle": "Tu herramienta Pretalk está configurada y operativa.",
+            "summary": "Resumen",
+            "expertise": "Dominio",
+            "service": "Servicio",
+            "nextSteps": "Próximos pasos",
+            "step1": "Crea tu primer formulario",
+            "step2": "Personaliza las preguntas de IA",
+            "step3": "Comparte con tus prospectos",
+            "goToDashboard": "Ir al panel de control"
+        },
+        "navigation": {
+            "back": "Volver",
+            "continue": "Continuar",
+            "skip": "Omitir"
+        }
+    },
+    "errors": {
+        "generic": "Ocurrió un error",
+        "tryAgain": "Por favor, inténtalo de nuevo",
+        "notFound": "Página no encontrada",
+        "notFoundDesc": "La página que buscas no existe.",
+        "backHome": "Volver al inicio",
+        "unauthorized": "Acceso no autorizado",
+        "sessionExpired": "Sesión expirada",
+        "networkError": "Error de conexión",
+        "saveError": "Error al guardar",
+        "deleteError": "Error al eliminar",
+        "validation": {
+            "required": "Este campo es obligatorio",
+            "email": "Correo inválido",
+            "phone": "Número de teléfono inválido",
+            "url": "URL inválida",
+            "minLength": "Mínimo {{min}} caracteres",
+            "maxLength": "Máximo {{max}} caracteres"
+        }
+    },
+    "notifications": {
+        "title": "Notificaciones",
+        "markAllRead": "Marcar todo como leído",
+        "noNotifications": "Sin notificaciones",
+        "newLead": "Nuevo lead",
+        "leadQualified": "Lead calificado",
+        "formSubmission": "Nueva presentación",
+        "bookingConfirmed": "Cita confirmada"
+    },
+    "landing": {
+        "nav": {
+            "features": "Funcionalidades",
+            "testimonials": "Testimonios",
+            "pricing": "Precios",
+            "demo": "Demo",
+            "login": "Iniciar sesión",
+            "tryFree": "Prueba gratis"
+        },
+        "hero": {
+            "badge": "Nuevo: IA Claude 4 integrada",
+            "title": "Califica tus prospectos",
+            "titleHighlight": "10x más rápido",
+            "titleEnd": "con IA",
+            "subtitle": "Pretalk genera automáticamente diagnósticos personalizados que transforman tus visitantes en clientes. Crea tu primer formulario IA en 5 minutos.",
+            "cta": "Comenzar gratis",
+            "demo": "Reservar una demo",
+            "noCreditCard": "Sin tarjeta de crédito",
+            "stats": {
+                "consultants": "Consultores",
+                "leadsProcessed": "Leads procesados",
+                "timeSaved": "Tiempo ahorrado"
+            }
+        },
+        "features": {
+            "sectionTitle": "Funcionalidades",
+            "title": "Todo lo que necesitas para",
+            "titleHighlight": "automatizar tus auditorías",
+            "ai": {
+                "title": "IA Generativa",
+                "desc": "Genera diagnósticos personalizados en segundos con nuestra IA avanzada."
+            },
+            "automation": {
+                "title": "Automatización",
+                "desc": "Workflows n8n integrados para automatizar tus procesos de principio a fin."
+            },
+            "pdf": {
+                "title": "PDFs Profesionales",
+                "desc": "Informes personalizados con tu marca, generados y enviados automáticamente."
+            },
+            "analytics": {
+                "title": "Analíticas Integradas",
+                "desc": "Sigue tu rendimiento y optimiza tus auditorías en tiempo real."
+            },
+            "security": {
+                "title": "Seguridad Enterprise",
+                "desc": "Tus datos y los de tus clientes están protegidos con cifrado de nivel bancario."
+            },
+            "multiUser": {
+                "title": "Multi-usuarios",
+                "desc": "Colabora en equipo con roles y permisos granulares."
+            }
+        },
+        "testimonials": {
+            "sectionTitle": "Testimonios",
+            "title": "Transformaron su negocio",
+            "titleHighlight": "con Pretalk"
+        },
+        "pricing": {
+            "sectionTitle": "Precios",
+            "title": "Precios simples,",
+            "titleHighlight": "sin sorpresas",
+            "monthly": "Mensual",
+            "yearly": "Anual",
+            "perMonth": "/mes",
+            "popular": "Popular",
+            "plans": {
+                "starter": {
+                    "name": "Starter",
+                    "price": "29€",
+                    "description": "Perfecto para empezar",
+                    "cta": "Comenzar gratis"
+                },
+                "professional": {
+                    "name": "Professional",
+                    "price": "89€",
+                    "description": "Nuestro plan más popular",
+                    "cta": "Probar 14 días gratis"
+                },
+                "enterprise": {
+                    "name": "Enterprise",
+                    "price": "Personalizado",
+                    "description": "Para equipos grandes",
+                    "cta": "Contáctanos"
+                }
+            }
+        },
+        "cta": {
+            "title": "¿Listo para transformar tus auditorías?",
+            "subtitle": "Únete a los consultores que ahorran tiempo con Pretalk.",
+            "button": "Comenzar gratis",
+            "noCreditCard": "Sin tarjeta de crédito • Configuración en 5 minutos"
+        },
+        "footer": {
+            "description": "La plataforma IA para consultores que quieren calificar más prospectos en menos tiempo.",
+            "product": "Producto",
+            "features": "Funcionalidades",
+            "pricing": "Precios",
+            "integrations": "Integraciones",
+            "changelog": "Changelog",
+            "company": "Empresa",
+            "about": "Acerca de",
+            "blog": "Blog",
+            "careers": "Carreras",
+            "contact": "Contacto",
+            "legal": "Legal",
+            "privacy": "Privacidad",
+            "terms": "Términos",
+            "cookies": "Cookies",
+            "copyright": "© 2024 Pretalk. Todos los derechos reservados."
+        }
+    },
+    "errors": {
+        "saveError": "Error al guardar",
+        "deleteError": "Error al eliminar",
+        "formTitleRequired": "El título del formulario es requerido",
+        "formQuestionsRequired": "Por favor, agregue al menos una pregunta al formulario",
+        "colorRequired": "Por favor, elige un color principal",
+        "saveFailed": "Error al guardar. Por favor intente de nuevo.",
+        "generateFailed": "Error en la generación"
+    }
+}

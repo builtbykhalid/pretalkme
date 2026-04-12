@@ -1,0 +1,221 @@
+{
+  "name": "Pretalk - Lead Actions Hub",
+  "description": "Routes incoming lead action events (qualified, rejected, reviewed) to appropriate handlers",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "lead-actions",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Lead Action Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "lead-actions-hub"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.action }}",
+              "value2": "lead_qualified",
+              "condition": "equals"
+            }
+          ]
+        }
+      },
+      "id": "route-qualified",
+      "name": "Is Qualified?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body.action }}",
+              "value2": "lead_rejected",
+              "condition": "equals"
+            }
+          ]
+        }
+      },
+      "id": "route-rejected",
+      "name": "Is Rejected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [450, 450]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.SUPABASE_URL }}/rest/v1/lead_actions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer {{ $env.SUPABASE_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "lead_id",
+              "value": "={{ $json.body.lead_id }}"
+            },
+            {
+              "name": "action_type",
+              "value": "={{ $json.body.action === 'lead_qualified' ? 'qualified' : $json.body.action === 'lead_rejected' ? 'rejected' : 'reviewed' }}"
+            },
+            {
+              "name": "action_reason",
+              "value": "={{ $json.body.reason || null }}"
+            },
+            {
+              "name": "metadata",
+              "value": "={{ {webhook_payload: $json.body, timestamp: new Date().toISOString()} }}"
+            }
+          ]
+        }
+      },
+      "id": "log-action",
+      "name": "Log Action to Supabase",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.body.lead_data?.email || 'consultant@pretalk.me' }}",
+        "subject": "Lead Qualified — Take Action Now 🎯",
+        "html": "<h2>{{ $json.body.lead_data?.name }} is ready!</h2><p>A qualified lead just entered your pipeline. <strong>Qualification score: {{ $json.body.lead_data?.score }}/100</strong></p><p><a href='https://app.pretalk.me/lead-review/{{ $json.body.lead_id }}'>View Lead Profile →</a></p>"
+      },
+      "id": "send-qualified-email",
+      "name": "Send Qualified Email",
+      "type": "n8n-nodes-base.sendGrid",
+      "typeVersion": 2,
+      "position": [850, 200],
+      "displayOptions": {
+        "show": { "routeQualified": [true] }
+      }
+    },
+    {
+      "parameters": {
+        "to": "={{ $json.body.lead_data?.email || 'consultant@pretalk.me' }}",
+        "subject": "Lead Status Changed",
+        "html": "<p>A lead was rejected{{ $json.body.reason ? ' — Reason: ' + $json.body.reason : '' }}.</p>"
+      },
+      "id": "send-rejected-notification",
+      "name": "Log Rejection",
+      "type": "n8n-nodes-base.sendGrid",
+      "typeVersion": 2,
+      "position": [850, 450],
+      "displayOptions": {
+        "show": { "routeRejected": [true] }
+      }
+    },
+    {
+      "parameters": {
+        "dotNotation": false,
+        "jsonOutput": "{\"success\": true, \"action\": \"{{ $json.body.action }}\", \"lead_id\": \"{{ $json.body.lead_id }}\", \"logged_at\": \"{{ new Date().toISOString() }}\"}"
+      },
+      "id": "respond-success",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    }
+  ],
+  "connections": {
+    "Lead Action Webhook": {
+      "main": [
+        [
+          {
+            "node": "Is Qualified?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Is Rejected?",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Log Action to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Qualified?": {
+      "main": [
+        [
+          {
+            "node": "Send Qualified Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Rejected?": {
+      "main": [
+        [
+          {
+            "node": "Log Rejection",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Action to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Qualified Email": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Log Rejection": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

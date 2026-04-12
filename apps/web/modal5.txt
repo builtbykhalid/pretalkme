@@ -1,0 +1,67 @@
+﻿                        <div className="p-10 pt-4 space-y-8">
+                            <div className="space-y-4">
+                                <label className="text-[10px] font-black text-[#9A9A9A] uppercase tracking-widest block ml-1">Choix du template</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        onClick={() => setSendConfig(prev => ({ ...prev, templateType: 'default' }))}
+                                        className={`p-5 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${sendConfig.templateType === 'default' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                    >
+                                        Défaut Pretalk
+                                    </button>
+                                    <button
+                                        onClick={() => setSendConfig(prev => ({ ...prev, templateType: 'data_driven' }))}
+                                        className={`p-5 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${sendConfig.templateType === 'data_driven' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                    >
+                                        Data Driven
+                                    </button>
+                                    <button
+                                        onClick={() => setSendConfig(prev => ({ ...prev, templateType: 'executive' }))}
+                                        className={`p-5 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${sendConfig.templateType === 'executive' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                    >
+                                        Executive
+                                    </button>
+                                    <button
+                                        onClick={() => setSendConfig(prev => ({ ...prev, templateType: 'storytelling' }))}
+                                        className={`p-5 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${sendConfig.templateType === 'storytelling' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                    >
+                                        Storytelling
+                                    </button>
+                                    <button
+                                        onClick={() => setSendConfig(prev => ({ ...prev, templateType: 'minimal_clarity' }))}
+                                        className={`p-5 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${sendConfig.templateType === 'minimal_clarity' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                    >
+                                        Minimal Clarity
+                                    </button>
+                                    <button
+                                        onClick={() => setSendConfig(prev => ({ ...prev, templateType: 'bold_impact' }))}
+                                        className={`p-5 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${sendConfig.templateType === 'bold_impact' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                    >
+                                        Bold Impact
+                                    </button>
+                                    <button
+                                        onClick={() => setSendConfig(prev => ({ ...prev, templateType: 'custom' }))}
+                                        className={`p-5 rounded-2xl border text-[11px] font-black uppercase tracking-widest transition-all ${sendConfig.templateType === 'custom' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                    >
+                                        Personnalisé
+                                    </button>
+                                </div>
+                            </div>
+
+                            {sendType === 'proposal' && (
+                                <div className="space-y-4">
+                                    <label className="text-[10px] font-black text-[#9A9A9A] uppercase tracking-widest block ml-1">Sélection des offres</label>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <button
+                                            onClick={() => {
+                                                setSendOfferMode('all');
+                                                setSelectedOfferIndices(localProposals.map((_, idx) => idx));
+                                            }}
+                                            className={`p-4 rounded-2xl border text-[10px] font-black uppercase tracking-widest transition-all ${sendOfferMode === 'all' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                        >
+                                            Tout envoyer
+                                        </button>
+                                        <button
+                                            onClick={() => setSendOfferMode('selected')}
+                                            className={`p-4 rounded-2xl border text-[10px] font-black uppercase tracking-widest transition-all ${sendOfferMode === 'selected' ? 'bg-[#0D0D0D] text-white border-[#0D0D0D]' : 'bg-[#FBFBFB] border-[#E8E8E8] text-[#9A9A9A] hover:bg-[#F4F4F4]'}`}
+                                        >
+                                            Sélection manuelle

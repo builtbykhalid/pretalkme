@@ -1,0 +1,235 @@
+{
+  "name": "Pretalk - API d'Assistance IA (Texte) - Ollama",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ai-assist-text",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "c38f07f4-a948-4b7d-a78c-e4fe3e92472c",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        -112
+      ],
+      "webhookId": "9ba60008-3d51-4531-aa72-35f66f47dae4"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body || $input.item.json;\nconst action  = body.action  || 'enhance_description';\nconst text    = (body.text   || '').trim();\nconst context = body.context || 'Professional consultant';\nconst locale  = body.locale  || 'fr';\n\nconst LANG_MAP = {\n  en:'English', fr:'French', es:'Spanish', ar:'Arabic',\n  pt:'Portuguese', de:'German', it:'Italian', nl:'Dutch', tr:'Turkish'\n};\nconst language = LANG_MAP[locale] || 'French';\n\nif (!text) throw new Error('MISSING_TEXT: text field is required and cannot be empty.');\n\n// Each action has a system role and a precise instruction.\n// All prompts in English — model outputs in the target language.\nconst ACTIONS = {\n\n  enhance_description: {\n    system: `You are a world-class B2B copywriter specializing in professional services.\nConsultant domain: ${context}. Output language: ${language}.`,\n    instruction: `Rewrite this description to make it more professional, compelling, and conversion-oriented.\nPreserve the original meaning and key facts. Enrich the vocabulary. Add impact without being artificial.\nEliminate weak phrases (\"I try to\", \"I hope\", \"I like to\"). Use active voice and results-oriented language.\nReturn ONLY the improved text — no quotes, no introduction, no commentary.`\n  },\n\n  fix_spelling: {\n    system: `You are an expert proofreader and language specialist. Output language: ${language}.`,\n    instruction: `Correct ONLY spelling, grammar, punctuation, and accents in this text.\nDo NOT change the meaning, style, tone, or sentence structure in any way.\nDo NOT rephrase, expand, or improve — only fix errors.\nReturn ONLY the corrected text.`\n  },\n\n  make_professional: {\n    system: `You are a senior LinkedIn personal branding expert for consultants and executives.\nContext: ${context}. Output language: ${language}.`,\n    instruction: `Rewrite this text to be ultra-professional, worthy of a senior consultant's LinkedIn profile.\nTone: confident, expert, results-oriented. Avoid all clichés (\"passionate\", \"dynamic\", \"results-driven\").\nLead with value delivered to clients, not personal qualities. Use concrete, specific language.\nReturn ONLY the rewritten text.`\n  },\n\n  generate_titles: {\n    system: `You are an expert in copywriting and high-impact audit/service titles.\nContext: ${context}. Output language: ${language}.`,\n    instruction: `Generate exactly 3 compelling titles based on this text.\nEach title must be: 4-8 words, benefit-focused for the prospect, specific to the consultant's domain.\nInclude an element of curiosity, urgency, or transformation in each title.\nReturn ONLY this exact format — nothing else:\nTitle 1: [title]\nTitle 2: [title]\nTitle 3: [title]`\n  },\n\n  generate_bio: {\n    system: `You are an expert in professional bio writing for consultants.\nContext: ${context}. Output language: ${language}.`,\n    instruction: `Write a punchy professional bio (120-180 characters max) based on this information.\nUse this formula: \"I help [specific audience] achieve [specific outcome] through [method/expertise].\"\nTone: direct, authentic, client-value-focused. No adjectives without proof.\nReturn ONLY the bio — no quotes, no explanation.`\n  },\n\n  generate_cta: {\n    system: `You are an expert conversion copywriter specializing in call-to-action optimization.\nContext: ${context}. Output language: ${language}.`,\n    instruction: `Generate 3 high-converting CTA variants based on this text.\nEach CTA: 4-8 words max, clear action verb, visible benefit, implicit urgency or exclusivity.\nVary the angle: one urgency-based, one benefit-based, one curiosity-based.\nReturn ONLY this exact format — nothing else:\nCTA 1: [text]\nCTA 2: [text]\nCTA 3: [text]`\n  },\n\n  translate: {\n    system: `You are a professional translator and language expert. Target language: ${language}.`,\n    instruction: `Translate this text into ${language}, preserving the exact tone, style, nuances, and structure.\nIf the text is already in ${language}, lightly refine it for fluency and naturalness.\nReturn ONLY the translation — no notes, no explanation.`\n  },\n\n  summarize: {\n    system: `You are an expert in professional content summarization. Output language: ${language}.`,\n    instruction: `Summarize this text in 2-3 sharp, impactful sentences that capture the essential message.\nKeep the most valuable and differentiating points. Remove all filler and redundancy.\nThe summary must stand alone — it should make sense without reading the original.\nReturn ONLY the summary.`\n  }\n};\n\nconst selected = ACTIONS[action] || ACTIONS['enhance_description'];\n\nconst fullPrompt =\n`<s>\n${selected.system}\n</s>\n\n<instruction>\n${selected.instruction}\n</instruction>\n\n<original_text>\n${text}\n</original_text>`;\n\nreturn {\n  json: {\n    prompt: fullPrompt,\n    action,\n    language\n  }\n};\n"
+      },
+      "id": "eca68a05-7042-4362-8b72-cdc566d0b140",
+      "name": "Logic Node",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}"
+      },
+      "id": "bd05eae6-952e-47e3-85c6-4292d066f920",
+      "name": "Ollama Chat",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        496,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, result: $('Ollama Chat').first().json.text, action: $('Logic Node').first().json.action, language: $('Logic Node').first().json.language } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "7f0179ed-044a-4178-9890-4623ea9fe09e",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        736,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        432,
+        96
+      ],
+      "id": "46cb004e-e292-4161-9644-37d8abc32443",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-text",
+              "leftValue": "={{ $json.body.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c5555a96-9b8c-4ba6-a967-949f561d1958",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        112,
+        -112
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, error: 'MISSING_TEXT', message: 'text field is required.' } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "8acc1ced-4973-42c4-b518-73f3d4f2ba41",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        80
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Logic Node",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Logic Node": {
+      "main": [
+        [
+          {
+            "node": "Ollama Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Ollama Chat",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "ccd0f6c9-1293-45e9-b9d1-b7c90652bbe2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "0CrNUksfh0jsCeYz",
+  "tags": []
+}

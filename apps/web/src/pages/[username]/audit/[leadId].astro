@@ -1,0 +1,32 @@
+---
+import '../../../components/ReactApp/index.css';
+import PublicAuditWrapper from '../../../components/ReactApp/PublicAuditWrapper';
+
+const reservedUsernames = ['app', 'admin', 'login', 'onboarding', 'f', 'api', 'static', 'assets', 'home', 'dashboard', 'settings', 'agents', 'leads', 'forms'];
+
+const { username, leadId } = Astro.params;
+
+if (!username || reservedUsernames.includes(username.toLowerCase())) {
+  return Astro.redirect('/');
+}
+
+if (!leadId) {
+  return Astro.redirect('/');
+}
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <title>Audit personnalisé | Pretalk</title>
+    <meta name="description" content="Audit digital personnalisé et plan d'action orienté conversion." />
+  </head>
+  <body class="bg-accent-800">
+    <div id="root">
+      <PublicAuditWrapper client:only="react" username={username} leadId={leadId} />
+    </div>
+  </body>
+</html>

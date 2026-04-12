@@ -1,0 +1,229 @@
+1. Nœud : Gemini Flash (Site Summary)
+Expression n8n à coller (Mode Expression ={{ ... }}) :
+
+JavaScript
+=`<system>You are an expert data extractor and business analyst.</system>
+
+<instructions>
+Analyze the provided website content and extract a structured, factual summary.
+- If it is a business: Identify the core activity, target audience, market positioning, and value proposition.
+- If it is an individual, freelancer, or personal project: Identify their profile, main interests, and primary project goals.
+Write in smoothly flowing prose paragraphs. Be extremely concise (maximum 5 sentences).
+</instructions>
+
+<context>
+<documents>
+<document index="1">
+<source>Website Content</source>
+<document_content>
+${$('Jina AI (Reader)').first().json.content}
+</document_content>
+</document>
+</documents>
+</context>`
+2. Nœud : Gemini Flash (Scoring)
+Expression n8n à coller :
+
+JavaScript
+=`<system>You are an expert lead qualification specialist working for a ${$('Extract & Prepare Variables').first().json.consultant_job}.</system>
+
+<instructions>
+Evaluate the maturity and viability of the prospect on a 100-point scale using this universal scoring grid:
+1. Budget / Investment Capacity (0-25 pts)
+2. Urgency / Project Timing (0-25 pts)
+3. Needs Clarity and Expectations (0-25 pts)
+4. Engagement / Quality of answers (0-25 pts)
+
+If a data point is missing or vague, assign exactly 5/25 for that category by default.
+
+Output ONLY a valid raw JSON object. Do not use markdown formatting, code blocks, or conversational text.
+Required format: { "score": N, "justification": "One short sentence explaining the score" }
+</instructions>
+
+<context>
+<prospect_answers>
+Static Answers: ${$('Extract & Prepare Variables').first().json.static_answers}
+Dynamic Answers: ${$('Extract & Prepare Variables').first().json.dynamic_answers}
+</prospect_answers>
+</context>`
+3. Nœud : Gemini Pro (Market Search)
+Expression n8n à coller :
+
+JavaScript
+=`<system>You are an elite industry analyst and strategic advisor.</system>
+
+<instructions>
+Analyze the current market context for the following sector or profile: ${$('Extract & Prepare Variables').first().json.sector}.
+
+Identify exactly:
+1. The top 3 major challenges, pain points, or frustrations currently facing this target audience.
+2. The immediate strategic opportunities available to them.
+
+Your goal is to provide strategic ammunition to a ${$('Extract & Prepare Variables').first().json.consultant_job} to help them convert this prospect. 
+Write a concise summary of maximum 10 lines in smoothly flowing prose.
+</instructions>`
+4. Nœud : Prepare Master Prompt (Code Node)
+Ce nœud central génère le prompt final. Voici le code JavaScript complet à remplacer dans le nœud "Prepare Master Prompt" pour intégrer la structure XML, l'approche universelle des personas, et forcer la langue de sortie.
+
+Code JavaScript à coller :
+
+JavaScript
+const leadData = $('Extract & Prepare Variables').first().json;
+let site_summary = 'No website summary available.';
+try { site_summary = $('Gemini Flash (Site Summary)').first().json.text; } catch(e1) { try { site_summary = $('Dummy Site Summary').first().json.text; } catch(e2) {} }
+let score_json = '{}';
+try { score_json = $('Gemini Flash (Scoring)').first().json.text; } catch(e) {}
+let market_study = 'Market trends unavailable.';
+try { market_study = $('Gemini Pro (Market Search)').first().json.text; } catch(e) {}
+
+const universalGuidance = `
+<universal_strategic_guidance>
+You are the strategic extension of the consultant (${leadData.consultant_job}). Your ultimate goal is NOT to provide free solutions, but to prove absolute authority and trigger a discovery call booking.
+
+Apply these 4 principles strictly based on the consultant's profession:
+
+1. THE COST OF INACTION (Adaptive):
+   - For B2B/Finance/Tech: Emphasize financial losses, falling behind competitors, and technical debt.
+   - For Coaching/HR: Emphasize mental load, risk of burnout, or negative impact on team dynamics.
+   - For Design/Habitat: Emphasize perceived value loss, degraded user experience, or budget overruns due to poor planning.
+
+2. THE AMBIGUITY LEVER (Anti-hallucination):
+   If the prospect's answers are short or vague, DO NOT invent information. Highlight these "uncontrolled risk zones" and state that they must be clarified during the call.
+
+3. EXPERTISE DEMONSTRATION (The What, Not The How):
+   Deliver a precise diagnosis and strategic axes (What and Why), but keep the execution method secret (The How). Execution must be purchased.
+
+4. THE CALL-TO-ACTION (The Bait):
+   Conclude the audit by justifying why a discovery call is the only logical and urgent next step to secure their project.
+</universal_strategic_guidance>
+`;
+
+let regenContext = '';
+if (leadData.action === 'regenerate') {
+  let historyCtx = '';
+  try { 
+      const h = leadData.history; 
+      if (h && h.length > 0) { 
+          const last = h[h.length-1]; 
+          historyCtx = `\nPrevious draft (version ${last.version || h.length}) — Consultant feedback: "${last.consultant_feedback || 'None'}"\n`; 
+      } 
+  } catch(e) {}
+  regenContext = `
+<regeneration_instructions>
+The consultant rejected the previous draft and demands these modifications: "${leadData.feedback}"
+Apply this feedback STRICTLY.
+${historyCtx}
+</regeneration_instructions>`;
+}
+
+const masterPrompt = `
+<system>
+${leadData.persona}
+</system>
+
+${universalGuidance}
+
+<context>
+<prospect_data>
+Email: ${leadData.lead_email || 'Not provided'}
+Company/Name: ${leadData.lead_company}
+Sector: ${leadData.sector || 'Not specified'}
+
+<form_answers>
+${leadData.static_answers}
+</form_answers>
+
+<dynamic_conversation>
+${leadData.dynamic_answers}
+</dynamic_conversation>
+
+<website_analysis>
+${site_summary}
+</website_analysis>
+
+<market_trends>
+${market_study}
+</market_trends>
+</prospect_data>
+</context>
+${regenContext}
+
+<instructions>
+1. OUTPUT LANGUAGE: You MUST generate the final content in the following language: ${leadData.consultant_language}.
+2. Tone: Professional, impactful, and action-oriented.
+3. Content Formatting: Use rich HTML tags strictly (<p>, <ul>, <li>, <strong>, <em>). Write minimum 3-5 sentences or bullet points per block.
+4. Personalization: Cite the company name and prospect's specific answers naturally within the text.
+5. Thinking Process: Before generating the JSON, you must briefly outline your strategy inside <thinking> tags to ensure you apply the cost of inaction and the ambiguity lever correctly.
+
+OUTPUT FORMAT (CRITICAL):
+After your <thinking> block, output a valid JSON object, and NOTHING ELSE. Do not use markdown blocks (\`\`\`json).
+{
+  "chart_data": { "labels": ["Label1","Label2","Label3","Label4"], "scores": [80,45,60,30] },
+  "audit_blocks": [
+    { "id": "intro", "zone": "main", "title": "Résumé Exécutif", "content": "<p>Impactful hook citing the company.</p>" },
+    { "id": "forts", "zone": "main", "title": "Points Forts Identifiés", "content": "<ul><li><strong>Strength 1:</strong> Detail.</li></ul>" },
+    { "id": "faibles", "zone": "main", "title": "Zones d'Ombre & Risques", "content": "<ul><li><strong>Risk 1:</strong> Impact of inaction.</li></ul>" },
+    { "id": "recos", "zone": "main", "title": "Plan d'Action Recommandé", "content": "<ul><li><strong>Action 1:</strong> The What and Why.</li></ul>" },
+    { "id": "cta", "zone": "main", "title": "Prochaines Étapes", "content": "<p>CTA to a discovery call.</p>" }
+  ]
+}
+Rule for chart_data: Generate 4-5 labels HIGHLY RELEVANT to the prospect's specific sector. Scores must be out of 100.
+</instructions>
+`;
+
+return [{ json: { master_prompt: masterPrompt, score_json, lead_id: leadData.lead_id } }];
+
+
+const formData = $('Get Form Context').first().json || {};
+const leadData = $('Get Lead Details').first().json || {};
+const profileData = $('Get Consultant Profile').first().json || {};
+const webhookData = $('Merge Triggers').first().json.body || {};
+
+let agentData = null;
+try { agentData = $('Get Agent Focus').first()?.json; } catch(e) {}
+
+// COMBINAISON DES CONTEXTES (Identité + Formulaire + Agent) structurée en XML
+let persona = `<role>You are acting on behalf of this professional: ${profileData.job_title || 'Business Consultant'}.</role>\n`;
+
+if (formData.ai_config?.systemPrompt) { 
+  persona += `<global_directives>\n${formData.ai_config.systemPrompt}\n</global_directives>\n`; 
+}
+
+if (agentData && agentData.base_prompt) { 
+  persona += `<agent_mission>\n${agentData.base_prompt}\n</agent_mission>\n`; 
+} else {
+  persona += `<agent_mission>\nWrite a personalized strategic audit for a prospect to demonstrate your expertise.\n</agent_mission>\n`;
+}
+
+let website_url = leadData.website_url || '';
+if(!website_url && leadData.static_answers) { 
+  for (const [key, value] of Object.entries(leadData.static_answers)) { 
+    if (typeof value === 'string' && (value.includes('http') || value.includes('www.'))) { 
+      website_url = value; break; 
+    } 
+  } 
+}
+
+let sector = leadData.sector || 'B2B Services';
+if (leadData.static_answers?.secteur) sector = leadData.static_answers.secteur;
+
+const consultantLanguage = profileData.language || 'Français';
+const consultantJob = profileData.job_title || 'Consultant';
+
+return [{ 
+  json: { 
+    lead_id: leadData.id, 
+    lead_email: leadData.email || '', 
+    lead_company: leadData.company || 'Company', 
+    website_url, 
+    sector, 
+    static_answers: JSON.stringify(leadData.static_answers || {}), 
+    dynamic_answers: JSON.stringify(leadData.dynamic_answers || {}), 
+    action: webhookData.action, 
+    feedback: webhookData.feedback || '', 
+    consultant_language: consultantLanguage, 
+    consultant_job: consultantJob, 
+    persona, 
+    history: leadData.ai_generation_history || [] 
+  } 
+}];

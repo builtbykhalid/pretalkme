@@ -1,0 +1,394 @@
+{
+  "name": "Pretalk OS 4.0 - Phase D (Post-Signature & Ops)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "deal-won-ops",
+        "options": {}
+      },
+      "id": "6155f078-3310-4a90-97c3-6c581dc4188f",
+      "name": "Webhook Deal Won",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        1856,
+        912
+      ],
+      "webhookId": "phase-d-post-signature"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ !!$json.body.lead_id && !!$json.body.deal_id }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "4966c4c3-9d0d-4276-8ca8-a931c8b50619",
+      "name": "Validate Trigger",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        2064,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $json.body.lead_id }}",
+              "condition": "eq"
+            }
+          ]
+        }
+      },
+      "id": "be2cd0f8-b319-4655-9d32-7c3008efb7c6",
+      "name": "Get Lead (Supabase)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        800
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "deals",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Validate Trigger').first().json.body.deal_id }}",
+              "condition": "eq"
+            }
+          ]
+        }
+      },
+      "id": "f3660fbc-52c7-4ddf-8d02-dbe895071958",
+      "name": "Get Deal (Supabase)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        1008
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead   = $('Get Lead (Supabase)').first().json  || {};\nconst deal   = $('Get Deal (Supabase)').first().json   || {};\n\n// ── Lead data\nconst leadName    = lead.full_name || lead.name || 'the client';\nconst leadCompany = lead.company   || '';\nconst leadEmail   = lead.email     || '';\n\n// ── Consultant data\nconst webhookBody     = $('Webhook Deal Won').first().json.body || {};\nconst consultantName  = webhookBody.consultant_name  || 'the consultant';\nconst consultantEmail = webhookBody.consultant_email || '';\nconst locale          = webhookBody.locale || lead.locale || 'fr';\nconst LANG_MAP = { en:'English', fr:'French', es:'Spanish', ar:'Arabic', pt:'Portuguese', de:'German' };\nconst language = LANG_MAP[locale] || 'French';\n\n// ── Deal data\nconst serviceName = deal.service_name || deal.name || 'the contracted service';\nconst dealValue   = deal.amount || deal.price || '';\nconst dealNotes   = deal.notes || '';\n\n// ── Audit context — supports v2 (named blocks) and v1 (audit_blocks[]) ──\nconst auditJson = lead.ai_analysis_json || {};\nconst stripH = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim();\nlet auditContext = 'No prior audit available.';\n\nif (auditJson.version === 2 || auditJson.context_block) {\n  const parts = [];\n  if (auditJson.hero?.headline) parts.push(`[Score: ${auditJson.hero.score || '?'}/100] ${auditJson.hero.headline}`);\n  if (auditJson.context_block?.content) parts.push(`[Contexte] ${stripH(auditJson.context_block.content).substring(0, 400)}`);\n  if (Array.isArray(auditJson.solutions_block?.items)) {\n    parts.push('[Solutions recommandées] ' + auditJson.solutions_block.items.map(i => i.title).join(', '));\n  }\n  auditContext = parts.join('\\n') || auditContext;\n} else {\n  const auditBlocks = Array.isArray(auditJson.audit_blocks) ? auditJson.audit_blocks : [];\n  auditContext = auditBlocks\n    .filter(b => ['intro','recos','forts'].includes(b.id))\n    .map(b => `[${b.title}]: ${stripH(b.content).substring(0, 400)}`)\n    .join('\\n') || auditContext;\n}\n\n// ── Form answers (what the client originally filled in)\nconst formAnswers = JSON.stringify(lead.static_answers || lead.respondent_info || {});\n\nconst prompt =\n`<s>\nYou are an expert professional onboarding specialist and UX form designer.\nYour mission: design a precise, complete Kickoff form to collect EVERYTHING needed to deliver \"${serviceName}\" to a new client.\nThe form must feel professional, organized, and respectful of the client's time.\nReason internally before generating. Output language: ${language}. ALL user-visible text in ${language}.\n</s>\n\n<context>\nClient: ${leadName}${leadCompany ? ' (' + leadCompany + ')' : ''}\nContracted service: ${serviceName}${dealValue ? ' — ' + dealValue : ''}\nConsultant: ${consultantName}\n\nWhat we already know about the client (from their initial form):\n${formAnswers}\n\nKey insights from prior audit:\n${auditContext}\n\n${dealNotes ? 'Deal notes: ' + dealNotes : ''}\n</context>\n\n<contraintes_juridiques_contrat_fr>\nWhen relevant to the contracted service, ensure questions allow collecting data required to secure: scope clarity, timeline, pricing assumptions, responsibilities, confidentiality, and intellectual property transfer conditions.\nDo not provide legal advice text to the client.\n</contraintes_juridiques_contrat_fr>\n\n<protocole_raisonnement_structure>\nReason internally, then provide a concise visible rationale_summary for the client.\nThis summary must explain framing choices and next step, without exposing hidden chain-of-thought.\n</protocole_raisonnement_structure>\n\n<quality_gate>\nIf the input is LOW quality, do not repeat unknown fields; ask only for the minimum needed information.\nIf the input is MEDIUM quality, infer sparingly and flag assumptions in the rationale_summary.\nIf the input is HIGH quality, use the data fully but stay within the requested scope.\nNever ask for information already collected in the initial answers.\n</quality_gate>\n\n\n\n<kickoff_form_strategy>\nDesign the form in 3 logical sections:\n\nSECTION 1 — ACCESS & CREDENTIALS\nCollect all technical access, logins, and assets the consultant needs to start.\nExamples: website URL, CMS access, social media handles, Google Analytics, ad accounts, existing assets, etc.\nAdapt to the service: \"${serviceName}\" — only ask for what is ACTUALLY needed for this service.\n\nSECTION 2 — STRATEGIC BRIEF\nCollect the key strategic information to personalize the deliverables.\nExamples: target audience, key competitors, main goals, current challenges, brand voice, key messages, constraints.\nThese should deepen understanding of what was already collected — no repetition.\n\nSECTION 3 — OPERATIONAL LOGISTICS\nCollect working preferences and logistics.\nExamples: preferred communication channel, availability for calls, project timeline, urgent priorities, stakeholders involved.\n\nFIELD TYPES AVAILABLE: text | textarea | select | radio | checkbox | email | phone | url | number | date | file | section\n- \"section\" type MUST have sectionTitle and empty label (groups questions visually)\n- select/radio/checkbox MUST have options array (2-5 choices)\n- Use \"url\" for website and link inputs, \"date\" for deadline inputs, \"file\" for document uploads\n</kickoff_form_strategy>\n\n<rules>\n1. Generate 12-18 questions (sections not counted) — enough to be thorough, not overwhelming.\n2. NEVER ask for information already collected in the client's initial form answers.\n3. Every question must be directly necessary to deliver \"${serviceName}\" — no filler questions.\n4. form_title: MAX 6 words, professional and welcoming.\n5. form_description: MAX 40 words, explain why this form matters and set expectations.\n6. thank_you_title: MAX 4 words.\n7. thank_you_description: MAX 35 words, state exact next step and timeframe (e.g., \"We'll review your answers and reach out within 48 hours to kick off your project.\").\n8. Output ONLY valid raw JSON. No markdown. No preamble.\n</rules>\n\n<output_format>\n{\n  \"form_title\": \"string — max 6 words\",\n  \"form_description\": \"string — max 40 words\",\n  \"questions\": [\n    { \"type\": \"section\",   \"sectionTitle\": \"Section name\",              \"label\": \"\",                    \"required\": false },\n    { \"type\": \"url\",       \"label\": \"Website or relevant URL?\",         \"placeholder\": \"https://...\",   \"required\": true  },\n    { \"type\": \"text\",      \"label\": \"Short answer question?\",           \"placeholder\": \"Your answer...\", \"required\": true  },\n    { \"type\": \"textarea\",  \"label\": \"Detailed open question?\",          \"placeholder\": \"Describe...\",   \"required\": false },\n    { \"type\": \"select\",    \"label\": \"Choice question?\",                  \"options\": [\"A\", \"B\", \"C\"],    \"required\": true  },\n    { \"type\": \"file\",      \"label\": \"Upload relevant document?\",        \"placeholder\": \"\",              \"required\": false }\n  ],\n  \"thank_you_title\": \"string — max 4 words\",\n  \"thank_you_description\": \"string - max 35 words with next step and timeframe\",\n  \"rationale_summary\": {\n    \"framing_choice\": \"1 short paragraph\",\n    \"contractual_points_to_validate\": [\"point 1\", \"point 2\"],\n    \"next_step\": \"1 sentence\"\n  }\n}\n</output_format>`;\n\nreturn [{\n  json: {\n    generated_prompt: prompt,\n    lead_id: lead.id,\n    user_id: lead.user_id,\n    client_name: leadName,\n    consultant_name: consultantName,\n    service_name: serviceName,\n    language\n  }\n}];\n"
+      },
+      "id": "3bfd47b7-0407-432d-9e18-2c2d46c77585",
+      "name": "Prepare Kickoff Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2656,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.generated_prompt }}"
+      },
+      "id": "a8a2f6d9-10fd-44e3-9474-3c8c26bf204a",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2864,
+        912
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "484bafe4-88ab-4ea3-a8ed-04005488a065",
+      "name": "Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2864,
+        1104
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nlet content = response.text || '';\n\ncontent = content.replace(/<thinking>[\\s\\S]*?<\\/thinking>/gi, '').trim();\nconst fenceS = content.indexOf('```');\nif (fenceS !== -1) {\n  const fenceE = content.lastIndexOf('```');\n  if (fenceE > fenceS) {\n    const al = content.indexOf('\\n', fenceS);\n    content = content.substring(al > -1 ? al + 1 : fenceS + 3, fenceE).trim();\n  }\n}\n\nconst s = content.indexOf('{'); const e = content.lastIndexOf('}');\nlet parsed;\ntry {\n  parsed = JSON.parse(s !== -1 && e > s ? content.substring(s, e + 1) : content);\n} catch(err) {\n  throw new Error('KICKOFF_PARSE_FAILED: Gemini returned invalid JSON. Raw: ' + content.substring(0, 200));\n}\n\nif (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {\n  throw new Error('KICKOFF_SCHEMA_ERROR: questions array missing or empty');\n}\n\nconst payload = $('Prepare Kickoff Prompt').first().json;\nconst slug = 'kickoff-' + (payload.lead_id || 'x') + '-' + Date.now();\nconst rationaleSummary = (() => {\n  const rs = parsed.rationale_summary;\n  if (typeof rs === 'string') {\n    return { framing_choice: rs, contractual_points_to_validate: [], next_step: '' };\n  }\n  return {\n    framing_choice: rs?.framing_choice || '',\n    contractual_points_to_validate: Array.isArray(rs?.contractual_points_to_validate) ? rs.contractual_points_to_validate.slice(0, 4) : [],\n    next_step: rs?.next_step || ''\n  };\n})();\n\nreturn [{\n  json: {\n    user_id:         payload.user_id,\n    title:           parsed.form_title || 'Kickoff Onboarding',\n    slug:            slug,\n    status:          'published',\n    is_public:       true,\n    form_structure:  { ...parsed, rationale_summary: rationaleSummary },\n    consultant_name: payload.consultant_name || 'Consultant',\n    client_name:     payload.client_name,\n    lead_id:         payload.lead_id\n  }\n}];\n"
+      },
+      "id": "0d988ce9-ea2e-4d54-a603-969c30c0bd00",
+      "name": "Parse & Prepare Form",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3056,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "forms",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "user_id",
+              "fieldValue": "={{ $json.user_id }}"
+            },
+            {
+              "fieldId": "title",
+              "fieldValue": "={{ $json.title }}"
+            },
+            {
+              "fieldId": "slug",
+              "fieldValue": "={{ $json.slug }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "is_public",
+              "fieldValue": "={{ $json.is_public }}"
+            },
+            {
+              "fieldId": "form_structure",
+              "fieldValue": "={{ $json.form_structure }}"
+            },
+            {
+              "fieldId": "consultant_name",
+              "fieldValue": "={{ $json.consultant_name }}"
+            }
+          ]
+        }
+      },
+      "id": "30880baa-f065-4b22-be0c-0567bfa7df56",
+      "name": "Save Kickoff Form (Supabase)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3264,
+        912
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, lead_id: $('Parse & Prepare Form').first().json.lead_id, form_slug: $json.slug, form_title: $json.title, client_name: $json.client_name, rationale_summary: $json.form_structure.rationale_summary } }}"
+      },
+      "id": "05e35cd8-e63a-4bd3-bc3d-e40a1219408d",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3456,
+        912
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, error: 'MISSING_FIELDS', message: 'lead_id and deal_id are required.' } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "phase-d-error-001",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2064,
+        1100
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Deal Won": {
+      "main": [
+        [
+          {
+            "node": "Validate Trigger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get Lead (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Lead (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Get Deal (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Deal (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Prepare Kickoff Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Kickoff Prompt": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parse & Prepare Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Prepare Form": {
+      "main": [
+        [
+          {
+            "node": "Save Kickoff Form (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Kickoff Form (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "a338eb60-021f-4c35-aeec-6572eaacf60e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "uSaIZ7zydMZXnbOQ",
+  "tags": []
+}

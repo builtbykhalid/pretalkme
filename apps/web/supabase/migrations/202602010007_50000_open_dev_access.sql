@@ -1,0 +1,8 @@
+-- Migration: Disable RLS for remaining tables
+-- No auth required in dev
+
+ALTER TABLE profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE invoices DISABLE ROW LEVEL SECURITY;
+ALTER TABLE workflows DISABLE ROW LEVEL SECURITY;
+ALTER TABLE subscriptions DISABLE ROW LEVEL SECURITY;
+ALTER TABLE integrations DISABLE ROW LEVEL SECURITY;

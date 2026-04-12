@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Audit Data-Driven Evidence</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:{{accentColor}};--ink:#0f1726;--muted:#5a677d;--line:#d6dfec;--bg:#f4f8fd}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Trebuchet MS",Arial,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;page-break-after:always;position:relative;background:#fff;overflow:hidden}
+.page:last-child{page-break-after:auto}
+.cover{padding:.64in .52in;background:linear-gradient(145deg,#0f1f36,var(--ac));color:#fff}
+.k{font-size:7px;letter-spacing:.16em;text-transform:uppercase;color:var(--pc);margin-bottom:10px}
+h1{font-size:30px;line-height:1.07;margin-bottom:10px}
+.p{font-size:9.5px;line-height:1.65;opacity:.82;max-width:3.5in}
+.meta{margin-top:22px;font-size:8px;opacity:.78}
+.dashboard{padding:.2in .52in;background:var(--bg);border-bottom:1px solid var(--line)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.metric{background:#fff;border:1px solid var(--line);border-radius:8px;padding:8px}
+.metric small{display:block;font-size:6px;letter-spacing:.1em;text-transform:uppercase;color:#70819a}
+.metric strong{display:block;font-size:12px;color:var(--ac);margin-top:3px}
+.chart{margin-top:8px;border:1px solid var(--line);border-radius:8px;padding:8px;background:#fff;text-align:center}
+.chart img{width:2in}
+.content-page{display:flex;flex-direction:column}
+.hd{display:flex;justify-content:space-between;padding:10px .52in;border-bottom:2px solid var(--ac);font-size:7px;color:#74839a;letter-spacing:.12em;text-transform:uppercase}
+.page-body{padding:.2in .52in .15in;flex:1}
+.audit-section{margin-bottom:12px;page-break-inside:avoid;break-inside:avoid}
+.section-title{font-size:15px;color:var(--ac);margin-bottom:7px}
+.prose-content{font-size:9px;line-height:1.72;color:#2d3a50}
+.prose-content table{width:100%;border-collapse:collapse;margin:8px 0}
+.prose-content th,.prose-content td{border:1px solid var(--line);padding:5px;font-size:8px}
+.block-image{width:100%;border-radius:6px;margin:8px 0}
+.ft{border-top:1px solid var(--line);padding:8px .52in;display:flex;justify-content:space-between;font-size:7px;color:#7a879e}
+.closing{padding:.66in .52in;background:#111d31;color:#fff}
+.closing h2{font-size:24px;margin-bottom:8px}
+.closing p{font-size:9.5px;line-height:1.68;color:rgba(255,255,255,.8)}
+</style>
+</head>
+<body>
+<div class="page cover">
+  {{coverImageUrl}}
+  <div>{{logoTag}}</div>
+  <div class="k">Data-Driven Evidence</div>
+  <h1>{{coverTitle}}</h1>
+  <p class="p">{{coverSubtitle}}</p>
+  <div class="meta">{{clientName}} {{clientCompany}} - {{date}}</div>
+</div>
+<div class="page">
+  <div class="dashboard">
+    <div style="font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#6a7890">Snapshot de performance</div>
+    <div class="grid">
+      <div class="metric"><small>Maturite</small><strong>{{maturityScore}}</strong></div>
+      <div class="metric"><small>Priorite</small><strong>{{topPriority}}</strong></div>
+    </div>
+    <div class="chart"><img src="{{chartImageUrl}}" alt="Radar"></div>
+  </div>
+</div>
+{{auditBlocksHtml}}
+<div class="page closing">
+  {{closingImageUrl}}
+  <h2>Des decisions basees sur des preuves.</h2>
+  <p>{{closingCta}}</p>
+  <p style="margin-top:12px;font-size:8px;color:var(--pc)">{{consultantName}} - {{consultantEmail}}</p>
+</div>
+</body>
+</html>

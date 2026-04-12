@@ -1,0 +1,161 @@
+---
+import '../components/ReactApp/index.css';
+import ProfileWrapper from '../components/ReactApp/ProfileWrapper';
+import AstroProfile from '../components/AstroProfile.astro';
+
+const reservedUsernames = ['app', 'admin', 'login', 'onboarding', 'f', 'api', 'static', 'assets', 'home', 'dashboard', 'settings', 'agents', 'leads', 'forms'];
+
+const { username } = Astro.params;
+
+if (!username || reservedUsernames.includes(username.toLowerCase())) {
+  return Astro.redirect('/app');
+}
+
+// SSR Data Fetching for SEO
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://htvtmrejzzwekztekzev.supabase.co';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+
+if (!supabaseAnonKey) {
+  console.error('[SSR] Missing VITE_SUPABASE_ANON_KEY for profile page rendering');
+}
+
+const headers = {
+  'apikey': supabaseAnonKey,
+  'Authorization': `Bearer ${supabaseAnonKey}`,
+};
+
+let profileData = null;
+let forms = [];
+let services = [];
+let error = null;
+
+try {
+  console.log(`[SSR] Fetching data for user: ${username}`);
+  // 1. Fetch from public_forms_view
+  const viewUrl = `${supabaseUrl}/rest/v1/public_forms_view?select=*&username=ilike.${username}&order=created_at.desc`;
+  const viewRes = await fetch(viewUrl, { headers });
+  
+  if (viewRes.ok) {
+    const rows = await viewRes.json();
+    console.log(`[SSR] public_forms_view result count: ${rows.length}`);
+    if (rows.length > 0) {
+      const r = rows[0];
+      profileData = {
+        id: r.profile_id || r.user_id || r.id,
+        username: r.username,
+        first_name: r.first_name,
+        last_name: r.last_name,
+        avatar_url: r.avatar_url,
+        job_title: r.job_title,
+        bio: r.bio,
+        website: r.website,
+        social_networks: r.social_networks,
+        public_visibility: r.public_visibility,
+        page_config: r.page_config,
+        custom_links: r.custom_links,
+        booking_config: r.profile_booking_config || r.booking_config,
+        steps_config: r.profile_steps_config || r.steps_config,
+      };
+      forms = rows;
+    }
+  } else {
+    console.error(`[SSR] viewRes error: ${viewRes.status} ${await viewRes.text()}`);
+  }
+
+  // 2. Fallback to profiles if not found in view
+  if (!profileData) {
+    console.log(`[SSR] Falling back to profiles table for: ${username}`);
+    const profileUrl = `${supabaseUrl}/rest/v1/profiles?select=id,username,first_name,last_name,avatar_url,job_title,bio,website,social_networks,public_visibility,page_config,custom_links,booking_config,steps_config&username=ilike.${username}`;
+    const profileRes = await fetch(profileUrl, { headers });
+    if (profileRes.ok) {
+      const data = await profileRes.json();
+      console.log(`[SSR] profiles table result count: ${data.length}`);
+      if (data.length > 0) {
+        profileData = data[0];
+        // Also fetch forms
+        const formsUrl = `${supabaseUrl}/rest/v1/forms?select=*&user_id=eq.${profileData.id}&is_public=eq.true`;
+        const formsRes = await fetch(formsUrl, { headers });
+        if (formsRes.ok) forms = await formsRes.json();
+      }
+    } else {
+      console.error(`[SSR] profileRes error: ${profileRes.status} ${await profileRes.text()}`);
+    }
+  }
+
+  // 3. Fetch services
+  if (profileData?.id) {
+    const servicesUrl = `${supabaseUrl}/rest/v1/services?select=*&consultant_id=eq.${profileData.id}&is_active=eq.true&show_on_public_profile=eq.true&order=created_at.desc`;
+    const servicesRes = await fetch(servicesUrl, { headers });
+    if (servicesRes.ok) services = await servicesRes.json();
+    console.log(`[SSR] services result count: ${services.length}`);
+  }
+} catch (e) {
+  console.error("SSR Profile Fetch Error:", e);
+  error = "Une erreur est survenue";
+}
+
+if (!profileData) {
+  return Astro.redirect('/404');
+}
+
+const fullName = profileData ? [profileData.first_name, profileData.last_name].filter(Boolean).join(' ') : (username || 'Consultant');
+const ogTitle = profileData ? `${fullName} | Pretalk` : 'Profil introuvable | Pretalk';
+const ogDesc = profileData?.bio || profileData?.job_title || 'Découvrez mon profil sur Pretalk';
+const ogImage = profileData?.avatar_url || 'https://pretalk.me/default-og.png';
+const config = profileData?.page_config || { theme: 'dark', color: '#48D951', font: 'inter', layout: 'linktree' };
+const fontFamilyParam = config.font === 'playfair'
+  ? 'Playfair+Display:wght@400;500;600;700'
+  : config.font === 'space'
+    ? 'Space+Grotesk:wght@400;500;600;700'
+    : config.font === 'outfit'
+      ? 'Outfit:wght@400;500;600;700'
+      : 'Inter:wght@400;500;600;700';
+---
+
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href={`https://fonts.googleapis.com/css2?family=${fontFamilyParam}&display=swap`} rel="stylesheet" />
+    <title>{ogTitle}</title>
+    
+    <!-- Open Graph / LinkedIn / Facebook -->
+    <meta property="og:type" content="profile" />
+    <meta property="og:url" content={Astro.url.href} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDesc} />
+    <meta property="og:image" content={ogImage} />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url.href} />
+    <meta property="twitter:title" content={ogTitle} />
+    <meta property="twitter:description" content={ogDesc} />
+    <meta property="twitter:image" content={ogImage} />
+  </head>
+  <body class="bg-[#221A40]">
+    <div id="root">
+        <!-- Contenu statique pour les moteurs de recherche (SEO @bot) -->
+        <div class="sr-only" style="display: none;" aria-hidden="true">
+             <AstroProfile 
+                profile={profileData} 
+                forms={forms} 
+                services={services} 
+                username={username} 
+             />
+        </div>
+
+        <!-- React Island hydratation client-side -->
+        <ProfileWrapper 
+            client:only="react" 
+            initialProfile={profileData} 
+            initialForms={forms} 
+            initialServices={services} 
+        />
+    </div>
+  </body>
+</html>

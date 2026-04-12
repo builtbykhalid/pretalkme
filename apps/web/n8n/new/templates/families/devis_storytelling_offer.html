@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Devis Storytelling Offer</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:{{accentColor}};--bg:#fff9f2;--ink:#312940;--line:#eadfce}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:Georgia,serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:var(--ink)}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;background:var(--bg);position:relative;padding-bottom:.38in}
+.hero{padding:.34in .5in;background:linear-gradient(140deg,#2a1f3b,var(--ac));color:#fff}
+.hero h1{font-size:22px;line-height:1.16}
+.hero p{font-size:9px;opacity:.84;margin-top:6px}
+.meta{display:flex;justify-content:space-between;padding:.14in .5in;background:#f2eadf;border-bottom:1px solid var(--line);font-size:8px;color:#6e667d}
+.body{padding:.22in .5in}
+.row{display:flex;justify-content:space-between;gap:12px;margin-bottom:10px}
+.card{flex:1;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.card h3{font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:#7f768f;margin-bottom:5px}
+.card p{font-size:8.3px;line-height:1.6;color:#40384f}
+.table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.table th{background:#efe5d5;font-size:6.5px;text-transform:uppercase;letter-spacing:.1em;color:#6e667d;padding:7px;text-align:left}
+.table td{font-size:8px;padding:7px;border-top:1px solid var(--line)}
+.table td.r,.table th.r{text-align:right}
+.total{margin-top:10px;margin-left:auto;width:2.1in;background:#fff;border:1px solid var(--line);border-radius:8px;padding:9px}
+.total .r{display:flex;justify-content:space-between;font-size:8px;color:#4c455b;padding:3px 0}
+.total .g{border-top:1px solid var(--line);margin-top:5px;padding-top:7px;font-size:10px;font-weight:700;color:var(--ac)}
+.story{margin-top:12px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.story h4{font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:#7f768f;margin-bottom:4px}
+.story p{font-size:8.4px;line-height:1.65}
+.ft{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--line);padding:8px .5in;display:flex;justify-content:space-between;font-size:7px;color:#7f7892}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hero">{{logoTag}}<h1>Programme d'accompagnement</h1><p>Devis N° {{quoteNumber}} - {{date}}</p></div>
+  <div class="meta"><span>{{consultantName}} / {{companyName}}</span><span>Client: {{clientName}} {{clientCompany}}</span></div>
+  <div class="body">
+    <div class="row">
+      <div class="card"><h3>Objectif</h3><p>{{quoteSubject}}</p></div>
+      <div class="card"><h3>Validite</h3><p>Offre valable jusqu'au {{validUntil}}</p></div>
+    </div>
+    <table class="table"><thead><tr><th>Phase</th><th class="r">Montant</th></tr></thead><tbody>{{lineItemsHtml}}</tbody></table>
+    <div class="total"><div class="r"><span>Sous-total</span><span>{{subtotal}}</span></div><div class="r"><span>TVA</span><span>{{taxAmount}}</span></div><div class="r g"><span>Total</span><span>{{totalAmount}}</span></div></div>
+    <div class="story"><h4>Pourquoi ce format</h4><p>{{offerNarrative}}</p></div>
+    <div class="story"><h4>Conditions</h4><p>{{paymentTerms}}</p></div>
+  </div>
+  <div class="ft"><span>{{companyName}} - Offre confidentielle</span><span>{{consultantEmail}}</span></div>
+</div>
+</body>
+</html>

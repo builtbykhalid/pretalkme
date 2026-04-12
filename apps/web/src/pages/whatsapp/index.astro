@@ -1,0 +1,19 @@
+---
+// src/pages/whatsapp/index.astro
+import WhatsappAppContainer from '../../components/ReactApp/WhatsappAppContainer';
+import '../../components/ReactApp/index.css';
+import '../../components/ReactApp/i18n';
+---
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pretalkme — WhatsApp IA</title>
+  </head>
+  <body>
+    <div id="whatsapp-root">
+       <WhatsappAppContainer client:only="react" />
+    </div>
+  </body>
+</html>

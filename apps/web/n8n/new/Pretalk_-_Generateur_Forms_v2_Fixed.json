@@ -1,0 +1,436 @@
+{
+  "name": "Pretalk - Générateur de Formulaires IA (Forms)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-forms",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "be05e4d2-ca53-4d46-af7b-425fc4abeecf",
+      "name": "Webhook Trigger Form AI",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        2016,
+        544
+      ],
+      "webhookId": "generate-forms-webhook"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-prompt-present",
+              "leftValue": "={{ $json.body.prompt }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cond-user-id-present",
+              "leftValue": "={{ $json.body.user_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "cond-prompt-not-too-long",
+              "leftValue": "={{ $json.body.prompt.length }}",
+              "rightValue": 4000,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "82c221db-7c0a-411e-8904-db8a6f5f0eaf",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2240,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// FORM PROMPT BUILDER — n8n Code Node\n// Version 2.0 — Fixed: role conflict, thinking tag, lang fallback,\n//               brace escaping, question count & type rules\n// ============================================================\n\nconst input = $input.first().json.body || $input.first().json;\n\n// ────────────────────────────────────────────────────────────\n// 1. LANGUAGE MAPPING\n//    Fix: French was the silent fallback for ALL unknown locales.\n//    Now defaults to English. Add any locale you need.\n// ────────────────────────────────────────────────────────────\nconst LANGUAGE_MAP = {\n  en: 'English',  fr: 'French',   es: 'Spanish',\n  ar: 'Arabic',   pt: 'Portuguese', de: 'German',\n  it: 'Italian',  nl: 'Dutch',    tr: 'Turkish',\n  ru: 'Russian',  zh: 'Chinese',  ja: 'Japanese',\n  pl: 'Polish',   sv: 'Swedish',  ko: 'Korean'\n};\nconst language = LANGUAGE_MAP[input.locale] || 'English';\n\n// ────────────────────────────────────────────────────────────\n// 2. CONSULTANT PROFILE\n// ────────────────────────────────────────────────────────────\nconst consultant    = input.consultant_profile || {};\nconst consultantName    = consultant.full_name   || 'Consultant';\nconst consultantRole    = consultant.job_title   || 'Expert consultant';\nconst consultantBio     = consultant.bio         || '';\nconst consultantWebsite = consultant.website     || '';\nconst consultantSocial  = consultant.social_networks || {};\n\n// ────────────────────────────────────────────────────────────\n// 3. ACTIVE SERVICE\n// ────────────────────────────────────────────────────────────\nconst service          = input.active_service || null;\nconst serviceIsActive  = !!(service && service.name);\nconst serviceDescription  = serviceIsActive ? (service.description  || '') : '';\nconst serviceBasePrompt   = serviceIsActive ? (service.base_prompt  || '') : '';\n\n// ────────────────────────────────────────────────────────────\n// 4. SYSTEM BLOCK\n//    Fix: previously <system> and <persona> carried two competing\n//    identities. Now merged into one coherent authority block.\n//    The consultant persona is a TONE constraint, not an identity override.\n// ────────────────────────────────────────────────────────────\nlet systemContent;\n\nif (serviceIsActive && serviceBasePrompt) {\n  // When a service has its own base prompt, it becomes the core instruction.\n  // We append the CRO mission as a reinforcement layer, not a replacement.\n  systemContent =\n    serviceBasePrompt\n    + (serviceDescription ? `\\n\\nService context: ${serviceDescription}` : '')\n    + `\\n\\nCore mission: You are acting as a UX/CRO Form Architect in service of the above. `\n    + `Generate a high-converting lead qualification form that perfectly fits this service's audience.`;\n} else {\n  // Default: unified role that combines expertise + consultant identity\n  systemContent =\n    `You are an elite Lead Generation Form Architect and UX/CRO specialist. `\n    + `You operate on behalf of ${consultantName}, ${consultantRole}. `\n    + `Your sole mission is to design high-converting prospect qualification forms that: `\n    + `(1) reflect ${consultantName}'s domain expertise, `\n    + `(2) minimize cognitive friction for prospects, `\n    + `(3) collect the highest-quality data for lead scoring and follow-up.`;\n}\n\n// ────────────────────────────────────────────────────────────\n// 5. INSTRUCTIONS BLOCK\n//    Includes: UX architecture, question count rules,\n//    type selection rules, label writing rules, output format.\n//    Fix: removed <thinking> tag instruction that broke JSON parsing.\n//    The model now reasons internally before outputting JSON.\n// ────────────────────────────────────────────────────────────\nconst instructionsContent = `\nGenerate a complete, production-ready JSON form for lead generation and prospect qualification.\nReason internally about the best UX strategy for this specific domain, then output ONLY the JSON — no preamble, no explanation, no markdown fences.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nMANDATORY FORM ARCHITECTURE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nSECTION STRUCTURE — Always follow this 3-section chronological order:\n\n  ① DISCOVERY (first section)\n     Purpose: Engagement. Start with the prospect's situation and pain points.\n     Tone: Easy, empathetic, conversational. No commitment required.\n     Question types: radio, checkbox, select — never open text here.\n     Question count: 3 to 4 questions.\n\n  ② PROJECT DETAILS (second section)\n     Purpose: Qualification. Go deeper on need, timeline, budget, scope.\n     Tone: Direct but friendly. The prospect is already invested.\n     Question types: radio, select, checkbox, and exactly ONE textarea for a critical deep-dive.\n     Question count: 3 to 5 questions.\n\n  ③ PERSONAL INFORMATION (third and last section — ALWAYS at the end)\n     Purpose: Data capture. The prospect commits their contact details only after\n     they've engaged with the form (foot-in-the-door principle).\n     Question count: EXACTLY 3 to 4 questions in this order:\n       - Full Name (type: text, required: true)\n       - Professional Email (type: email, required: true)\n       - Phone Number (type: phone, required: true)\n       - Company / Organization (type: text, required: false) — include only if relevant to the domain\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nQUESTION COUNT RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  - Total questions (excluding section headers): minimum 9, maximum 13.\n  - Section ① Discovery: 3 to 4 questions.\n  - Section ② Project Details: 3 to 5 questions (including the single textarea).\n  - Section ③ Personal Info: exactly 3 to 4 questions.\n  - Never exceed 13 questions total — completion rate drops sharply beyond this.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nQUESTION TYPE SELECTION RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  Choose the type that creates the LEAST friction for the expected answer:\n\n  \"radio\"    → Use when: only ONE answer is valid, 2 to 4 options.\n               Best for: budget ranges, timelines, yes/no, priority levels.\n               Example: \"What is your current timeline?\" → [Under 1 month / 1–3 months / 3–6 months / Not sure]\n\n  \"checkbox\" → Use when: MULTIPLE answers are valid simultaneously, 2 to 5 options.\n               Best for: goals, challenges, services of interest, preferred channels.\n               Example: \"What are your main challenges?\" → [Lack of time / Budget constraints / No strategy / ...]\n\n  \"select\"   → Use when: only ONE answer is valid BUT there are 5 or more options (rendered as dropdown).\n               Best for: industry sector, country, company size, type of business.\n               Example: \"What industry are you in?\" → [Technology / Healthcare / Finance / Real estate / ...]\n\n  \"textarea\" → Use MAXIMUM ONE time per form, only in Section ②, for the single most important open question.\n               Best for: \"Describe your main challenge in a few words.\"\n               Keep the label under 8 words. Set required: false to reduce friction.\n\n  \"text\"     → ONLY for: Full Name, Company Name. Never for anything else.\n  \"email\"    → ONLY for: Email Address field.\n  \"phone\"    → ONLY for: Phone Number field.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nLABEL & OPTIONS WRITING RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  Labels:\n  - HARD LIMIT: maximum 8 words per label.\n  - Use conversational, first-person-friendly language.\n  - Start with \"What\", \"Which\", \"How\", \"Do you\", \"Are you\" — not with nouns.\n  - GOOD: \"What is your main goal right now?\"\n  - BAD:  \"Primary strategic objective (please specify)\"\n  - GOOD: \"How soon do you need results?\"\n  - BAD:  \"Expected implementation timeline\"\n\n  Options (for radio / checkbox / select):\n  - HARD LIMIT: maximum 5 words per option.\n  - Always add a catch-all when relevant: \"Not sure yet\", \"Other\", \"None of the above\".\n  - Options must be mutually exclusive for radio/select.\n  - Maximum 4 options for radio, maximum 5 for checkbox, maximum 10 for select.\n  - Never include an \"Other — please specify\" option without a follow-up text field.\n\n  Placeholder text:\n  - Only include for text, textarea, email, phone types.\n  - Keep under 6 words.\n  - Use it as a micro-instruction: \"e.g. John Smith\", \"your work email\", \"+1 (555) 000-0000\".\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nFORM TITLE & DESCRIPTION\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  form_title:       MAX 6 words. Action-oriented. Benefit-focused. No jargon.\n  form_description: MAX 30 words. Lead with the value for the prospect (what they GET).\n                    End with a clear expectation (\"takes 2 minutes\", \"free consultation\", etc.).\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nTHANK YOU PAGE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  thank_you_title:       MAX 4 words. Reassuring and positive. (e.g., \"Request Received!\", \"You're All Set\")\n  thank_you_description: MAX 30 words. State EXACTLY what happens next AND when.\n                         Example: \"I'll review your answers and reach out within 24 hours to schedule your free strategy call.\"\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEXECUTION RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  - ALL user-visible text MUST be generated in ${language}.\n  - If the form objective is vague, infer the domain and typical prospect pain points\n    from the consultant's role and bio. Tailor EVERY question to that professional context.\n  - A question that could belong on ANY form is a bad question. Each question should feel\n    specific to the consultant's domain.\n  - Output ONLY a valid raw JSON object. No preamble. No explanation. No markdown. Just JSON.\n`.trim();\n\n// ────────────────────────────────────────────────────────────\n// 6. OUTPUT FORMAT SCHEMA\n//    Fix: built as an array of strings and joined WITHOUT going\n//    through the brace-escaping step. This prevents the model\n//    from seeing {{ }} in the example and reproducing them.\n// ────────────────────────────────────────────────────────────\nconst outputFormatLines = [\n  '{',\n  '  \"form_title\": \"string (max 6 words)\",',\n  '  \"form_description\": \"string (max 30 words)\",',\n  '  \"questions\": [',\n  '',\n  '    // ── Section header example ──',\n  '    {',\n  '      \"type\": \"section\",',\n  '      \"sectionTitle\": \"Section Name\",',\n  '      \"label\": \"\",',\n  '      \"required\": false',\n  '    },',\n  '',\n  '    // ── Closed question examples ──',\n  '    {',\n  '      \"type\": \"radio\",',\n  '      \"label\": \"Question label (max 8 words)\",',\n  '      \"options\": [\"Option A\", \"Option B\", \"Not sure yet\"],',\n  '      \"required\": true',\n  '    },',\n  '    {',\n  '      \"type\": \"checkbox\",',\n  '      \"label\": \"Which of these apply to you?\",',\n  '      \"options\": [\"Goal 1\", \"Goal 2\", \"Goal 3\", \"Other\"],',\n  '      \"required\": false',\n  '    },',\n  '    {',\n  '      \"type\": \"select\",',\n  '      \"label\": \"What industry are you in?\",',\n  '      \"placeholder\": \"Select your industry\",',\n  '      \"options\": [\"Option 1\", \"Option 2\", \"Option 3\", \"Option 4\", \"Option 5\"],',\n  '      \"required\": true',\n  '    },',\n  '',\n  '    // ── Single textarea (Section 2 only, max 1 per form) ──',\n  '    {',\n  '      \"type\": \"textarea\",',\n  '      \"label\": \"Describe your main challenge briefly.\",',\n  '      \"placeholder\": \"A few words is enough\",',\n  '      \"required\": false',\n  '    },',\n  '',\n  '    // ── Personal Info section examples ──',\n  '    {',\n  '      \"type\": \"text\",',\n  '      \"label\": \"Your full name\",',\n  '      \"placeholder\": \"e.g. Jane Smith\",',\n  '      \"required\": true',\n  '    },',\n  '    {',\n  '      \"type\": \"email\",',\n  '      \"label\": \"Your professional email address\",',\n  '      \"placeholder\": \"you@company.com\",',\n  '      \"required\": true',\n  '    },',\n  '    {',\n  '      \"type\": \"phone\",',\n  '      \"label\": \"Your phone number\",',\n  '      \"placeholder\": \"+1 (555) 000-0000\",',\n  '      \"required\": true',\n  '    }',\n  '',\n  '  ],',\n  '  \"thank_you_title\": \"string (max 4 words)\",',\n  '  \"thank_you_description\": \"string (max 30 words)\",',\n  '  \"button_text\": \"Action button label (max 3 words, e.g. Start audit)\"',\n  '}'\n];\nconst outputFormatContent = outputFormatLines.join('\\n');\n\n// ────────────────────────────────────────────────────────────\n// 7. CONTEXT BLOCK\n// ────────────────────────────────────────────────────────────\nlet contextContent = `CONSULTANT PROFILE:\n  Name: ${consultantName}\n  Role: ${consultantRole}`;\n\nif (consultantBio)              contextContent += `\\n  Bio: ${consultantBio}`;\nif (consultantWebsite)          contextContent += `\\n  Website: ${consultantWebsite}`;\nif (consultantSocial?.linkedin) contextContent += `\\n  LinkedIn: ${consultantSocial.linkedin}`;\n\ncontextContent += `\\n\\n=== FORM REQUEST ===`;\ncontextContent += `\\nObjective: ${input.prompt || 'Generate a prospect qualification and lead generation form'}`;\n\nif (input.form_title?.trim())\n  contextContent += `\\nPreferred Title (use as creative reference, not verbatim): ${input.form_title}`;\n\nif (input.form_description?.trim())\n  contextContent += `\\nPreferred Description (use as reference): ${input.form_description}`;\n\nif (Array.isArray(input.sections) && input.sections.length > 0) {\n  contextContent += '\\n\\nClient-suggested Sections (adapt to UX architecture above):';\n  input.sections.forEach(s => {\n    contextContent += `\\n  - ${s.name}`;\n    if (s.description) contextContent += `: ${s.description}`;\n  });\n}\n\n// ────────────────────────────────────────────────────────────\n// 8. ASSEMBLY & N8N SAFETY\n//    Fix: brace-escaping is applied ONLY to dynamic user-input\n//    parts (systemContent and contextContent), which may contain\n//    { } characters from user-provided bios, prompts, etc.\n//\n//    instructionsContent and outputFormatContent are static and\n//    controlled — escaping them would corrupt the JSON schema\n//    example shown to the model.\n// ────────────────────────────────────────────────────────────\nconst safeSystem  = systemContent.replace(/\\{/g, '{{').replace(/\\}/g, '}}');\nconst safeContext = contextContent.replace(/\\{/g, '{{').replace(/\\}/g, '}}');\n\nconst generatedPrompt =\n  `<system>\\n${safeSystem}\\n</system>\\n\\n` +\n  `<instructions>\\n${instructionsContent}\\n</instructions>\\n\\n` +\n  `<output_format>\\n${outputFormatContent}\\n</output_format>\\n\\n` +\n  `<context>\\n${safeContext}\\n</context>`;\n\nreturn [{\n  json: {\n    ...input,\n    generated_prompt: generatedPrompt\n  }\n}];"
+      },
+      "id": "95e8302a-0adb-47c7-b5ea-33e5441c1845",
+      "name": "Prepare Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2464,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.generated_prompt }}"
+      },
+      "id": "2844e801-1aed-4995-8f17-2b9534ca145d",
+      "name": "Gemini LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2704,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "let text = $input.first().json.text || '';\ntext = text.replace(/<thinking>[\\s\\S]*?<\\/thinking>/gi, '');\ntext = text.replace(/^```json\\n?/, '').replace(/\\n?```$/, '');\ntext = text.replace(/^```\\n?/, '').replace(/\\n?```$/, '');\ntext = text.trim();\n\n// FIX: Extract JSON between first { and last } for robustness\nconst start = text.indexOf('{');\nconst end   = text.lastIndexOf('}');\nif (start !== -1 && end > start) {\n  text = text.substring(start, end + 1);\n}\n\nlet parsed = {};\ntry {\n  parsed = JSON.parse(text);\n} catch (e) {\n  // FIX: throw instead of returning a fake form.\n  // Previously, a parse error returned { form_title: 'Error Form', questions: [] }\n  // which then got saved to Supabase as a real form — silent data corruption.\n  throw new Error('JSON_PARSE_ERROR: Gemini returned invalid JSON. Raw output: ' + text.substring(0, 200));\n}\n\n// FIX: Validate that the parsed object has the minimum required structure\nif (!parsed.form_title || !Array.isArray(parsed.questions) || parsed.questions.length === 0) {\n  throw new Error('JSON_SCHEMA_ERROR: Generated form is missing required fields (form_title or questions).');\n}\n\nconst questions = Array.isArray(parsed.questions) ? parsed.questions : [];\nconst sections = questions.filter(q => q.type === 'section');\n\nreturn [{\n  json: {\n    form_title: parsed.form_title || 'Untitled Form',\n    form_description: parsed.form_description || '',\n    questions: questions,\n    sections: sections,\n    thank_you_title: parsed.thank_you_title || 'Thank you!',\n    thank_you_description: parsed.thank_you_description || '',\n    button_text: parsed.button_text || 'Envoyer',\n    generated: true\n  }\n}];"
+      },
+      "id": "30de64f2-a3ed-4677-b57e-5cfed74204b2",
+      "name": "Parse & Validate JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2944,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const payload = $('Webhook Trigger Form AI').first().json.body;\nconst parsed = $input.first().json;\nconst consultant = payload.consultant_profile || {};\n\n// Generate slug from form_title (lowercase, replace spaces with dashes)\nconst generateSlug = (title) => {\n  return (title || 'form').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');\n};\n\nconst slug = generateSlug(parsed.form_title) + '_' + Date.now();\n\nreturn [{\n  json: {\n    user_id: payload.user_id,\n    title: parsed.form_title || 'Untitled Form',\n    slug: slug,\n    status: 'published',\n    form_structure: {\n      form_title: parsed.form_title || 'Untitled Form',\n      form_description: parsed.form_description || '',\n      questions: parsed.questions || [],\n      sections: parsed.sections || [],\n      thank_you_title: parsed.thank_you_title || 'Merci!',\n      thank_you_description: parsed.thank_you_description || '',\n      button_text: parsed.button_text || 'Envoyer'\n    },\n    ai_config: payload.ai_config || {},\n    consultant_email: payload.user_email || 'contact@pretalk.me',\n    consultant_name: consultant.full_name || payload.user_name || 'Consultant',\n    consultant_role: consultant.job_title || 'Consultant Expert',\n    domain: consultant.website || null,\n    views_count: 0,\n    leads_count: 0\n  }\n}];"
+      },
+      "id": "df4fafdf-1614-49e3-a851-6ab08ebcd874",
+      "name": "Prepare Data for DB",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3104,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "forms",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "user_id",
+              "fieldValue": "={{ $json.user_id }}"
+            },
+            {
+              "fieldId": "title",
+              "fieldValue": "={{ $json.title }}"
+            },
+            {
+              "fieldId": "slug",
+              "fieldValue": "={{ $json.slug }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "form_structure",
+              "fieldValue": "={{ $json.form_structure }}"
+            },
+            {
+              "fieldId": "ai_config",
+              "fieldValue": "={{ $json.ai_config }}"
+            },
+            {
+              "fieldId": "consultant_email",
+              "fieldValue": "={{ $json.consultant_email }}"
+            },
+            {
+              "fieldId": "consultant_name",
+              "fieldValue": "={{ $json.consultant_name }}"
+            },
+            {
+              "fieldId": "consultant_role",
+              "fieldValue": "={{ $json.consultant_role }}"
+            },
+            {
+              "fieldId": "domain",
+              "fieldValue": "={{ $json.domain }}"
+            },
+            {
+              "fieldId": "views_count",
+              "fieldValue": "={{ $json.views_count }}"
+            },
+            {
+              "fieldId": "leads_count",
+              "fieldValue": "={{ $json.leads_count }}"
+            }
+          ]
+        }
+      },
+      "id": "fd0301b6-3a5a-40e1-9204-8d957f628249",
+      "name": "Save Form to Supabase",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        3264,
+        544
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, form_id: $('Save Form to Supabase').first().json?.id || null, form_slug: $json.slug, form_title: $json.title, timestamp: new Date().toISOString(), message: 'Formulaire créé avec succès' } }}",
+        "options": {
+          "responseCode": 200,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "22740e3a-68b3-4ddb-81f0-5bf85f04a518",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3424,
+        544
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, error: 'VALIDATION_ERROR', missing_fields: ['prompt (required)', 'user_id (required)'], constraints: ['prompt must be non-empty', 'user_id must be non-empty', 'prompt must be under 4000 characters'], message: 'Required fields missing or invalid.' } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "455692c1-b08a-41ca-9540-c5882fd70654",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2240,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2704,
+        752
+      ],
+      "id": "9ed319a5-5b66-4d4c-af50-bed122dc63d0",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, error: 'DATABASE_ERROR', message: 'Failed to save form. Please try again.', user_id: $('Webhook Trigger Form AI').first().json.body.user_id } }}",
+        "options": {
+          "responseCode": 500,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1b2c3d4-0000-4000-8000-db-error-resp",
+      "name": "DB Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        3424,
+        752
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Trigger Form AI": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Prepare Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parse & Validate JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Validate JSON": {
+      "main": [
+        [
+          {
+            "node": "Prepare Data for DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Data for DB": {
+      "main": [
+        [
+          {
+            "node": "Save Form to Supabase",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Form to Supabase": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DB Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "5129b1c1-c7a0-4c0c-8dde-5fb3bd585f3a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "k2zRkxHna9YtHs8U",
+  "tags": [
+    {
+      "updatedAt": "2026-02-17T11:32:16.540Z",
+      "createdAt": "2026-02-17T11:32:16.540Z",
+      "id": "AkMeZasep98HCHxU",
+      "name": "Pretalk"
+    },
+    {
+      "updatedAt": "2026-03-03T13:48:57.267Z",
+      "createdAt": "2026-03-03T13:48:57.267Z",
+      "id": "afjPKj9wkIDcD8x8",
+      "name": "Forms"
+    }
+  ]
+}

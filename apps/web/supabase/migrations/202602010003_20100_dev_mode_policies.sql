@@ -1,0 +1,8 @@
+-- Migration: DEV MODE - Disable all RLS
+-- Simple and clear: no RLS policies block anything
+
+ALTER TABLE forms DISABLE ROW LEVEL SECURITY;
+ALTER TABLE leads DISABLE ROW LEVEL SECURITY;
+ALTER TABLE agents_library DISABLE ROW LEVEL SECURITY;
+ALTER TABLE user_installed_agents DISABLE ROW LEVEL SECURITY;
+ALTER TABLE agent_requests DISABLE ROW LEVEL SECURITY;

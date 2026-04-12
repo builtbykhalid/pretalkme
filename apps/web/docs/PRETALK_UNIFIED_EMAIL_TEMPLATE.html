@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{params.email_title}}</title>
+</head>
+<body style="margin:0;padding:0;background:#f4f7fb;font-family:Arial,sans-serif;color:#0f172a;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7fb;padding:24px 12px;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="640" cellpadding="0" cellspacing="0" style="max-width:640px;background:#ffffff;border-radius:16px;overflow:hidden;border:1px solid #dbe4f0;">
+          <tr>
+            <td style="background:linear-gradient(135deg,#0D3B66,#1782C5);padding:24px 28px;">
+              <img src="{{params.brand_logo_url}}" alt="Pretalk" width="132" style="display:block;height:auto;border:0;" />
+            </td>
+          </tr>
+
+          <tr>
+            <td style="padding:28px;">
+              <p style="margin:0 0 8px 0;color:#475569;font-size:13px;">{{params.email_kicker}}</p>
+              <h1 style="margin:0 0 14px 0;font-size:28px;line-height:1.2;color:#0D3B66;">{{params.email_title}}</h1>
+              <p style="margin:0 0 18px 0;font-size:15px;line-height:1.65;color:#334155;">{{params.email_intro}}</p>
+
+              <div style="background:#f8fbff;border:1px solid #dbeafe;border-radius:12px;padding:16px 18px;margin:0 0 18px 0;">
+                <p style="margin:0;font-size:14px;line-height:1.6;color:#1e293b;">{{params.custom_body}}</p>
+              </div>
+
+              <table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0 8px 0;">
+                <tr>
+                  <td style="border-radius:10px;background:#0D3B66;">
+                    <a href="{{params.primary_action_url}}" target="_blank" style="display:inline-block;padding:12px 18px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:700;">{{params.primary_action_label}}</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin:10px 0 0 0;font-size:12px;color:#64748b;">{{params.email_footer_note}}</p>
+            </td>
+          </tr>
+
+          <tr>
+            <td style="border-top:1px solid #e2e8f0;padding:16px 28px;background:#f8fafc;">
+              <p style="margin:0;font-size:12px;color:#64748b;">Pretalk • {{params.brand_tagline}}</p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

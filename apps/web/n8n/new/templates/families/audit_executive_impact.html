@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  font-family:'Poppins',system-ui,sans-serif;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+  background:#fff;
+  color:#0A1628;
+}
+@page{size:A4;margin:0}
+
+/* ── TOKENS ─────────────────────────────────── */
+:root{
+  --p:{{primaryColor}};
+  --a:{{accentColor}};
+  --ink:#0A1628;
+  --muted:#64748B;
+  --border:#E2E8F0;
+  --card:#F8FAFC;
+  --deep:#070E1C;
+  --deep2:#0D1829;
+}
+
+/* ════════════════════════════════════════════
+   COVER — 297mm exact, uses real HTML table
+════════════════════════════════════════════ */
+.cover-page{
+  width:210mm;
+  height:297mm;
+  background:var(--deep);
+  color:#fff;
+  page-break-after:always;
+  overflow:hidden;
+  position:relative;
+}
+/* Decorative radial glows */
+.glow-tr{
+  position:absolute;top:-60px;right:-60px;
+  width:280px;height:280px;
+  background:radial-gradient(circle,var(--p) 0%,transparent 65%);
+  opacity:.10;pointer-events:none;
+}
+.glow-bl{
+  position:absolute;bottom:50px;left:-50px;
+  width:220px;height:220px;
+  background:radial-gradient(circle,#1a3060 0%,transparent 65%);
+  opacity:.30;pointer-events:none;
+}
+
+/* Full-height table */
+.cover-table{
+  width:100%;height:297mm;
+  border-collapse:collapse;
+}
+
+/* — Top bar — */
+.cover-topbar{height:60px;padding:0 40px;vertical-align:middle}
+.cover-topbar-inner{display:flex;justify-content:space-between;align-items:center}
+.cover-conf{
+  font-size:7px;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.35);
+  border:1px solid rgba(255,255,255,.15);
+  padding:4px 10px;border-radius:20px;
+}
+.logo-text{font-size:13px;font-weight:700;color:#fff;letter-spacing:.02em}
+.logo-img{max-height:26px;object-fit:contain}
+
+/* — Body — */
+.cover-body{padding:0 40px;vertical-align:middle}
+
+/* Inner 2-col table */
+.cover-split{width:100%;border-collapse:collapse;table-layout:fixed}
+.split-left{width:58%;padding:40px 24px 40px 0;vertical-align:middle}
+.split-right{width:42%;padding:40px 0 40px 0;vertical-align:middle}
+
+.cover-tag{
+  display:inline-block;
+  background:var(--p);color:var(--deep);
+  font-size:7px;font-weight:800;
+  letter-spacing:.16em;text-transform:uppercase;
+  padding:5px 12px;border-radius:3px;
+  margin-bottom:22px;
+}
+.cover-h1{
+  font-size:32px;font-weight:800;
+  line-height:1.1;letter-spacing:-.025em;
+  color:#fff;margin-bottom:16px;
+}
+.cover-h1 em{color:var(--p);font-style:normal}
+.cover-divider{width:36px;height:3px;background:var(--p);border-radius:2px;margin-bottom:16px}
+.cover-sub{
+  font-size:10px;font-weight:400;
+  color:rgba(255,255,255,.5);line-height:1.72;
+}
+
+/* Chapters card */
+.chapters-card{
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;
+  overflow:hidden;
+}
+.chapters-label{
+  font-size:6.5px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--p);font-weight:700;
+  padding:14px 16px 10px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+.ch-item{
+  display:table;width:100%;
+  border-bottom:1px solid rgba(255,255,255,.06);
+  padding:9px 16px;
+}
+.ch-item:last-child{border-bottom:none}
+.ch-n{
+  display:table-cell;
+  font-size:9px;font-weight:700;color:var(--p);
+  width:22px;vertical-align:top;padding-top:1px;
+}
+.ch-t{
+  display:table-cell;
+  font-size:8.5px;font-weight:500;
+  color:rgba(255,255,255,.72);line-height:1.4;
+}
+
+/* — Footer bar — */
+.cover-footer{
+  height:64px;
+  background:rgba(255,255,255,.04);
+  border-top:1px solid rgba(255,255,255,.08);
+  padding:0 40px;
+  vertical-align:middle;
+}
+.footer-inner{display:flex;justify-content:space-between;align-items:center}
+.footer-label{
+  font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--p);font-weight:700;margin-bottom:3px;
+}
+.footer-name{font-size:15px;font-weight:700;color:#fff}
+.footer-co{font-size:9px;color:rgba(255,255,255,.4);margin-top:1px}
+.footer-date{font-size:8px;color:rgba(255,255,255,.3);text-align:right}
+
+/* ════════════════════════════════════════════
+   CONTENT — flowing, page-break-before
+════════════════════════════════════════════ */
+.content-wrap{page-break-before:always;padding:28px 36px 20px}
+
+/* Running header */
+.rh{
+  width:100%;border-collapse:collapse;
+  border-bottom:2px solid var(--p);
+  padding-bottom:10px;margin-bottom:24px;
+}
+.rh-left{vertical-align:middle;padding-bottom:10px}
+.rh-right{vertical-align:middle;text-align:right;padding-bottom:10px}
+.rh-company{
+  font-size:7px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);font-weight:600;
+}
+
+/* ── Hero block (block 01) ───────────────── */
+.hero{
+  background:var(--deep);color:#fff;
+  border-radius:12px;
+  padding:28px 28px 26px;
+  margin-bottom:14px;
+  position:relative;overflow:hidden;
+  break-inside:avoid;page-break-inside:avoid;
+}
+.hero::before{
+  content:'';
+  position:absolute;top:-30px;right:-30px;
+  width:160px;height:160px;
+  background:radial-gradient(circle,var(--p),transparent 65%);
+  opacity:.12;
+}
+.hero-watermark{
+  position:absolute;bottom:-12px;right:20px;
+  font-size:80px;font-weight:900;letter-spacing:-.04em;
+  color:var(--p);opacity:.07;line-height:1;
+  pointer-events:none;user-select:none;
+}
+.hero-zone{
+  display:inline-block;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.14);
+  border-radius:20px;
+  font-size:7px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--p);font-weight:700;
+  padding:3px 10px;margin-bottom:12px;
+}
+.hero-title{
+  font-size:18px;font-weight:700;
+  color:#fff;line-height:1.2;letter-spacing:-.015em;
+  margin-bottom:14px;max-width:88%;
+}
+.hero-prose{
+  font-size:9.3px;line-height:1.82;
+  color:rgba(255,255,255,.68);
+}
+.hero-prose p{margin-bottom:8px}
+.hero-prose p:last-child{margin-bottom:0}
+.hero-prose strong{color:#fff;font-weight:600}
+/* Lists in hero = pill row */
+.hero-prose ul{
+  list-style:none;padding:0;
+  display:table;width:100%;
+  border-collapse:separate;border-spacing:0 5px;
+  margin:8px 0;
+}
+.hero-prose ul li{
+  display:table-row;
+}
+.hero-prose ul li::before{
+  display:table-cell;
+  content:'→';
+  color:var(--p);font-weight:700;font-size:9px;
+  padding:5px 8px 5px 0;
+  width:18px;vertical-align:top;
+  padding-top:7px;
+}
+.hero-li-text{
+  display:table-cell;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:6px;
+  padding:6px 10px;
+  font-size:8.5px;color:rgba(255,255,255,.78);
+  font-weight:500;line-height:1.45;
+}
+
+/* ── Grid of blocks ────────────────────────
+   Uses REAL HTML table for guaranteed 2-col
+─────────────────────────────────────────── */
+.blocks-table{
+  width:100%;
+  border-collapse:separate;
+  border-spacing:10px 10px;
+  margin:0 -10px;
+  width:calc(100% + 20px);
+}
+.block-td{
+  vertical-align:top;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-top:3px solid var(--p);
+  border-radius:10px;
+  padding:18px;
+  break-inside:avoid;page-break-inside:avoid;
+}
+.block-td-full{
+  vertical-align:top;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-top:3px solid var(--p);
+  border-radius:10px;
+  padding:18px;
+  break-inside:avoid;page-break-inside:avoid;
+}
+.card-zone{
+  font-size:6.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--p);font-weight:700;margin-bottom:4px;
+}
+.card-header-row{
+  display:table;width:100%;
+  margin-bottom:12px;
+}
+.card-num-cell{
+  display:table-cell;
+  font-size:10px;font-weight:800;color:var(--p);
+  width:26px;vertical-align:top;padding-top:2px;
+}
+.card-title-cell{
+  display:table-cell;
+  font-size:13px;font-weight:700;
+  color:var(--ink);line-height:1.25;letter-spacing:-.01em;
+  vertical-align:top;
+}
+.card-prose{
+  font-size:8.8px;line-height:1.78;color:#374151;
+}
+.card-prose p{margin-bottom:7px}
+.card-prose p:last-child{margin-bottom:0}
+.card-prose strong{color:var(--ink);font-weight:600}
+.card-prose ul{
+  list-style:none;padding:0;
+  display:table;width:100%;
+  border-collapse:separate;border-spacing:0 5px;
+  margin:6px 0;
+}
+.card-prose ul li{display:table-row}
+.card-prose ul li::before{
+  display:table-cell;
+  content:'→';
+  color:var(--p);font-weight:700;font-size:9px;
+  padding-right:8px;
+  width:14px;vertical-align:top;padding-top:7px;
+}
+.card-li-text{
+  display:table-cell;
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:5px;
+  padding:6px 10px;
+  font-size:8.3px;color:#374151;line-height:1.5;
+}
+.card-prose ol{padding-left:16px;margin:6px 0}
+.card-prose ol li{font-size:8.3px;color:#374151;line-height:1.6;margin-bottom:4px}
+.card-prose ol li::marker{color:var(--p);font-weight:700}
+.card-prose h2,.card-prose h3{font-weight:700;color:var(--ink);margin:8px 0 4px}
+.card-prose h2{font-size:11px}
+.card-prose h3{font-size:10px}
+.card-img{width:100%;max-height:120px;object-fit:cover;border-radius:6px;margin-top:10px}
+
+/* ── CTA block (last) ─────────────────────── */
+.cta-block{
+  background:linear-gradient(135deg,var(--deep) 0%,var(--deep2) 100%);
+  color:#fff;
+  border-radius:10px;
+  padding:0;
+  margin-top:12px;
+  break-inside:avoid;page-break-inside:avoid;
+  overflow:hidden;
+}
+.cta-table{width:100%;border-collapse:collapse}
+.cta-left{
+  padding:22px 20px 22px 24px;
+  vertical-align:middle;
+  width:72%;
+}
+.cta-right{
+  padding:22px 24px 22px 0;
+  vertical-align:middle;
+  width:28%;
+  text-align:right;
+}
+.cta-tag{
+  font-size:7px;font-weight:700;color:var(--p);
+  letter-spacing:.14em;text-transform:uppercase;
+  margin-bottom:8px;
+}
+.cta-title{
+  font-size:16px;font-weight:700;color:#fff;
+  line-height:1.2;margin-bottom:10px;
+}
+.cta-prose{font-size:8.8px;color:rgba(255,255,255,.6);line-height:1.72}
+.cta-prose p{margin-bottom:6px}
+.cta-prose p:last-child{margin-bottom:0}
+.cta-prose ul{list-style:none;padding:0;margin:6px 0}
+.cta-prose ul li{
+  font-size:8.3px;color:rgba(255,255,255,.65);
+  padding:3px 0 3px 14px;
+  position:relative;line-height:1.5;
+}
+.cta-prose ul li::before{
+  content:'→';position:absolute;left:0;
+  color:var(--p);font-size:8px;font-weight:700;
+}
+.cta-num{
+  font-size:60px;font-weight:900;
+  color:var(--p);opacity:.12;
+  letter-spacing:-.04em;line-height:1;
+}
+
+/* ════════════════════════════════════════════
+   CLOSING — 297mm exact
+════════════════════════════════════════════ */
+.closing-page{
+  width:210mm;
+  height:297mm;
+  background:var(--deep);color:#fff;
+  page-break-before:always;
+  position:relative;overflow:hidden;
+}
+.closing-glow-br{
+  position:absolute;bottom:-60px;right:-60px;
+  width:300px;height:300px;
+  background:radial-gradient(circle,var(--p),transparent 65%);
+  opacity:.09;
+}
+.closing-glow-tl{
+  position:absolute;top:-50px;left:-50px;
+  width:240px;height:240px;
+  background:radial-gradient(circle,#1a3060,transparent 65%);
+  opacity:.25;
+}
+/* Table for reliable vertical centering */
+.closing-table{width:100%;height:297mm;border-collapse:collapse}
+.closing-cell{
+  padding:0 50px;
+  vertical-align:middle;
+}
+.closing-step{
+  font-size:7px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--p);font-weight:700;
+  display:table;width:200px;
+  margin-bottom:28px;
+}
+.closing-step-text{display:table-cell;vertical-align:middle;padding:0 10px}
+.closing-step-line{
+  display:table-cell;
+  width:24px;height:1px;
+  border-top:1px solid var(--p);
+  opacity:.4;vertical-align:middle;
+}
+.closing-h2{
+  font-size:32px;font-weight:800;
+  line-height:1.1;letter-spacing:-.025em;
+  color:#fff;max-width:380px;
+  margin-bottom:14px;
+}
+.closing-h2 em{color:var(--p);font-style:normal}
+.closing-cta-text{
+  font-size:10.5px;line-height:1.75;
+  color:rgba(255,255,255,.5);
+  max-width:300px;margin-bottom:42px;
+}
+.consultant-card{
+  background:rgba(255,255,255,.055);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;
+  padding:16px 20px;
+  display:inline-block;min-width:200px;
+}
+.consultant-card img{height:26px;object-fit:contain;margin-bottom:8px;border-radius:3px;display:block}
+.con-name{font-size:13px;font-weight:700;color:#fff}
+.con-title{font-size:8px;color:rgba(255,255,255,.4);margin-top:2px}
+.con-email{font-size:8.5px;color:var(--p);margin-top:4px}
+.con-link a{color:var(--p);font-size:8px;text-decoration:none}
+</style>
+</head>
+<body>
+
+<!-- ════ COVER ════════════════════════════════ -->
+<div class="cover-page">
+  <div class="glow-tr"></div>
+  <div class="glow-bl"></div>
+  <table class="cover-table">
+    <tr>
+      <td class="cover-topbar">
+        <div class="cover-topbar-inner">
+          <div>{{logoTag}}</div>
+          <div class="cover-conf">Rapport Confidentiel</div>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td class="cover-body">
+        <table class="cover-split">
+          <tr>
+            <td class="split-left">
+              <div class="cover-tag">Rapport Stratégique Personnalisé</div>
+              <h1 class="cover-h1">{{coverTitle}}</h1>
+              <div class="cover-divider"></div>
+              <p class="cover-sub">{{coverSubtitle}}</p>
+            </td>
+            <td class="split-right">
+              <div class="chapters-card">
+                <div class="chapters-label">Chapitres</div>
+                {{coverChaptersHtml}}
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td class="cover-footer">
+        <div class="footer-inner">
+          <div>
+            <div class="footer-label">Préparé pour</div>
+            <div class="footer-name">{{clientName}}</div>
+            <div class="footer-co">{{clientCompany}}</div>
+          </div>
+          <div class="footer-date">{{date}}</div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+<!-- ════ CONTENT ══════════════════════════════ -->
+<div class="content-wrap">
+  <table class="rh"><tr>
+    <td class="rh-left"><span class="rh-company">{{companyName}} — Analyse Stratégique</span></td>
+    <td class="rh-right">{{logoTag}}</td>
+  </tr></table>
+  {{auditBlocksHtml}}
+</div>
+
+<!-- ════ CLOSING ══════════════════════════════ -->
+<div class="closing-page">
+  <div class="closing-glow-br"></div>
+  <div class="closing-glow-tl"></div>
+  <table class="closing-table">
+    <tr>
+      <td class="closing-cell">
+        <table class="closing-step">
+          <tr>
+            <td class="closing-step-line"></td>
+            <td class="closing-step-text">Prochaine étape</td>
+            <td class="closing-step-line"></td>
+          </tr>
+        </table>
+        <h2 class="closing-h2">Décision claire.<br><em>Exécution rapide.</em></h2>
+        <p class="closing-cta-text">{{closingCta}}</p>
+        <div class="consultant-card">
+          {{consultantAvatar}}
+          <div class="con-name">{{consultantName}}</div>
+          <div class="con-title">{{consultantTitle}}</div>
+          <div class="con-email">{{consultantEmail}}</div>
+          <div class="con-link">{{consultantProfileLink}}</div>
+        </div>
+      </td>
+    </tr>
+  </table>
+</div>
+
+</body>
+</html>

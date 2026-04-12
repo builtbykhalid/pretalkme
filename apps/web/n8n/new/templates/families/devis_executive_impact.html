@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Devis Executive Impact</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:{{accentColor}};--line:#d8dfeb;--muted:#5f6878}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;position:relative;background:#fff;overflow:hidden}
+.hd{background:linear-gradient(135deg,var(--ac),#132744);color:#fff;padding:.3in .5in}
+.hd-top{display:flex;justify-content:space-between;align-items:flex-end}
+.badge{font-size:7px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--pc);color:#042011;padding:4px 8px}
+.number{font-size:19px;font-weight:700}
+.meta{font-size:8px;opacity:.85;margin-top:6px}
+.parties{display:flex;gap:12px;padding:.16in .5in;background:#f5f7fb;border-bottom:1px solid var(--line)}
+.parties>div{flex:1}
+.lbl{font-size:6px;letter-spacing:.14em;text-transform:uppercase;color:#607089;margin-bottom:4px}
+.val{font-size:8.2px;color:#31394a;line-height:1.55}
+.body{padding:.22in .5in}
+.subject{font-size:9px;color:#273046;font-weight:700;margin-bottom:10px}
+.tbl{width:100%;border-collapse:collapse;margin-bottom:12px}
+.tbl th{background:var(--ac);color:#dff0ff;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;padding:7px;text-align:left}
+.tbl td{font-size:8px;padding:7px;border-bottom:1px solid var(--line);color:#2f3748;vertical-align:top}
+.tbl td.r,.tbl th.r{text-align:right}
+.tot{width:2.2in;margin-left:auto;border:1px solid var(--line);border-radius:6px;padding:8px}
+.row{display:flex;justify-content:space-between;padding:3px 0;font-size:8px;color:#3a4354}
+.row.total{margin-top:6px;padding-top:7px;border-top:1px solid var(--line);font-size:10px;font-weight:700;color:var(--ac)}
+.boxes{display:flex;gap:10px;margin-top:10px}
+.box{flex:1;background:#f7f9fc;border:1px solid var(--line);border-radius:6px;padding:8px}
+.box h4{font-size:7px;letter-spacing:.1em;text-transform:uppercase;color:#607089;margin-bottom:4px}
+.box p{font-size:8px;color:#3a4354;line-height:1.5}
+.sign{display:flex;gap:10px;margin-top:14px}
+.sign .cell{flex:1;border-top:1px dashed #bfc8d8;padding-top:6px;font-size:7px;color:var(--muted)}
+.ft{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--line);display:flex;justify-content:space-between;padding:8px .5in;font-size:7px;color:#7a8498}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="hd">
+    <div class="hd-top">
+      <div>{{logoTag}}</div>
+      <div class="number">N° {{quoteNumber}}</div>
+    </div>
+    <div class="badge">Executive Impact Quote</div>
+    <div class="meta">Date: {{date}} - Valable jusqu'au {{validUntil}}</div>
+  </div>
+
+  <div class="parties">
+    <div><div class="lbl">Emetteur</div><div class="val">{{consultantName}}<br>{{companyName}}<br>{{consultantEmail}}</div></div>
+    <div><div class="lbl">Client</div><div class="val">{{clientName}}<br>{{clientCompany}}<br>{{clientEmail}}</div></div>
+  </div>
+
+  <div class="body">
+    <div class="subject">Objet: {{quoteSubject}}</div>
+    <table class="tbl">
+      <thead><tr><th>Livrable</th><th class="r">P.U</th><th class="r">Qt</th><th class="r">Total</th></tr></thead>
+      <tbody>{{lineItemsHtml}}</tbody>
+    </table>
+
+    <div class="tot">
+      <div class="row"><span>Sous-total</span><span>{{subtotal}}</span></div>
+      <div class="row"><span>TVA</span><span>{{taxAmount}}</span></div>
+      <div class="row total"><span>Total TTC</span><span>{{totalAmount}}</span></div>
+    </div>
+
+    <div class="boxes">
+      <div class="box"><h4>Impact attendu</h4><p>{{impactSummary}}</p></div>
+      <div class="box"><h4>Conditions</h4><p>{{paymentTerms}}</p></div>
+    </div>
+
+    <div class="sign">
+      <div class="cell">Le Prestataire - {{consultantName}}</div>
+      <div class="cell">Le Client - {{clientName}}</div>
+    </div>
+  </div>
+
+  <div class="ft"><span>{{companyName}} - Devis confidentiel</span><span>01</span></div>
+</div>
+</body>
+</html>

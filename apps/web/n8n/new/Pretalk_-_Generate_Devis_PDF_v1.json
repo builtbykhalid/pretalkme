@@ -1,0 +1,285 @@
+{
+  "name": "Pretalk - Generate Devis PDF v1",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-devis",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "1a2b3c4d-0001-0001-0001-000000000001",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "generate-devis-webhook"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.body.lead_id || $json.lead_id }}"
+            }
+          ]
+        }
+      },
+      "id": "1a2b3c4d-0002-0002-0002-000000000002",
+      "name": "Get Lead Data",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [460, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "profiles",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Webhook Trigger').item.json.body.user_id || $('Webhook Trigger').item.json.user_id }}"
+            }
+          ]
+        }
+      },
+      "id": "1a2b3c4d-0003-0003-0003-000000000003",
+      "name": "Get Consultant Profile",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [680, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "pdf_templates",
+        "returnAll": false,
+        "limit": 1,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "template_type",
+              "condition": "eq",
+              "keyValue": "devis"
+            },
+            {
+              "keyName": "family_key",
+              "condition": "eq",
+              "keyValue": "={{ $('Get Consultant Profile').item.json.default_template_family || 'executive' }}"
+            },
+            {
+              "keyName": "is_active",
+              "condition": "eq",
+              "keyValue": "true"
+            }
+          ]
+        }
+      },
+      "id": "1a2b3c4d-0004-0004-0004-000000000004",
+      "name": "Get Devis Template",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [900, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// ─── INPUTS ───────────────────────────────────────────────────────────────\nconst raw = $('Webhook Trigger').item.json;\nconst body = raw.body || raw;\n\nconst lead    = $('Get Lead Data').item.json;\nconst profile = $('Get Consultant Profile').item.json;\n\nlet templateHtml = null;\ntry {\n  const t = $('Get Devis Template').item.json;\n  if (t && t.html_css_content && t.html_css_content.length > 50) {\n    templateHtml = t.html_css_content;\n  }\n} catch (e) { templateHtml = null; }\n\n// ─── BRANDING ─────────────────────────────────────────────────────────────\nconst branding       = profile.branding_config || {};\nconst primaryColor   = branding.primaryColor  || '#48D951';\nconst accentColor    = branding.accentColor   || '#221A40';\nconst logo           = profile.company_logo_url || '';\nconst companyName    = profile.company_name   || 'Pretalk';\nconst consultantName = profile.full_name      || body.consultant_name || companyName;\nconst consultantEmail= profile.contact_email  || profile.email || body.consultant_email || '';\nconst consultantPhone= profile.phone          || '';\nconst consultantAddr = profile.address        || '';\nconst logoTag = logo\n  ? '<img src=\"' + logo + '\" class=\"doc-logo\" alt=\"' + companyName + '\" />'\n  : '<span class=\"doc-brand-name\">' + companyName + '</span>';\n\n// ─── CLIENT INFO ──────────────────────────────────────────────────────────\nconst ri           = lead.respondent_info || {};\nconst clientName   = ri.name   || ri.firstName || 'Client';\nconst clientCompany= ri.company || ri.organization || '';\nconst clientEmail  = ri.email  || '';\nconst clientPhone  = ri.phone  || '';\nconst clientAddr   = ri.address || '';\n\n// ─── QUOTE PAYLOAD ────────────────────────────────────────────────────────\nconst qtp = body.quote_template_payload || {};\nconst quoteItems    = qtp.quote_items || body.offer?.deliverables?.map((d, i) => ({\n  description: d.name || d,\n  quantity: 1,\n  unit: 'forfait',\n  unitPrice: (body.offer?.price_ht || 0) / Math.max((body.offer?.deliverables?.length || 1), 1),\n})) || [];\n\nconst quoteNumber   = qtp.quote_number  || ('DEV-' + Date.now().toString().slice(-6));\nconst quoteSubject  = qtp.quote_subject || body.offer?.name || 'Proposition commerciale';\nconst validUntil    = qtp.valid_until   || new Date(Date.now() + 30 * 86400000).toLocaleDateString('fr-FR');\nconst paymentTerms  = qtp.payment_terms || '30 jours net';\nconst deliveryDelay = qtp.delivery_delay|| body.offer?.timeline || '4 à 6 semaines';\nconst quoteNotes    = qtp.notes         || '';\nconst locale        = body.locale       || 'fr';\n\nconst today = new Date().toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });\n\n// ─── FINANCIAL CALCULATIONS ───────────────────────────────────────────────\nconst tvaRate = qtp.tva_rate ?? 20;\nlet subtotalHT = 0;\nconst quoteItemsRows = quoteItems.map((item) => {\n  const qty   = Number(item.quantity || 1);\n  const price = Number(item.unit_price ?? item.unitPrice ?? 0);\n  const total = qty * price;\n  subtotalHT += total;\n  const fmtPrice = price.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €';\n  const fmtTotal = total.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €';\n  return (\n    '<tr>' +\n    '<td class=\"item-desc\">' + (item.description || item.name || '') + '</td>' +\n    '<td class=\"item-qty\">'  + qty   + '</td>' +\n    '<td class=\"item-unit\">' + (item.unit || 'forfait') + '</td>' +\n    '<td class=\"item-price\">' + fmtPrice + '</td>' +\n    '<td class=\"item-total\">' + fmtTotal + '</td>' +\n    '</tr>'\n  );\n}).join('');\n\nconst tvaMontant = subtotalHT * (tvaRate / 100);\nconst totalTTC   = subtotalHT + tvaMontant;\n\nconst fmtSubtotal = subtotalHT.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €';\nconst fmtTVA      = tvaMontant.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €';\nconst fmtTotal    = totalTTC.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + ' €';\n\n// ─── REPLACE TEMPLATE VARS ────────────────────────────────────────────────\nconst rep = (html, key, val) =>\n  html.replace(new RegExp('\\\\{\\\\{\\\\s*' + key + '\\\\s*\\\\}\\\\}', 'g'), String(val || ''));\n\nlet finalHtml;\n\nif (templateHtml) {\n  finalHtml = templateHtml;\n  finalHtml = rep(finalHtml, 'primaryColor',   primaryColor);\n  finalHtml = rep(finalHtml, 'accentColor',    accentColor);\n  finalHtml = rep(finalHtml, 'logoTag',        logoTag);\n  finalHtml = rep(finalHtml, 'companyName',    companyName);\n  finalHtml = rep(finalHtml, 'consultantName', consultantName);\n  finalHtml = rep(finalHtml, 'consultantEmail',consultantEmail);\n  finalHtml = rep(finalHtml, 'consultantPhone',consultantPhone);\n  finalHtml = rep(finalHtml, 'consultantAddress', consultantAddr);\n  finalHtml = rep(finalHtml, 'clientName',    clientName);\n  finalHtml = rep(finalHtml, 'clientCompany', clientCompany);\n  finalHtml = rep(finalHtml, 'clientEmail',   clientEmail);\n  finalHtml = rep(finalHtml, 'clientPhone',   clientPhone);\n  finalHtml = rep(finalHtml, 'clientAddress', clientAddr);\n  finalHtml = rep(finalHtml, 'date',          today);\n  finalHtml = rep(finalHtml, 'quoteNumber',   quoteNumber);\n  finalHtml = rep(finalHtml, 'quoteSubject',  quoteSubject);\n  finalHtml = rep(finalHtml, 'validUntil',    validUntil);\n  finalHtml = rep(finalHtml, 'paymentTerms',  paymentTerms);\n  finalHtml = rep(finalHtml, 'deliveryDelay', deliveryDelay);\n  finalHtml = rep(finalHtml, 'quoteNotes',    quoteNotes);\n  finalHtml = rep(finalHtml, 'quoteItemsRows',quoteItemsRows);\n  finalHtml = rep(finalHtml, 'subtotalHT',    fmtSubtotal);\n  finalHtml = rep(finalHtml, 'tvaRate',       tvaRate + '%');\n  finalHtml = rep(finalHtml, 'tvaMontant',    fmtTVA);\n  finalHtml = rep(finalHtml, 'totalTTC',      fmtTotal);\n\n  // Inject CSS vars override for colors\n  const cssOverride = '<style>:root{--pc:' + primaryColor + ' !important;--ac:' + accentColor + ' !important;}</style>';\n  finalHtml = finalHtml.includes('</head>')\n    ? finalHtml.replace('</head>', cssOverride + '</head>')\n    : cssOverride + finalHtml;\n\n} else {\n  // ─── FALLBACK MINIMAL HTML ──────────────────────────────────────────────\n  finalHtml = `<!DOCTYPE html>\n<html lang=\"fr\">\n<head>\n<meta charset=\"UTF-8\">\n<style>\n:root{--pc:${primaryColor};--ac:${accentColor};}\n*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}\nhtml,body{font-family:Arial,sans-serif;font-size:10px;color:#1a1a2e;background:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}\n@page{size:5.8in 8.3in;margin:0}\n.page{width:5.8in;min-height:8.3in;page-break-after:always;overflow:hidden;padding:0.5in}\n.page:last-child{page-break-after:auto}\n.hd{background:var(--ac);color:#fff;padding:0.3in 0.5in;margin:-0.5in -0.5in 0.3in;display:flex;justify-content:space-between;align-items:flex-end}\n.hd-brand{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em}\n.hd-doc{text-align:right}\n.hd-num{font-size:18px;font-weight:900}\n.hd-date{font-size:8px;opacity:0.55;margin-top:2px}\n.badge{background:var(--pc);color:var(--ac);font-size:7px;font-weight:900;letter-spacing:0.15em;text-transform:uppercase;padding:3px 8px;border-radius:2px;display:inline-block;margin-bottom:6px}\n.parties{display:flex;gap:0.4in;margin:0.2in 0 0.3in}\n.party{flex:1}\n.party-label{font-size:7px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--pc);border-bottom:1.5px solid var(--pc);padding-bottom:4px;margin-bottom:8px}\n.party-name{font-size:10px;font-weight:700;color:var(--ac)}\n.party-info{font-size:8px;color:#6b7280;margin-top:2px;line-height:1.5}\n.subject{background:#f5f4fb;border-left:3px solid var(--pc);padding:10px 14px;border-radius:0 4px 4px 0;margin:0.2in 0}\n.subject-label{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--pc)}\n.subject-text{font-size:11px;font-weight:700;color:var(--ac);margin-top:3px}\ntable{width:100%;border-collapse:collapse;margin:0.15in 0}\nth{background:var(--ac);color:#fff;font-size:7.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;padding:7px 8px;text-align:left}\ntd{font-size:8.5px;padding:7px 8px;border-bottom:1px solid #e5e7eb}\ntr:nth-child(even) td{background:#f9fafb}\n.item-qty,.item-price,.item-total,.item-unit{text-align:right}\n.totals{width:45%;margin-left:auto;margin-top:0.1in}\n.tot-row{display:flex;justify-content:space-between;padding:5px 0;font-size:9px;border-bottom:1px solid #e5e7eb}\n.tot-row.final{background:var(--ac);color:#fff;padding:8px 10px;font-weight:900;font-size:10px;border-radius:2px;margin-top:4px}\n.footer-info{margin-top:0.2in;display:flex;gap:0.3in}\n.footer-block{flex:1;font-size:8px;color:#6b7280}\n.footer-block strong{display:block;font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--ac);margin-bottom:4px}\n</style>\n</head>\n<body>\n<div class=\"page\">\n  <div class=\"hd\">\n    <div class=\"hd-brand\">${companyName}</div>\n    <div class=\"hd-doc\">\n      <div class=\"badge\">Devis</div>\n      <div class=\"hd-num\">${quoteNumber}</div>\n      <div class=\"hd-date\">${today}</div>\n    </div>\n  </div>\n  <div class=\"parties\">\n    <div class=\"party\">\n      <div class=\"party-label\">Émetteur</div>\n      <div class=\"party-name\">${consultantName}</div>\n      <div class=\"party-info\">${consultantEmail}${consultantPhone ? '<br>' + consultantPhone : ''}${consultantAddr ? '<br>' + consultantAddr : ''}</div>\n    </div>\n    <div class=\"party\">\n      <div class=\"party-label\">Destinataire</div>\n      <div class=\"party-name\">${clientName}${clientCompany ? ' — ' + clientCompany : ''}</div>\n      <div class=\"party-info\">${clientEmail}${clientPhone ? '<br>' + clientPhone : ''}${clientAddr ? '<br>' + clientAddr : ''}</div>\n    </div>\n  </div>\n  <div class=\"subject\">\n    <div class=\"subject-label\">Objet du devis</div>\n    <div class=\"subject-text\">${quoteSubject}</div>\n  </div>\n  <table>\n    <thead><tr>\n      <th style=\"width:45%\">Prestation</th>\n      <th style=\"width:10%;text-align:right\">Qté</th>\n      <th style=\"width:12%;text-align:right\">Unité</th>\n      <th style=\"width:15%;text-align:right\">P.U. HT</th>\n      <th style=\"width:18%;text-align:right\">Total HT</th>\n    </tr></thead>\n    <tbody>${quoteItemsRows || '<tr><td colspan=\"5\" style=\"text-align:center;color:#9ca3af\">Aucune prestation renseignée</td></tr>'}</tbody>\n  </table>\n  <div class=\"totals\">\n    <div class=\"tot-row\"><span>Sous-total HT</span><span>${fmtSubtotal}</span></div>\n    <div class=\"tot-row\"><span>TVA (${tvaRate}%)</span><span>${fmtTVA}</span></div>\n    <div class=\"tot-row final\"><span>TOTAL TTC</span><span>${fmtTotal}</span></div>\n  </div>\n  <div class=\"footer-info\">\n    <div class=\"footer-block\"><strong>Validité</strong>${validUntil}</div>\n    <div class=\"footer-block\"><strong>Délai de réalisation</strong>${deliveryDelay}</div>\n    <div class=\"footer-block\"><strong>Conditions de paiement</strong>${paymentTerms}</div>\n  </div>\n  ${quoteNotes ? '<div style=\"margin-top:0.15in;font-size:8px;color:#6b7280;border-top:1px solid #e5e7eb;padding-top:10px\"><strong>Notes :</strong> ' + quoteNotes + '</div>' : ''}\n</div>\n</body></html>`;\n}\n\nconst htmlBuffer = Buffer.from(finalHtml, 'utf8');\nconst binaryData = await this.helpers.prepareBinaryData(htmlBuffer, 'index.html', 'text/html');\n\nconst filename = 'devis_' + lead.id + '_' + Date.now() + '.pdf';\n\nreturn [{\n  json: {\n    filename,\n    lead_id: lead.id,\n    user_id: body.user_id,\n    quote_template_payload: qtp,\n    offer_index: body.offer_index ?? 0,\n    waitDelay: '2s',\n  },\n  binary: { html_file: binaryData },\n}];"
+      },
+      "id": "1a2b3c4d-0005-0005-0005-000000000005",
+      "name": "Build Devis HTML",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://pdf.pretalk.me/forms/chromium/convert/html",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "files",
+              "inputDataFieldName": "html_file"
+            },
+            { "name": "paperWidth",  "value": "5.8" },
+            { "name": "paperHeight", "value": "8.3" },
+            { "name": "marginTop",    "value": "0" },
+            { "name": "marginBottom", "value": "0" },
+            { "name": "marginLeft",   "value": "0" },
+            { "name": "marginRight",  "value": "0" },
+            { "name": "waitDelay",    "value": "={{ $('Build Devis HTML').item.json.waitDelay }}" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1a2b3c4d-0006-0006-0006-000000000006",
+      "name": "Gotenberg PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1340, 300],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "gHpHkNb3KcLhvM4r",
+          "name": "Unnamed credential"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://htvtmrejzzwekztekzev.supabase.co/storage/v1/object/pdf-documents/devis/' + $('Build Devis HTML').item.json.lead_id + '/' + $('Build Devis HTML').item.json.filename }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh0dnRtcmVqenp3ZWt6dGVremV2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDEyMzA0NSwiZXhwIjoyMDg1Njk5MDQ1fQ.tULXG3YNnsS_LeHkanNrZW7eOYzKEV99A73wuTMqF6s"
+            },
+            { "name": "Content-Type", "value": "application/pdf" },
+            { "name": "x-upsert",     "value": "true" }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "data",
+        "options": {}
+      },
+      "id": "1a2b3c4d-0007-0007-0007-000000000007",
+      "name": "Upload PDF to Supabase Storage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1560, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const supabaseUrl = 'https://htvtmrejzzwekztekzev.supabase.co';\nconst leadId   = $('Build Devis HTML').item.json.lead_id;\nconst filename = $('Build Devis HTML').item.json.filename;\nconst qtp      = $('Build Devis HTML').item.json.quote_template_payload;\nconst publicUrl = supabaseUrl + '/storage/v1/object/public/pdf-documents/devis/' + leadId + '/' + filename;\nreturn { pdf_url: publicUrl, lead_id: leadId, filename, quote_template_payload: qtp };"
+      },
+      "id": "1a2b3c4d-0008-0008-0008-000000000008",
+      "name": "Build PDF Public URL",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1780, 300]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.lead_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "devis_pdf",
+              "fieldValue": "={{ $json.pdf_url }}"
+            }
+          ]
+        }
+      },
+      "id": "1a2b3c4d-0009-0009-0009-000000000009",
+      "name": "Update Lead Devis PDF",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [2000, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, pdf_url: $('Build PDF Public URL').item.json.pdf_url, lead_id: $('Build PDF Public URL').item.json.lead_id, quote_template_payload: $('Build PDF Public URL').item.json.quote_template_payload }) }}",
+        "options": {}
+      },
+      "id": "1a2b3c4d-0010-0010-0010-000000000010",
+      "name": "Webhook Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [2220, 300]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Trigger": {
+      "main": [[{ "node": "Get Lead Data", "type": "main", "index": 0 }]]
+    },
+    "Get Lead Data": {
+      "main": [[{ "node": "Get Consultant Profile", "type": "main", "index": 0 }]]
+    },
+    "Get Consultant Profile": {
+      "main": [[{ "node": "Get Devis Template", "type": "main", "index": 0 }]]
+    },
+    "Get Devis Template": {
+      "main": [[{ "node": "Build Devis HTML", "type": "main", "index": 0 }]]
+    },
+    "Build Devis HTML": {
+      "main": [[{ "node": "Gotenberg PDF", "type": "main", "index": 0 }]]
+    },
+    "Gotenberg PDF": {
+      "main": [[{ "node": "Upload PDF to Supabase Storage", "type": "main", "index": 0 }]]
+    },
+    "Upload PDF to Supabase Storage": {
+      "main": [[{ "node": "Build PDF Public URL", "type": "main", "index": 0 }]]
+    },
+    "Build PDF Public URL": {
+      "main": [[{ "node": "Update Lead Devis PDF", "type": "main", "index": 0 }]]
+    },
+    "Update Lead Devis PDF": {
+      "main": [[{ "node": "Webhook Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "devis-pdf-v1-0000-000000000001",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "pretalk-generate-devis-v1",
+  "tags": []
+}

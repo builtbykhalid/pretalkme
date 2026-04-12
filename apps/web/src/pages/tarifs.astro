@@ -1,0 +1,21 @@
+---
+import '../components/ReactApp/index.css';
+import Header from '../components/Landing/Header';
+import Footer from '../components/Landing/Footer';
+import { AuthProvider } from '../components/ReactApp/context/AuthContext';
+import { AppProvider } from '../components/ReactApp/context/AppContext';
+import PricingPage from '../components/ReactApp/pages/PricingPage';
+---
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tarifs & Comparatif - PreTalk</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-white text-black selection:bg-primary-500 selection:text-white">
+    <PricingPage client:load />
+  </body>
+</html>

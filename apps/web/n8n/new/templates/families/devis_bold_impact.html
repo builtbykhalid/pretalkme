@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Devis Bold Impact</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:#0A0A0A;--line:#dfdfdf;--stripe:#f8f8f8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#111}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;background:#fff;position:relative;padding-bottom:.38in}
+.header{background:#0A0A0A;color:#fff;padding:.25in .5in}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.title{font-family:"Arial Black",Arial,sans-serif;font-size:24px;line-height:1.1;margin-top:8px}
+.meta{font-size:8px;color:#cdcdcd;line-height:1.5}
+.parties{display:flex;gap:12px;padding:.14in .5in;border-bottom:1px solid var(--line)}
+.parties .c{flex:1}
+.lbl{font-size:6px;letter-spacing:.14em;text-transform:uppercase;color:#6b7280;margin-bottom:4px}
+.txt{font-size:8px;line-height:1.55;color:#1f2937}
+.body{padding:.2in .5in}
+.subject{font-size:9px;font-weight:700;margin-bottom:10px}
+.table{width:100%;border-collapse:collapse;margin-bottom:10px}
+.table th{background:#0A0A0A;color:#fff;font-size:6.5px;letter-spacing:.1em;text-transform:uppercase;text-align:left;padding:8px}
+.table td{font-size:8px;padding:8px;border-bottom:1px solid var(--line)}
+.table tr:nth-child(even) td{background:var(--stripe)}
+.table .r{text-align:right}
+.totals{width:2.2in;margin-left:auto;border:1px solid var(--line);border-radius:6px;padding:8px}
+.tr{display:flex;justify-content:space-between;padding:3px 0;font-size:8px}
+.tr.t{margin-top:5px;padding-top:6px;border-top:1px solid var(--line);font-size:10px;font-family:"Arial Black",Arial,sans-serif;color:var(--pc,#1782C5)}
+.panel{margin-top:10px;border-left:4px solid var(--pc,#1782C5);padding:8px 10px;background:#fafafa}
+.panel h4{font-size:7px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px}
+.panel p{font-size:8px;line-height:1.6;color:#1f2937}
+.sign{display:flex;gap:10px;margin-top:12px}
+.sign .c{flex:1;border-top:1px dashed #c3ccd9;padding-top:6px;font-size:7px;color:#4b5563}
+.footer{position:absolute;left:0;right:0;bottom:0;background:#0A0A0A;color:#fff;padding:8px .5in;display:flex;justify-content:space-between;align-items:center;font-size:7px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="row">
+      <div>{{logoTag}}</div>
+      <div class="meta">{{companyName}}<br>Devis N° {{quoteNumber}} - {{date}}</div>
+    </div>
+    <div class="title">Devis Bold Impact</div>
+  </div>
+
+  <div class="parties">
+    <div class="c"><div class="lbl">Consultant</div><div class="txt">{{consultantName}}<br>{{companyName}}<br>{{consultantEmail}}</div></div>
+    <div class="c"><div class="lbl">Client</div><div class="txt">{{clientName}}<br>{{clientCompany}}<br>{{clientEmail}}</div></div>
+  </div>
+
+  <div class="body">
+    <div class="subject">Objet: {{quoteSubject}}</div>
+    <table class="table">
+      <thead><tr><th>Livrable</th><th class="r">P.U</th><th class="r">Qt</th><th class="r">Total</th></tr></thead>
+      <tbody>{{lineItemsHtml}}</tbody>
+    </table>
+
+    <div class="totals">
+      <div class="tr"><span>Sous-total</span><span>{{subtotal}}</span></div>
+      <div class="tr"><span>TVA</span><span>{{taxAmount}}</span></div>
+      <div class="tr t"><span>Total TTC</span><span>{{totalAmount}}</span></div>
+    </div>
+
+    <div class="panel"><h4>Impact attendu</h4><p>{{impactSummary}}</p></div>
+    <div class="panel"><h4>Paiement</h4><p>{{paymentTerms}}</p></div>
+
+    <div class="sign">
+      <div class="c">Le Prestataire - {{consultantName}}</div>
+      <div class="c">Le Client - {{clientName}}</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Propulse par PreTalk</span>
+    <span>{{pretalkLogo}}</span>
+  </div>
+</div>
+</body>
+</html>

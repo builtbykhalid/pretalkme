@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Audit Minimal Clarity</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:{{accentColor}};--pretalk-blue:#1782C5;--pretalk-navy:#0D3B66;--ink:#111;--muted:#4b5563;--line:#d9e0e8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:Arial,sans-serif;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;background:#fff;position:relative;page-break-after:always}
+.page:last-child{page-break-after:auto}
+.watermark{position:absolute;right:.35in;bottom:.35in;font-size:28px;font-family:Georgia,"Times New Roman",serif;color:rgba(13,59,102,.06);letter-spacing:.06em;z-index:0}
+.header{padding:.26in .5in .12in;border-bottom:1px solid var(--line);position:relative;z-index:1}
+.header .top{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.header .company{font-size:9px;color:var(--muted);text-align:right}
+.header .line{margin-top:8px;height:2px;background:var(--pc, var(--pretalk-blue))}
+.cover{padding:.5in .5in .25in;position:relative;z-index:1}
+.badge{display:inline-block;font-size:7px;letter-spacing:.12em;text-transform:uppercase;color:var(--ac, var(--pretalk-navy));font-weight:700}
+.cover h1{font-size:30px;line-height:1.1;color:var(--ac, var(--pretalk-navy));margin:10px 0 8px}
+.cover p{font-size:10px;line-height:1.65;color:#1f2937}
+.meta{margin-top:14px;font-size:8px;color:#6b7280}
+.content{padding:.16in .5in .2in;position:relative;z-index:1}
+.section{margin-bottom:12px;page-break-inside:avoid;break-inside:avoid}
+.section h3{font-size:14px;color:var(--ac, var(--pretalk-navy));margin-bottom:6px}
+.section .txt{font-size:9px;line-height:1.7;color:#1f2937}
+.chart{border:1px solid var(--line);padding:8px;margin:12px 0;border-radius:6px;background:#fff}
+.chart img{display:block;width:2in;margin:0 auto}
+.footer{position:absolute;left:0;right:0;bottom:0;border-top:1px solid var(--line);padding:8px .5in;display:flex;justify-content:space-between;align-items:center;font-size:7px;color:#6b7280;background:#fff;z-index:2}
+.cta-page{padding:.55in .5in;position:relative;z-index:1}
+.cta-page h2{font-size:24px;line-height:1.18;color:var(--ac, var(--pretalk-navy));margin-bottom:10px}
+.cta-page p{font-size:10px;line-height:1.65;color:#1f2937}
+.consultant{margin-top:14px;border:1px solid var(--line);border-radius:8px;padding:10px}
+.consultant .n{font-size:11px;font-weight:700;margin-top:6px}
+.consultant .t{font-size:8px;color:#6b7280}
+.consultant .e{font-size:8px;color:var(--pc, var(--pretalk-blue));margin-top:3px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="watermark">PreTalk</div>
+  <div class="header">
+    <div class="top">
+      <div>{{logoTag}}</div>
+      <div class="company">{{companyName}}</div>
+    </div>
+    <div class="line"></div>
+  </div>
+  <div class="cover">
+    {{coverImageUrl}}
+    <div class="badge">Minimal Clarity Audit</div>
+    <h1>{{coverTitle}}</h1>
+    <p>{{coverSubtitle}}</p>
+    <div class="meta">{{clientName}} - {{clientCompany}} - {{date}}</div>
+  </div>
+  <div class="content">
+    <div class="chart">
+      <img src="{{chartImageUrl}}" alt="Radar chart" />
+    </div>
+    {{auditBlocksHtml}}
+  </div>
+  <div class="footer">
+    <span>Propulse par PreTalk</span>
+    <span>{{pretalkLogo}}</span>
+  </div>
+</div>
+
+<div class="page cta-page">
+  <div class="watermark">PreTalk</div>
+  <h2>Une trajectoire claire, des actions concretes</h2>
+  <p>{{closingCta}}</p>
+  {{closingImageUrl}}
+  <div class="consultant">
+    <div>{{consultantAvatar}}</div>
+    <div class="n">{{consultantName}}</div>
+    <div class="t">{{consultantTitle}}</div>
+    <div class="e">{{consultantEmail}}</div>
+    <div style="margin-top:6px">{{consultantProfileLink}}</div>
+  </div>
+  <div class="footer">
+    <span>Propulse par PreTalk</span>
+    <span>{{pretalkLogo}}</span>
+  </div>
+</div>
+</body>
+</html>

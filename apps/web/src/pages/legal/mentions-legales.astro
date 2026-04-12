@@ -1,0 +1,35 @@
+---
+import '../../components/ReactApp/index.css';
+import LegalTemplate from '../../components/ReactApp/components/layout/LegalTemplate';
+---
+
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mentions Légales - PreTalk</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-white text-black">
+    <LegalTemplate title="Mentions" badge="Légal" lastUpdated="8 avril 2026" client:load>
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">1. Édition du site</h2>
+        <p>Le présent site, accessible à l'URL www.pretalk.me (le « Site »), est édité par :</p>
+        <p><strong>Propulsé par elevyup.com</strong></p>
+        <p>Contact : hello@pretalk.me</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">2. Hébergement</h2>
+        <p>Le Site est hébergé par la société Supabase Inc. (Base de données et authentification) et Vercel Inc. (Interface), dont les serveurs sont situés en Europe pour garantir la conformité RGPD.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">3. Propriété intellectuelle</h2>
+        <p>L'ensemble des éléments constituant le Site (textes, graphismes, logiciels, photographies, images, vidéos, sons, plans, noms, logos, marques, créations et œuvres protégeables diverses, bases de données, etc.) ainsi que le Site lui-même, relèvent des législations françaises et internationales sur le droit d'auteur et la propriété intellectuelle.</p>
+      </section>
+    </LegalTemplate>
+  </body>
+</html>

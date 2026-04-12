@@ -1,0 +1,195 @@
+﻿GUIDE D'ARCHITECTURE N8N : GESTION DES SCÉNARIOS ET EDGE CASES
+Version 2.0 — Référence validée le 08/03/2026
+
+Ce guide définit l'architecture défensive à appliquer sur tout workflow n8n en production
+(SaaS, automatisation IA) pour garantir 100% de fiabilité et une UX sans friction.
+
+════════════════════════════════════════════════════════════════
+1. SCÉNARIO : Données Manquantes ou Invalides (Triggering)
+════════════════════════════════════════════════════════════════
+
+Le problème : Un Webhook est déclenché, mais des variables critiques (lead_id, prompt, form_id)
+sont vides, nulles ou du mauvais type.
+
+La solution n8n :
+
+  Nœud IF / Filter — Placer immédiatement après le Trigger.
+  Valider : la PRÉSENCE des clés essentielles ET leur TYPE (string non-vide, number > 0).
+
+  Exemple de condition :
+  {{ $json.prompt && typeof $json.prompt === 'string' && $json.prompt.trim().length > 0 }}
+
+  Fail Fast — Si la validation échoue, la branche False renvoie HTTP 400 (Bad Request)
+  avec un message structuré, puis arrêt immédiat. Ne jamais laisser tourner à vide.
+
+  Réponse d'erreur recommandée :
+  { "success": false, "error": "MISSING_REQUIRED_FIELD", "field": "prompt" }
+
+════════════════════════════════════════════════════════════════
+2. SCÉNARIO : Défaillance d'API Tierce (Timeouts & Rate Limits)
+════════════════════════════════════════════════════════════════
+
+Le problème : Une API externe (Gemini, Supabase, Jina Reader) est temporairement hors ligne
+ou limite les requêtes (Erreur 429 ou 5xx).
+
+La solution n8n :
+
+  Retry On Fail (Settings du nœud) — Activer sur tous les appels HTTP et nœuds LLM.
+  Max Tries : 2 ou 3. Wait Between Tries : 2000 à 5000 ms.
+
+  Règle de retry côté Frontend (useN8nWebhook pattern) :
+  → Ne PAS réessayer sur erreurs 4xx (erreur client, réessayer ne changera rien).
+  → Réessayer UNE fois sur erreurs 5xx ou erreurs réseau (AbortError, TypeError).
+
+  if (/^HTTP 4\d\d/.test(error.message)) throw error; // client error, no retry
+  // sinon : second attempt avec nouveau AbortController
+
+  Continue On Fail (nœud non vital uniquement) — Par exemple, si le scraping d'un site
+  secondaire échoue, le workflow continue. Traiter le vide via un nœud Code de fallback.
+
+════════════════════════════════════════════════════════════════
+3. SCÉNARIO : Hallucination ou Crash de Parsing (LLM Output)
+════════════════════════════════════════════════════════════════
+
+Le problème : Le LLM renvoie du markdown, un bloc <thinking> avant le JSON, ou un JSON
+malformé (reduce error, Unexpected token).
+
+La solution n8n — Nœud Code de Parsing (à placer juste après le LLM Chain) :
+
+  // ÉTAPE 1 — Retirer le bloc <thinking> (obligatoire si thinking activé)
+  // Référence : Guide prompt, Règle 3
+  content = content.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
+
+  // ÉTAPE 2 — Retirer les backticks markdown
+  content = content.replace(/```\s*json\s*\n?/gi, '').replace(/```\s*\n?/g, '').trim();
+
+  // ÉTAPE 3 — Extraction défensive du JSON
+  const s = content.indexOf('{');
+  const e = content.lastIndexOf('}');
+  let parsed;
+  try {
+    parsed = JSON.parse(s !== -1 && e > s ? content.substring(s, e + 1) : content);
+  } catch (err) {
+    // ÉTAPE 4 — Fallback : structure minimale pour ne pas crasher les nœuds suivants
+    parsed = { error: 'PARSE_FAILED', raw: content.substring(0, 500) };
+  }
+
+  Note : Le fallback doit reproduire la STRUCTURE attendue (même avec des valeurs vides),
+  pour que les nœuds Supabase Update ou Respond to Webhook ne crashent pas.
+
+════════════════════════════════════════════════════════════════
+4. SCÉNARIO : Bifurcation Logique (Paths parallèles)
+════════════════════════════════════════════════════════════════
+
+Le problème : Le flux se divise (ex: le prospect a un site → Scraper ; il n'en a pas →
+Ignorer). La maintenance devient impossible si la fin du workflow est dupliquée.
+
+La solution n8n :
+
+  Merge Node — Réunifier les chemins AVANT les actions finales (génération du Master Prompt,
+  insertion BDD). Mode Wait for All ou Choose Branch selon le cas.
+
+  Règle : Les nœuds d'écriture en BDD et le nœud Respond to Webhook ne doivent JAMAIS
+  être dupliqués sur chaque branche. Ils vivent toujours APRÈS le Merge.
+
+════════════════════════════════════════════════════════════════
+5. SCÉNARIO : L'Attente du Front-End (UX Synchrone vs Asynchrone)
+════════════════════════════════════════════════════════════════
+
+Le problème : Les LLM peuvent prendre > 10 secondes. Choisir le mauvais pattern
+provoque soit un timeout, soit une UX confuse pour l'utilisateur.
+
+COMMENT CHOISIR ?
+
+  UX Synchrone (Using 'Respond to Webhook' node) — RECOMMANDÉ pour :
+  → Durée estimée < 3 minutes (génération de formulaire, audit court, text assist).
+  → Le Front-End attend la réponse directement (fetch avec timeout adapté).
+  → Configurer le timeout frontend à 180 000 ms (3 min) avec 1 seul retry.
+  → Le workflow DOIT terminer par un nœud "Respond to Webhook" avec la réponse finale.
+  → Afficher un loader dès le déclenchement, masquer à réception.
+
+  UX Asynchrone (Respond Immediately = HTTP 202) — RECOMMANDÉ pour :
+  → Durée estimée > 3 minutes (rapport complet, scraping multi-pages, 10+ appels LLM).
+  → Le workflow répond immédiatement puis continue en arrière-plan.
+  → Écrire un champ "status" dans Supabase ('pending' → 'processing' → 'completed' | 'error').
+  → Le Front-End utilise SUPABASE REALTIME (subscriptions), pas du polling — polling = UX dégradée.
+  → Exemple d'abonnement frontend :
+      supabase.channel('report-status')
+        .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'reports',
+            filter: `id=eq.${reportId}` }, (payload) => {
+          if (payload.new.status === 'completed') loadResult(payload.new.id);
+          if (payload.new.status === 'error') showErrorMessage(payload.new.error_message);
+        }).subscribe();
+
+  UX Progressive Feedback (pour opérations > 5 secondes, synchrones ou async) :
+  → Un spinner statique sans texte après 5 secondes génère de l'anxiété utilisateur.
+  → Utiliser des messages progressifs basés sur le temps écoulé :
+      0-3s  : "Analyzing your request..."
+      3-8s  : "Generating questions with AI..."
+      8-15s : "Almost done..."
+      > 15s : "This is taking longer than usual. Please wait..."
+
+════════════════════════════════════════════════════════════════
+6. SCÉNARIO : Erreur Fatale Globale (Crash inattendu)
+════════════════════════════════════════════════════════════════
+
+Le problème : Un bug non anticipé fait planter le workflow à mi-parcours. L'utilisateur
+attend infiniment et ne sait pas ce qui se passe.
+
+La solution n8n :
+
+  Error Trigger Node — Créer un sous-workflow distinct qui commence par ce nœud.
+  Il se déclenche automatiquement quand un autre workflow crash.
+
+  Ce workflow d'erreur doit :
+  1. Envoyer une alerte (Slack/Email) avec l'execution_id et l'erreur.
+  2. Mettre à jour le statut dans Supabase à "error" avec l'error_message.
+  3. Le Front-End LIT ce statut (via Supabase Realtime ou au prochain load) et affiche
+     un message clair à l'utilisateur au lieu de charger indéfiniment.
+
+  Règle : Ne jamais laisser un statut "processing" sans timeout de sécurité.
+  Mettre un champ "started_at" en BDD et afficher une erreur côté UI si
+  Date.now() - started_at > 5 minutes.
+
+════════════════════════════════════════════════════════════════
+7. SCÉNARIO : Double-Déclenchement (Protection Idempotence)
+════════════════════════════════════════════════════════════════
+
+Le problème : L'utilisateur clique deux fois sur "Générer". Deux appels webhook parallèles
+se déclenchent → deux réponses incohérentes → état UI imprévisible.
+
+La solution Frontend :
+
+  Désactivation du bouton pendant le chargement (obligatoire) :
+  <button disabled={isLoading} onClick={handleGenerate}>
+    {isLoading ? 'Generating...' : 'Generate'}
+  </button>
+
+  Vérification de l'état isLoading avant tout appel :
+  if (isLoading) return; // guard clause en tête de handleGenerate
+
+  La solution n8n (pour les workflows async avec BDD) :
+  → Vérifier dans Supabase si un status "processing" existe déjà pour ce form_id/user_id.
+  → Si oui : renvoyer HTTP 409 (Conflict) avec { "error": "ALREADY_PROCESSING" }.
+  → Le Front-End affiche "Generation already in progress" au lieu de déclencher un second appel.
+
+════════════════════════════════════════════════════════════════
+8. SCÉNARIO : Désalignement de Timeout (n8n ↔ Frontend)
+════════════════════════════════════════════════════════════════
+
+Le problème : Le frontend abandonne après 3 minutes, mais n8n continue à tourner en arrière-
+plan → gaspillage de ressources LLM et incohérence de statut en BDD.
+
+La règle d'alignement :
+
+  Timeout Frontend (AbortController) : 180 000 ms (3 min recommandé)
+  Timeout n8n (Execution Timeout)    : > Frontend timeout (ex: 5 min)
+
+  Raison : Si le frontend abandonne avant n8n, le workflow continue, écrit en BDD, mais
+  le Front-End ne lira jamais ce résultat (pour le pattern synchrone). Cela crée une
+  incohérence de données inutile.
+
+  Pour les appels HTTP vers des LLM dans n8n :
+  → Activer Timeout dans les Settings du nœud HTTP Request.
+  → Valeur recommandée : 120 000 ms (2 min) pour laisser la marge au workflow de finir
+    par le nœud Respond to Webhook avant que le frontend n'abandonne.

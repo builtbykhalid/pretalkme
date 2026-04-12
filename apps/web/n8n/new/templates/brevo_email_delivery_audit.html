@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!--
+    BREVO TEMPLATE: delivery_audit (ID: 20 FR)
+    Params available from Master Email Hub:
+      {{ params.nom_client }}         - Client first name / full name
+      {{ params.nom_consultant }}     - Consultant full name
+      {{ params.audit_url }}          - Direct PDF download URL
+      {{ params.booking_link }}       - CTA booking/meeting URL
+      {{ params.cta_label }}          - CTA button label
+      {{ params.consultant_email }}   - Consultant reply-to email
+      {{ params.custom_content }}     - Optional custom message body
+      {{ unsubscribe }}               - Brevo unsubscribe link (auto-injected)
+  -->
+  <title>Votre rapport d'audit est prêt</title>
+  <style>
+    body { margin: 0; padding: 0; background: #f0f0f5; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; -webkit-text-size-adjust: 100%; }
+    table { border-collapse: collapse; mso-table-lspace: 0; mso-table-rspace: 0; }
+    img { border: 0; display: block; max-width: 100%; }
+    a { text-decoration: none; }
+    .preheader { display: none; max-height: 0; overflow: hidden; mso-hide: all; }
+  </style>
+</head>
+<body style="margin:0;padding:0;background:#f0f0f5;">
+  <!-- Preheader -->
+  <div class="preheader">{{ params.nom_consultant }} a finalisé votre audit stratégique. Téléchargez votre rapport personnalisé.</div>
+
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f0f5;padding:32px 16px;">
+    <tr>
+      <td align="center">
+        <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:10px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.09);">
+
+          <!-- HEADER BAND -->
+          <tr>
+            <td style="background:#221A40;padding:32px 40px 24px;text-align:center;">
+              <div style="display:inline-block;background:#48D951;color:#221A40;font-size:10px;font-weight:800;letter-spacing:0.2em;text-transform:uppercase;padding:4px 14px;border-radius:20px;margin-bottom:14px;">Audit Stratégique</div>
+              <h1 style="color:#ffffff;font-size:22px;font-weight:700;line-height:1.35;margin:0 0 10px;">Votre rapport est prêt !</h1>
+              <p style="color:rgba(255,255,255,0.58);font-size:13px;line-height:1.6;margin:0;">{{ params.nom_consultant }} a finalisé l'analyse de votre situation.</p>
+            </td>
+          </tr>
+
+          <!-- BODY -->
+          <tr>
+            <td style="padding:32px 40px;">
+
+              <!-- Greeting -->
+              <p style="font-size:15px;color:#374151;line-height:1.7;margin:0 0 20px;">
+                Bonjour <strong>{{ params.nom_client }}</strong>,
+              </p>
+              <p style="font-size:14px;color:#374151;line-height:1.7;margin:0 0 24px;">
+                Votre audit stratégique personnalisé est maintenant disponible. Ce rapport analyse en profondeur votre situation et met en lumière les leviers de croissance les plus pertinents pour votre activité.
+              </p>
+
+              <!-- Custom message (if any) -->
+              {% if params.custom_content %}
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border-left:3px solid #48D951;border-radius:0 4px 4px 0;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:14px 18px;font-size:13px;color:#374151;line-height:1.7;">
+                    {{ params.custom_content }}
+                  </td>
+                </tr>
+              </table>
+              {% endif %}
+
+              <!-- Document card -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:8px;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:18px 22px;">
+                    <table cellpadding="0" cellspacing="0">
+                      <tr>
+                        <td style="vertical-align:middle;width:46px;">
+                          <div style="width:40px;height:40px;background:#221A40;border-radius:7px;text-align:center;line-height:40px;font-size:20px;">&#128202;</div>
+                        </td>
+                        <td style="padding-left:14px;vertical-align:middle;">
+                          <div style="font-size:13px;font-weight:700;color:#111827;margin-bottom:3px;">Rapport d'Audit Stratégique</div>
+                          <div style="font-size:11px;color:#6b7280;">Préparé par {{ params.nom_consultant }}</div>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Primary CTA: download audit -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:16px;">
+                <tr>
+                  <td align="center">
+                    <a href="{{ params.audit_url }}" style="display:inline-block;background:#48D951;color:#221A40;font-size:14px;font-weight:800;letter-spacing:0.02em;padding:14px 40px;border-radius:6px;text-decoration:none;">&#11015;&#65039; Télécharger mon audit</a>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Secondary CTA: booking -->
+              {% if params.booking_link %}
+              <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:28px;">
+                <tr>
+                  <td align="center">
+                    <a href="{{ params.booking_link }}" style="display:inline-block;background:#ffffff;color:#221A40;font-size:13px;font-weight:700;padding:12px 32px;border-radius:6px;border:2px solid #221A40;text-decoration:none;">&#128197; {{ params.cta_label }}</a>
+                  </td>
+                </tr>
+              </table>
+              {% endif %}
+
+              <hr style="border:none;border-top:1px solid #e5e7eb;margin:0 0 24px;" />
+
+              <!-- Next steps -->
+              <table width="100%" cellpadding="0" cellspacing="0" style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;margin-bottom:24px;">
+                <tr>
+                  <td style="padding:16px 20px;">
+                    <div style="font-size:11px;font-weight:700;color:#15803d;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;">&#9989; Prochaines étapes</div>
+                    <table cellpadding="0" cellspacing="0">
+                      <tr><td style="font-size:13px;color:#374151;padding:3px 0 3px 4px;line-height:1.6;">&#8226;&nbsp; Lisez votre audit en détail et identifiez les priorités</td></tr>
+                      <tr><td style="font-size:13px;color:#374151;padding:3px 0 3px 4px;line-height:1.6;">&#8226;&nbsp; Notez vos 2–3 actions immédiates</td></tr>
+                      <tr><td style="font-size:13px;color:#374151;padding:3px 0 3px 4px;line-height:1.6;">&#8226;&nbsp; Planifiez un appel avec {{ params.nom_consultant }} pour aller plus loin</td></tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Signature line -->
+              <p style="font-size:13px;color:#374151;line-height:1.7;margin:0 0 6px;">Cordialement,</p>
+              <p style="font-size:13px;font-weight:700;color:#111827;margin:0 0 4px;">{{ params.nom_consultant }}</p>
+              {% if params.consultant_email %}
+              <p style="font-size:12px;color:#48D951;margin:0;">{{ params.consultant_email }}</p>
+              {% endif %}
+
+              <!-- Legal note -->
+              <p style="font-size:11px;color:#9ca3af;line-height:1.6;margin:20px 0 0;border-top:1px solid #f3f4f6;padding-top:16px;">
+                Ce rapport est confidentiel. Le lien de téléchargement est valable 90 jours. Si vous rencontrez un problème, contactez {{ params.consultant_email }}.
+              </p>
+
+            </td>
+          </tr>
+
+          <!-- FOOTER -->
+          <tr>
+            <td style="background:#f9fafb;border-top:1px solid #e5e7eb;padding:20px 40px;text-align:center;">
+              <div style="font-size:11px;font-weight:700;color:#9ca3af;text-transform:uppercase;letter-spacing:0.12em;margin-bottom:6px;">Propulsé par Pretalk</div>
+              <div style="font-size:10px;color:#9ca3af;line-height:1.6;">
+                Ce message transactionnel a été envoyé via la plateforme Pretalk.<br />
+                <a href="{{ unsubscribe }}" style="color:#9ca3af;text-decoration:underline;">Se désabonner</a>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

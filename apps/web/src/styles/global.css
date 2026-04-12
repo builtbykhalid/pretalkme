@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+@theme {
+  /* Fonts */
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+
+  /* Colors */
+  --color-pt-dark: #221A40;
+  --color-pt-darker: #160F2E;
+  --color-pt-green: #48D951;
+  --color-pt-green-muted: rgba(72,217,81,0.12);
+  --color-pt-green-dark: #35A83C;
+  --color-pt-bg: #F4F1FF;
+  --color-pt-bg-2: #EDE9FF;
+  --color-pt-border: #E8E5F5;
+
+  /* Shadows */
+  --shadow-card: 0 4px 24px rgba(34,26,64,0.08);
+  --shadow-card-hover: 0 12px 40px rgba(34,26,64,0.14);
+  --shadow-float: 0 8px 32px rgba(34,26,64,0.12);
+
+  /* Radius */
+  --radius-4xl: 2rem;
+  --radius-5xl: 2.5rem;
+
+  /* Animations */
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-float2: float 4s ease-in-out 0.8s infinite;
+  --animate-float3: float 4s ease-in-out 1.6s infinite;
+  --animate-shimmer-fast: shimmer 2.5s linear infinite;
+  --animate-slide-up: slideUp 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+
+  /* Keyframes */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes slideUp {
+    0% { opacity: 0; transform: translateY(28px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+}

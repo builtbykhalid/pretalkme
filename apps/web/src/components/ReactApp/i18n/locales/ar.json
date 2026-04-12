@@ -1,0 +1,990 @@
+{
+    "common": {
+        "save": "حفظ",
+        "cancel": "إلغاء",
+        "delete": "حذف",
+        "edit": "تعديل",
+        "create": "إنشاء",
+        "close": "إغلاق",
+        "confirm": "تأكيد",
+        "search": "بحث",
+        "filter": "تصفية",
+        "loading": "جاري التحميل...",
+        "error": "خطأ",
+        "success": "نجاح",
+        "warning": "تحذير",
+        "info": "معلومات",
+        "yes": "نعم",
+        "no": "لا",
+        "back": "رجوع",
+        "next": "التالي",
+        "previous": "السابق",
+        "submit": "إرسال",
+        "reset": "إعادة تعيين",
+        "view": "عرض",
+        "download": "تحميل",
+        "upload": "رفع",
+        "copy": "نسخ",
+        "copied": "تم النسخ!",
+        "share": "مشاركة",
+        "settings": "الإعدادات",
+        "help": "مساعدة",
+        "logout": "تسجيل خروج",
+        "login": "تسجيل دخول",
+        "signup": "تسجيل",
+        "email": "البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "name": "الاسم",
+        "phone": "الهاتف",
+        "company": "الشركة",
+        "website": "الموقع",
+        "message": "رسالة",
+        "date": "التاريخ",
+        "time": "الوقت",
+        "status": "الحالة",
+        "action": "إجراء",
+        "actions": "إجراءات",
+        "all": "الكل",
+        "none": "لا شيء",
+        "other": "أخرى",
+        "more": "المزيد",
+        "less": "أقل",
+        "showMore": "عرض المزيد",
+        "showLess": "عرض أقل",
+        "noResults": "لا توجد نتائج",
+        "comingSoon": "قريباً",
+        "beta": "تجريبي",
+        "new": "جديد",
+        "viewAll": "عرض الكل",
+        "consultant": "مستشار",
+        "active": "نشط",
+        "inactive": "غير نشط",
+        "soon": "قريباً",
+        "today": "اليوم",
+        "saving": "جاري الحفظ...",
+        "update": "تحديث",
+        "or": "أو",
+        "install": "تثبيت",
+        "installed": "مُثبّت",
+        "uninstall": "إلغاء التثبيت",
+        "send": "إرسال",
+        "sending": "جاري الإرسال...",
+        "proPlan": "خطة Pro",
+        "notifications": "الإخطارات",
+        "noNotifications": "لا توجد اعلامات",
+        "justNow": "للتو ",
+        "markAllAsRead": "ضع علامات بالمطالعة",
+        "configureNotifications": "تكوين الاعلامات",
+        "clearAll": "حذف الكل"
+    },
+    "nav": {
+        "dashboard": "لوحة التحكم",
+        "agents": "وكلائي",
+        "leads": "العملاء المحتملين",
+        "forms": "نماذجي",
+        "automations": "الأتمتة",
+        "settings": "الإعدادات",
+        "features": "الميزات",
+        "testimonials": "الشهادات",
+        "pricing": "الأسعار",
+        "demo": "عرض تجريبي"
+    },
+    "auth": {
+        "welcomeBack": "مرحباً بعودتك",
+        "createAccount": "إنشاء حساب",
+        "loginTitle": "تسجيل الدخول إلى مساحة المستشار الخاصة بك",
+        "signupTitle": "ابدأ مجاناً الآن",
+        "emailPlaceholder": "you@example.com",
+        "passwordPlaceholder": "••••••••",
+        "fullNamePlaceholder": "محمد أحمد",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "noAccount": "ليس لديك حساب؟",
+        "hasAccount": "لديك حساب بالفعل؟",
+        "continueWithGoogle": "المتابعة مع Google",
+        "orContinueWith": "أو",
+        "termsAgree": "بتسجيل الدخول، أنت توافق على",
+        "termsOfService": "شروط الخدمة",
+        "and": "و",
+        "privacyPolicy": "سياسة الخصوصية",
+        "loginButton": "تسجيل الدخول",
+        "signupButton": "إنشاء حسابي",
+        "magicLinkButton": "إرسال الرابط السحري",
+        "loggingIn": "جاري التحميل...",
+        "signingUp": "جاري التسجيل...",
+        "loginTab": "تسجيل الدخول",
+        "registerTab": "التسجيل",
+        "magicLinkTab": "الرابط السحري",
+        "fullName": "الاسم الكامل",
+        "emailAddress": "عنوان البريد الإلكتروني",
+        "password": "كلمة المرور",
+        "minChars": "6 أحرف كحد أدنى",
+        "magicLinkSent": "تم إرسال الرابط السحري! تحقق من بريدك الإلكتروني",
+        "accountCreated": "تم إنشاء الحساب! تحقق من بريدك الإلكتروني لتأكيد التسجيل.",
+        "enterFullName": "الرجاء إدخال اسمك الكامل",
+        "errorOccurred": "حدث خطأ",
+        "heroTitle": "قيّم عملاءك المحتملين",
+        "heroHighlight": "بالذكاء الاصطناعي",
+        "heroSubtitle": "أنشئ نماذج ذكية تطرح الأسئلة الصحيحة وتنتج تقارير مخصصة تلقائياً.",
+        "feature1": "نماذج ذكية بأسئلة ديناميكية",
+        "feature2": "تقييم تلقائي للعملاء المحتملين",
+        "feature3": "إنشاء تقارير مخصصة بالذكاء الاصطناعي",
+        "feature4": "تكاملات CRM والأتمتة"
+    },
+    "home": {
+        "accessEarly": "الوصول المبكر",
+        "hero": {
+            "title": "توقف عن إضاعة 30 دقيقة لفهم المتطلبات.",
+            "highlight": "دع الذكاء الاصطناعي يفعله نيابةً عنك.",
+            "subtitle": "أداة التأهيل المسبق التي تحل محل مقابلات العملاء الطويلة بتشخيص فوري. يرحب وكيلك بالذكاء الاصطناعي بالعملاء المحتملين، يطرح الأسئلة الصحيحة ويجهز الملف. تتدخل أنت فقط لإتمام الصفقة."
+        },
+        "cta": {
+            "start": "ابدأ مجاناً",
+            "demo": "عرض تجريبي"
+        },
+        "checkline": "لا حاجة لبطاقة ائتمان • جاهز خلال 120 ثانية — انضم إلى المستشارين الذين توقّفوا عن مكالمات الاكتشاف غير الضرورية.",
+        "stats": {
+            "consultants": "مستشارون نشطون",
+            "diagnostics": "التشخيصات المُنشأة",
+            "satisfaction": "معدل الرضا",
+            "time": "متوسط زمن الإنشاء"
+        },
+        "dashboardLabel": "لوحة Pretalk",
+        "dashboard": {
+            "title": "واجهة بديهية",
+            "subtitle": "أنشئ تشخيصات الذكاء الاصطناعي ببضع نقرات"
+        },
+        "features": {
+            "sectionTitle": "لماذا تجعل عمليّاتك الحالية تفوّت عليك الصفقات.",
+            "sectionSubtitle": "مقارنة قبل / بعد — ما تخسره اليوم وما تعيده لك Pretalk.",
+            "items": [
+                {
+                    "title": "الطريقة التقليدية (مؤلمة)",
+                    "description": "وقت ضائع: مكالمة لمدة 20 دقيقة فقط لفهم السياق الأساسي."
+                },
+                {
+                    "title": "طريقة Pretalk (سلسة)",
+                    "description": "وقت موفّر: تصل إلى الاجتماع مع السياق والميزانية والاحتياجات محَلّلة مسبقاً."
+                },
+                {
+                    "title": "الطريقة التقليدية (مؤلمة)",
+                    "description": "عدم الاستجابة: ينتظر العميل 3 أيام حتى يتوفر وقتك."
+                },
+                {
+                    "title": "طريقة Pretalk (سلسة)",
+                    "description": "السرعة: يتلقى العميل تشخيصه وتقدير السعر في ساعات متأخرة."
+                },
+                {
+                    "title": "الطريقة التقليدية (مؤلمة)",
+                    "description": "لا شيء ملموس: يغلق العميل المكالمة دون شيء حقيقي."
+                },
+                {
+                    "title": "طريقة Pretalk (سلسة)",
+                    "description": "تأثير الإبهار: يحصل العميل على تقرير PDF مخصص قبل التحدّث إليك. الفرز: يتحقق الذكاء الاصطناعي من الميزانية مقدمًا."
+                }
+            ]
+        },
+        "how": {
+            "title": "كيف يعمل",
+            "subtitle": "فعّل وكيلك، شارك رابطك، دع الذكاء الاصطناعي يؤهل ويخطرك.",
+            "steps": [
+                {
+                    "title": "فعّل وكيلك",
+                    "description": "تحدّث مع Pretalk لوصف عرضك. يُنشئ الذكاء الاصطناعي النموذج ويضبط سيناريو المبيعات فوراً."
+                },
+                {
+                    "title": "شارك رابطك",
+                    "description": "أضف pretalk.me/اسمك على LinkedIn أو Instagram أو موقعك. إنها بطاقتك التجارية النشطة الجديدة."
+                },
+                {
+                    "title": "دع الذكاء الاصطناعي يعمل",
+                    "description": "يجري الذكاء الاصطناعي المقابلة، يولّد التشخيص ويخطرك فقط عند تأهل العميل المحتمل. أنت تتحقق من التقرير."
+                }
+            ]
+        },
+        "pricing": {
+            "title": "الأسعار",
+            "titleAccent": "شفافة",
+            "subtitle": "اختر الخطة المناسبة لاحتياجاتك. يمكنك التغيير في أي وقت.",
+            "plans": {
+                "free": {
+                    "name": "FREE",
+                    "description": "اختبار داخلي",
+                    "features": [
+                        "العملاء المحتملون / الشهر: 5 (اختبار)",
+                        "وكلاء نشطون متزامنون: 1",
+                        "مولد Chat-to-Form: ✅",
+                        "تقييم العملاء: ✅"
+                    ],
+                    "cta": "تجربة"
+                },
+                "starter": {
+                    "name": "STARTER",
+                    "description": "مستقلون",
+                    "features": [
+                        "العملاء المحتملون / الشهر: 50",
+                        "وكلاء نشطون متزامنون: غير محدود",
+                        "الوصول إلى القوالب: ✅",
+                        "التحقق البشري: ✅"
+                    ],
+                    "cta": "ابدأ"
+                },
+                "pro": {
+                    "name": "PRO",
+                    "description": "خبراء",
+                    "features": [
+                        "العملاء المحتملون / الشهر: 500",
+                        "نماذج غير محدودة",
+                        "أسئلة IA في الوقت الفعلي: ✅",
+                        "نموذج IA مميز: ✅"
+                    ],
+                    "cta": "تجربة"
+                },
+                "agency": {
+                    "name": "AGENCY",
+                    "description": "فرق",
+                    "features": [
+                        "العملاء المحتملون / الشهر: غير محدود",
+                        "وكلاء مخصصون متضمنون",
+                        "العلامة البيضاء وتخصيص PDF: ✅",
+                        "وصول API وحسابات متعددة المستخدمين"
+                    ],
+                    "cta": "تواصل"
+                }
+            }
+        },
+        "ctaSection": {
+            "title": "جاهز لدفع عملك للأمام؟",
+            "subtitle": "انضم إلى أكثر من 1000 مستشار يقومون بإنشاء تشخيصات احترافية خلال 30 ثانية",
+            "placeholder": "بريدك الإلكتروني المهني",
+            "footnote": "✓ ابدأ مجاناً • ✓ لا حاجة لبطاقة • ✓ الإعداد خلال دقيقتين"
+        },
+        "waitlist": {
+            "title": "الانضمام إلى قائمة الانتظار",
+            "subtitle": "كن أول من يعرف عند فتح الوصول.",
+            "placeholder": "بريدك الإلكتروني",
+            "success": "شكراً — سنخبرك عند فتح الوصول.",
+            "errors": {
+                "invalidEmail": "الرجاء إدخال بريد إلكتروني صالح",
+                "failed": "فشل الاشتراك، حاول مرة أخرى لاحقًا"
+            },
+            "actions": {
+                "join": "الاشتراك",
+                "loading": "جاري..."
+            }
+        },
+        "transform": {
+            "title": "حوّل عملًا إداريًا مملًا إلى فرصة تجارية.",
+            "subtitle": "بطاقات بصرية: المُنشئ السحري، وكيل التشخيص، تقرير PDF وتسجيل نقاط العملاء التلقائي.",
+            "cards": [
+                {
+                    "title": "المُنشئ السحري (Chat-to-Form)",
+                    "description": "انس إعداد التكوين اليدوي الممل. وصف نشاطك وسينشئ الذكاء الاصطناعي لدينا أسئلة التأهيل المثالية لنشاطك." 
+                },
+                {
+                    "title": "وكيل التشخيص",
+                    "description": "هو لا يقيم الإجابات فقط: إنه يدقق نضج العميل حتى لا تضيع وقتك في شرح الأساسيات."
+                },
+                {
+                    "title": "تقرير PDF (بالتدخل البشري)",
+                    "description": "يقوم Pretalk بصياغة المسودة، وأنت توافق على الإرسال. احتفظ بالتحكم الكامل مع توفير 90% من وقت الكتابة."
+                }
+            ]
+        }
+    },
+    "footer": {
+        "productTitle": "المنتج",
+        "product": {
+            "features": "الميزات",
+            "agents": "مكتبة الوكلاء",
+            "sampleReport": "مثال تقرير PDF",
+            "pricing": "الأسعار"
+        },
+        "resourcesTitle": "الموارد",
+        "resources": {
+            "guide": "دليل: النجاح في مكالمات الاكتشاف",
+            "tools": "أدوات للمستشارين",
+            "blog": "المدونة"
+        },
+        "supportTitle": "الدعم",
+        "support": {
+            "helpCenter": "مركز المساعدة",
+            "contact": "اتصل",
+            "legal": "القوانين",
+            "privacy": "الخصوصية"
+        },
+        "copyright": "© 2026 Pretalk. جميع الحقوق محفوظة.",
+        "terms": "شروط الخدمة",
+        "privacyPolicy": "سياسة الخصوصية",
+        "cookies": "ملفات تعريف الارتباط",
+        "tagline": "منصة الذكاء الاصطناعي التي تحوّل تقاريرك إلى آلات تحويل."
+    },
+    "dashboard": {
+        "title": "لوحة التحكم",
+        "greeting": "مرحباً، {{name}}",
+        "subtitle": "إليك ما يحدث في نماذجك اليوم.",
+        "leadsThisMonth": "العملاء هذا الشهر",
+        "activeForms": "النماذج النشطة",
+        "automations": "الأتمتة",
+        "conversionRate": "معدل التحويل",
+        "recentLeads": "العملاء الأخيرون",
+        "quickActions": "إجراءات سريعة",
+        "optimizeConversion": "حسّن معدل التحويل",
+        "optimizeDescription": "أنشئ نماذج جديدة وتابع عملاءك المحتملين في الوقت الفعلي لتحقيق أقصى النتائج.",
+        "createForm": "إنشاء نموذج",
+        "newForm": "نموذج جديد",
+        "stats": {
+            "totalLeads": "إجمالي العملاء",
+            "qualifiedLeads": "العملاء المؤهلون",
+            "thisWeek": "هذا الأسبوع",
+            "vsLastWeek": "مقارنة بالأسبوع الماضي"
+        },
+        "viewAll": "عرض الكل",
+        "noRecentLeads": "لا يوجد عملاء حديثون",
+        "viewLeads": "عرض العملاء",
+        "configureAgent": "تكوين وكيل"
+    },
+    "leads": {
+        "title": "العملاء المحتملين والتقييم",
+        "subtitle": "أدِر عملاءك المحتملين وحلّل إمكانية تحويلهم.",
+        "searchPlaceholder": "البحث بالاسم أو الشركة...",
+        "filterByStatus": "تصفية حسب الحالة",
+        "filterByScore": "تصفية حسب النتيجة",
+        "allStatuses": "جميع الحالات",
+        "allScores": "جميع النتائج",
+        "export": "تصدير",
+        "exportCSV": "تصدير CSV",
+        "newLead": "عميل جديد",
+        "prospect": "عميل محتمل",
+        "project": "مشروع",
+        "projectInsight": "المشروع والرؤى",
+        "aiScore": "تقييم الذكاء الاصطناعي",
+        "topScore": "أعلى تقييم",
+        "mostRecent": "الأحدث",
+        "noResults": "لم يتم العثور على عملاء لهذا البحث.",
+        "resetFilters": "إعادة تعيين التصفية",
+        "showingResults": "عرض {{count}} نتائج",
+        "editAudit": "تعديل التقرير",
+        "viewDetails": "عرض التفاصيل",
+        "statusNew": "جدد",
+        "statusReviewed": "للمراجعة",
+        "statusQualified": "مؤهلون / مرسلون",
+        "statusRejected": "مرفوضون",
+        "columns": {
+            "contact": "جهة الاتصال",
+            "source": "المصدر",
+            "score": "النتيجة",
+            "status": "الحالة",
+            "date": "التاريخ",
+            "actions": "إجراءات"
+        },
+        "status": {
+            "new": "جديد",
+            "contacted": "تم التواصل",
+            "qualified": "مؤهل",
+            "proposal": "عرض",
+            "won": "فاز",
+            "lost": "خسر"
+        },
+        "score": {
+            "hot": "ساخن",
+            "warm": "دافئ",
+            "cold": "بارد"
+        },
+        "noLeads": "لا يوجد عملاء حتى الآن",
+        "noLeadsDesc": "سيظهر العملاء هنا عندما يملأ العملاء المحتملون نماذجك.",
+        "details": {
+            "title": "تفاصيل العميل",
+            "contactInfo": "معلومات الاتصال",
+            "responses": "ردود النموذج",
+            "aiAnalysis": "تحليل الذكاء الاصطناعي",
+            "timeline": "الجدول الزمني",
+            "notes": "ملاحظات",
+            "addNote": "إضافة ملاحظة"
+        }
+    },
+    "forms": {
+        "title": "نماذجي",
+        "subtitle": "أدِر نقاط الدخول وحلّل أدائها.",
+        "newForm": "نموذج جديد",
+        "createForm": "إنشاء نموذج",
+        "searchPlaceholder": "البحث عن نموذج...",
+        "loading": "جاري تحميل نماذجك...",
+        "noForms": "لا توجد نماذج",
+        "noFormsDesc": "أنشئ نموذجك الأول لبدء جمع العملاء المحتملين.",
+        "createFirst": "إنشاء نموذجي الأول",
+        "startFromScratch": "ابدأ من الصفر أو استخدم قالباً",
+        "online": "متصل",
+        "draft": "مسودة",
+        "modified": "معدّل",
+        "views": "مشاهدات",
+        "leads": "عملاء",
+        "conv": "تحويل",
+        "copyPublicLink": "نسخ الرابط العام",
+        "confirmDelete": "هل أنت متأكد من حذف هذا النموذج؟",
+        "card": {
+            "leads": "عملاء",
+            "views": "مشاهدات",
+            "conversion": "تحويل",
+            "lastEdit": "معدّل",
+            "draft": "مسودة",
+            "active": "نشط"
+        },
+        "actions": {
+            "edit": "تعديل",
+            "preview": "معاينة",
+            "duplicate": "نسخ",
+            "share": "مشاركة",
+            "delete": "حذف",
+            "viewLeads": "عرض العملاء"
+        },
+        "builder": {
+            "title": "محرر النموذج",
+            "untitled": "نموذج جديد",            "save": "حفظ",
+            "publish": "نشر",
+            "online": "متصل",
+            "draft": "مسودة",
+            "yourQuestions": "أسئلتك",
+            "generateWithAI": "توليد الأسئلة بالذكاء الاصطناعي",
+            "websiteUrl": "عنوان URL للموقع",
+            "customerJourney": "منطقة التبادل الذكية",            "tabs": {
+                "structure": "الهيكل",
+                "steps": "المراحل",
+                "intelligence": "الذكاء الاصطناعي",
+                "design": "التصميم"
+            },
+            "saved": "تم الحفظ بنجاح",
+            "structure": {
+                "title": "الأسئلة",
+                "addQuestion": "إضافة سؤال",
+                "generateAI": "إنشاء بالذكاء الاصطناعي",
+                "questionTypes": {
+                    "text": "نص قصير",
+                    "textarea": "نص طويل",
+                    "email": "بريد إلكتروني",
+                    "phone": "هاتف",
+                    "url": "رابط",
+                    "number": "رقم",
+                    "select": "قائمة منسدلة",
+                    "radio": "اختيار واحد",
+                    "checkbox": "خانات اختيار",
+                    "date": "تاريخ"
+                },
+                "questionLabel": "عنوان السؤال",
+                "placeholder": "نص توضيحي",
+                "required": "مطلوب",
+                "options": "الخيارات (واحد لكل سطر)"
+            },
+            "steps": {
+                "title": "رحلة العميل",
+                "subtitle": "كوّن مراحل النموذج وفعّل حجز المواعيد.",
+                "stepsOrder": "ترتيب المراحل",
+                "stepsInfo": "أعد ترتيب المراحل حسب رغبتك.",
+                "calendar": "حجز موعد",
+                "calendarDesc": "العميل يختار موعداً من التقويم",
+                "form": "نموذج التأهيل",
+                "formDesc": "العميل يجيب على أسئلة التأهيل",
+                "ai": "أسئلة ذكية (ذكاء اصطناعي)",
+                "aiDesc": "الذكاء الاصطناعي يطرح أسئلة مخصصة بناءً على الردود",
+                "bookingConfig": {
+                    "title": "إعدادات التقويم",
+                    "subtitle": "التوفر ونوع الموعد",
+                    "connectGoogle": "اربط تقويم Google الخاص بك",
+                    "connectGoogleDesc": "لاستخدام حجز المواعيد، يجب ربط حساب Google Calendar أولاً.",
+                    "goToIntegrations": "الذهاب للتكاملات",
+                    "googleMeetInfo": "اجتماعات عبر Google Meet",
+                    "googleMeetDesc": "سيتم إنشاء رابط Google Meet تلقائياً لكل موعد",
+                    "duration": "مدة الموعد",
+                    "minNotice": "الحد الأدنى للإشعار",
+                    "maxAdvance": "أقصى حجز مسبق",
+                    "timezone": "المنطقة الزمنية",
+                    "availability": "أوقات توفرك",
+                    "addSlot": "إضافة"
+                },
+                "days": {
+                    "monday": "الاثنين",
+                    "tuesday": "الثلاثاء",
+                    "wednesday": "الأربعاء",
+                    "thursday": "الخميس",
+                    "friday": "الجمعة",
+                    "saturday": "السبت",
+                    "sunday": "الأحد"
+                }
+            },
+            "ai": {
+                "title": "عقل الوكيل",
+                "subtitle": "كوّن كيف يتفاعل الذكاء الاصطناعي مع عملائك.",
+                "systemPrompt": "توجيهات النظام",
+                "systemPromptPlaceholder": "أنت مستشار خبير...",
+                "tone": "نبرة المحادثة",
+                "tones": {
+                    "professional": "مهني",
+                    "friendly": "ودي",
+                    "strict": "صارم",
+                    "empathetic": "متعاطف"
+                },
+                "numberOfQuestions": "عدد الأسئلة",
+                "complexity": "تعقيد الأسئلة",
+                "complexities": {
+                    "simple": "بسيط",
+                    "intermediate": "متوسط",
+                    "expert": "خبير"
+                },
+                "context": "سياق العمل",
+                "contextPlaceholder": "صف نشاطك وخدماتك...",
+                "model": "نموذج الذكاء الاصطناعي"
+            },
+            "design": {
+                "title": "المظهر",
+                "subtitle": "خصّص تصميم نموذجك.",
+                "primaryColor": "اللون الرئيسي",
+                "buttonStyle": "نمط الأزرار",
+                "font": "الخط",
+                "backgroundColor": "الخلفية"
+            },
+            "preview": "معاينة",
+            "save": "حفظ",
+            "publish": "نشر",
+            "saving": "جاري الحفظ...",
+            "saved": "تم الحفظ!"
+        }
+    },
+    "agents": {
+        "title": "وكلائي الذكيون",
+        "subtitle": "فعّل خبراء افتراضيين أو اطلب نسختك الخاصة.",
+        "tabs": {
+            "store": "المكتبة",
+            "custom": "مخصص"
+        },
+        "loading": "جاري تحميل الوكلاء...",
+        "noAgentsInLibrary": "لا يوجد وكلاء متاحون في المكتبة حالياً.",
+        "createCustomAgent": "إنشاء وكيل مخصص",
+        "createCustomAgentDesc": "مدرّب على بياناتك ومنهجياتك الخاصة.",
+        "category": "الفئة",
+        "custom": {
+            "title": "اطلب وكيلك المخصص",
+            "subtitle": "نسخة ذكاء اصطناعي مدربة بمنهجياتك وبياناتك لتوصيات شخصية فائقة.",
+            "benefits": {
+                "title": "ما ستحصل عليه:",
+                "training": "تدريب على عملياتك وبياناتك",
+                "methodology": "منهجيتك مدمجة",
+                "branding": "تخصيص بهويتك",
+                "support": "دعم مخصص"
+            },
+            "form": {
+                "title": "أخبرنا ما تبحث عنه",
+                "agentName": "اسم الوكيل",
+                "agentNamePlaceholder": "مثال: وكيل تدقيق SEO",
+                "objective": "الهدف الرئيسي",
+                "objectivePlaceholder": "صف ما يجب أن يحققه الوكيل...",
+                "budget": "الميزانية التقديرية",
+                "timeline": "الجدول الزمني المطلوب",
+                "timelineStandard": "قياسي (2-3 أسابيع)",
+                "timelineUrgent": "عاجل (أسبوع واحد)",
+                "timelineFlexible": "مرن",
+                "submit": "إرسال الطلب"
+            },
+            "successMessage": "تم إرسال الطلب بنجاح! سنتواصل معك خلال 24 ساعة.",
+            "errorMessage": "خطأ في إرسال الطلب."
+        }
+    },
+    "automations": {
+        "title": "الأتمتة",
+        "subtitle": "اربط أدواتك ودع الذكاء الاصطناعي يتعامل مع المهام المتكررة.",
+        "newWorkflow": "سير عمل جديد",
+        "tabs": {
+            "integrations": "التكاملات",
+            "workflows": "سير العمل"
+        },
+        "integrations": {
+            "title": "التكاملات",
+            "googleCalendar": {
+                "desc": "زامن مواعيدك وأنشئ أحداثاً تلقائياً مع Google Meet."
+            },
+            "googleSheets": {
+                "desc": "صدّر عملاءك المحتملين تلقائياً إلى جدول بيانات."
+            },
+            "slack": {
+                "desc": "استلم إشعارات فورية عن العملاء الجدد."
+            },
+            "webhook": {
+                "desc": "اربط أي تطبيق عبر webhooks مخصصة."
+            }
+        },
+        "googleCalendarIntegration": "تكامل تقويم Google",
+        "googleCalendarIntegrationDesc": "اربط تقويم Google الخاص بك للسماح للعملاء بحجز مواعيد مباشرة في أجندتك.",
+        "connected": "متصل",
+        "notConnected": "غير متصل",
+        "connect": "ربط",
+        "configure": "تكوين",
+        "comingSoon": "قريباً",
+        "fillAllFields": "يرجى ملء جميع الحقول",
+        "confirmDelete": "هل أنت متأكد من رغبتك في الحذف؟",
+        "activeWorkflows": "سير العمل النشطة",
+        "inactiveWorkflows": "سير العمل غير النشطة",
+        "configuration": "التكوين",
+        "noWorkflows": "لم يتم إنشاء أي سير عمل",
+        "createFirstWorkflow": "إنشاء سير عملك الأول",
+        "createWorkflow": "إنشاء سير عمل",
+        "editWorkflow": "تعديل سير العمل",
+        "workflowName": "اسم سير العمل",
+        "workflowNamePlaceholder": "مثال: إرسال بريد إلى العملاء المؤهلين",
+        "trigger": "المشغّل (إذا...)",
+        "triggerPlaceholder": "مثال: يصبح العميل مؤهلاً",
+        "action": "الإجراء (ثم...)",
+        "actionPlaceholder": "مثال: إرسال بريد المتابعة",
+        "if": "إذا",
+        "then": "ثم",
+        "lastRun": "آخر تنفيذ",
+        "workflows": {
+            "title": "سير العمل",
+            "active": "نشط",
+            "inactive": "غير نشط",
+            "activeWorkflows": "سير عمل نشط",
+            "inactiveWorkflows": "سير عمل غير نشط",
+            "noWorkflows": "لا يوجد سير عمل",
+            "noWorkflowsDesc": "أنشئ أول سير عمل لأتمتة مهامك",
+            "createFirst": "إنشاء سير عمل",
+            "if": "إذا",
+            "then": "عندها",
+            "lastRun": "آخر تشغيل",
+            "today": "اليوم"
+        },
+        "modal": {
+            "createTitle": "إنشاء سير عمل",
+            "editTitle": "تعديل سير العمل",
+            "workflowName": "اسم سير العمل",
+            "workflowNamePlaceholder": "مثال: إرسال بريد للعملاء المؤهلين",
+            "trigger": "المحفز (إذا...)",
+            "triggerPlaceholder": "مثال: العميل يصبح مؤهلاً",
+            "action": "الإجراء (عندها...)",
+            "actionPlaceholder": "مثال: إرسال بريد متابعة",
+            "create": "إنشاء",
+            "update": "تحديث",
+            "saving": "جاري الحفظ..."
+        }
+    },
+    "settings": {
+        "title": "الإعدادات",
+        "subtitle": "أدِر ملفك الشخصي واشتراكك والعلامة البيضاء.",
+        "tabs": {
+            "profile": "ملفي الشخصي",
+            "billing": "الاشتراك",
+            "domain": "العلامة البيضاء",
+            "notifications": "الإشعارات"
+        },
+        "profile": {
+            "title": "المعلومات الشخصية",
+            "subtitle": "حدّث صورتك ومعلومات الاتصال.",
+            "firstName": "الاسم الأول",
+            "lastName": "اسم العائلة",
+            "email": "البريد الإلكتروني",
+            "phone": "الهاتف",
+            "role": "المنصب",
+            "avatar": "صورة الملف",
+            "changeAvatar": "تغيير الصورة",
+            "dragDrop": "اسحب وأفلت صورة أو انقر للتصفح",
+            "save": "حفظ",
+            "saveSuccess": "تم حفظ التغييرات!"
+        },
+        "billing": {
+            "title": "الاشتراك",
+            "subtitle": "أدِر خطتك واطلع على فواتيرك.",
+            "currentPlan": "الخطة الحالية",
+            "freePlan": "مجاني",
+            "proPlan": "احترافي",
+            "upgradePro": "الترقية للاحترافي",
+            "invoices": "الفواتير",
+            "noInvoices": "لا توجد فواتير"
+        },
+        "domain": {
+            "title": "العلامة البيضاء",
+            "subtitle": "خصّص التجربة لعملائك.",
+            "customDomain": "نطاق مخصص",
+            "customDomainPlaceholder": "audits.yoursite.com",
+            "customDomainHelp": "كوّن نطاقك الخاص للنماذج العامة.",
+            "logo": "شعار الشركة",
+            "logoHelp": "سيظهر هذا الشعار على نماذجك وتقارير PDF.",
+            "dragDropLogo": "اسحب وأفلت شعارك هنا",
+            "save": "حفظ"
+        },
+        "notifications": {
+            "title": "تفضيلات الإشعارات",
+            "subtitle": "اختر كيف تريد أن يتم إشعارك.",
+            "newLead": "عميل جديد",
+            "newLeadDesc": "استلم بريداً عند ملء عميل محتمل للنموذج",
+            "weeklyReport": "التقرير الأسبوعي",
+            "weeklyReportDesc": "ملخص أدائك كل يوم اثنين",
+            "marketing": "أخبار ونصائح",
+            "marketingDesc": "استلم أفضل ممارساتنا وأخبار المنتج",
+            "save": "حفظ"
+        },
+        "logout": "تسجيل خروج"
+    },
+    "publicForm": {
+        "poweredBy": "مدعوم من",
+        "step": "الخطوة",
+        "of": "من",
+        "continueButton": "متابعة",
+        "submitButton": "إرسال",
+        "submitting": "جاري الإرسال...",
+        "aiThinking": "الذكاء الاصطناعي يفكر...",
+        "errorLoading": "خطأ في تحميل النموذج",
+        "formNotFound": "النموذج غير موجود",
+        "slugMissing": "الرابط مفقود",
+        "calendar": {
+            "title": "احجز موعدك",
+            "selectSlot": "اختر موعداً",
+            "noSlots": "لا تتوفر مواعيد",
+            "duration": "المدة",
+            "timezone": "المنطقة الزمنية",
+            "googleMeet": "اجتماع Google Meet"
+        },
+        "bookingInfo": {
+            "title": "بياناتك",
+            "name": "اسمك الكامل",
+            "email": "بريدك الإلكتروني",
+            "phone": "هاتفك",
+            "company": "شركتك"
+        },
+        "success": {
+            "title": "شكراً لك!",
+            "subtitle": "تم تسجيل ردودك.",
+            "message": "سنتواصل معك قريباً جداً.",
+            "withBooking": "تم تأكيد موعدك.",
+            "bookingDetails": "تفاصيل الموعد",
+            "meetingLink": "رابط الاجتماع"
+        },
+        "loading": {
+            "form": "جاري تحميل النموذج...",
+            "questions": "جاري إنشاء الأسئلة..."
+        }
+    },
+    "onboarding": {
+        "title": "مرحباً بك في Pretalk!",
+        "subtitle": "لنُعِد أداتك في خطوات بسيطة.",
+        "steps": {
+            "expertise": {
+                "title": "مجال الخبرة",
+                "description": "لنكوّن شخصية الذكاء الاصطناعي الخاصة بك"
+            },
+            "service": {
+                "title": "خدمتك",
+                "description": "خصّص عرضك"
+            },
+            "testDrive": {
+                "title": "تجربة قيادة",
+                "description": "اكتشف سحر الذكاء الاصطناعي"
+            },
+            "ready": {
+                "title": "جاهز!",
+                "description": "أداتك جاهزة للعمل"
+            }
+        },
+        "expertise": {
+            "title": "ما هو مجال خبرتك؟",
+            "subtitle": "اختر المجال الذي يناسب خدماتك",
+            "marketing": {
+                "title": "التسويق / SEO",
+                "desc": "تدقيق الظهور، الاستراتيجيات الرقمية، SEO"
+            },
+            "tech": {
+                "title": "التقنية / التطوير",
+                "desc": "التدقيق التقني، الأداء، البنية"
+            },
+            "sales": {
+                "title": "المبيعات / الأعمال",
+                "desc": "التشخيص التجاري، عمليات البيع"
+            },
+            "other": {
+                "title": "أخرى",
+                "desc": "مجال متخصص أو مخصص"
+            }
+        },
+        "service": {
+            "title": "صف خدمتك الرئيسية",
+            "serviceName": "اسم خدمتك الرئيسية",
+            "serviceNamePlaceholder": "مثال: تدقيق SEO كامل، تشخيص تجاري...",
+            "logoUpload": "شعار شركتك (اختياري)",
+            "dragDrop": "اسحب وأفلت شعارك أو انقر للتصفح"
+        },
+        "testDrive": {
+            "title": "لنجرب الذكاء الاصطناعي معاً!",
+            "subtitle": "أجب على هذه الأسئلة كما لو كنت عميلاً محتملاً:",
+            "challenge": "ما هو تحديك الرئيسي الآن؟",
+            "challengePlaceholder": "صف مشكلتك الحالية...",
+            "goal": "ما النتيجة التي تتوقعها؟",
+            "goalPlaceholder": "ما الذي سيكون مثالياً لك؟",
+            "generate": "إنشاء أسئلتي الذكية",
+            "generating": "الذكاء الاصطناعي يحلل ردودك...",
+            "result": "إليك الأسئلة التي سيطرحها الذكاء الاصطناعي على عملائك:",
+            "tryAgain": "جرّب بردود أخرى"
+        },
+        "ready": {
+            "title": "أنت جاهز!",
+            "subtitle": "أداة Pretalk الخاصة بك مكوّنة وجاهزة للعمل.",
+            "summary": "الملخص",
+            "expertise": "المجال",
+            "service": "الخدمة",
+            "nextSteps": "الخطوات التالية",
+            "step1": "أنشئ نموذجك الأول",
+            "step2": "خصّص أسئلة الذكاء الاصطناعي",
+            "step3": "شارك مع عملائك المحتملين",
+            "goToDashboard": "الذهاب للوحة التحكم"
+        },
+        "navigation": {
+            "back": "رجوع",
+            "continue": "متابعة",
+            "skip": "تخطي"
+        }
+    },
+    "errors": {
+        "generic": "حدث خطأ",
+        "tryAgain": "يرجى المحاولة مرة أخرى",
+        "notFound": "الصفحة غير موجودة",
+        "notFoundDesc": "الصفحة التي تبحث عنها غير موجودة.",
+        "backHome": "العودة للرئيسية",
+        "unauthorized": "غير مصرح بالوصول",
+        "sessionExpired": "انتهت الجلسة",
+        "networkError": "خطأ في الاتصال",
+        "saveError": "خطأ في الحفظ",
+        "deleteError": "خطأ في الحذف",
+        "validation": {
+            "required": "هذا الحقل مطلوب",
+            "email": "بريد إلكتروني غير صالح",
+            "phone": "رقم هاتف غير صالح",
+            "url": "رابط غير صالح",
+            "minLength": "{{min}} أحرف كحد أدنى",
+            "maxLength": "{{max}} أحرف كحد أقصى"
+        }
+    },
+    "notifications": {
+        "title": "الإشعارات",
+        "markAllRead": "تعليم الكل كمقروء",
+        "noNotifications": "لا توجد إشعارات",
+        "newLead": "عميل جديد",
+        "leadQualified": "عميل مؤهل",
+        "formSubmission": "تقديم جديد",
+        "bookingConfirmed": "تم تأكيد الموعد"
+    },
+    "landing": {
+        "nav": {
+            "features": "الميزات",
+            "testimonials": "الشهادات",
+            "pricing": "الأسعار",
+            "demo": "عرض تجريبي",
+            "login": "تسجيل دخول",
+            "tryFree": "جرّب مجاناً"
+        },
+        "hero": {
+            "badge": "جديد: ذكاء اصطناعي Claude 4 مدمج",
+            "title": "قيّم عملاءك المحتملين",
+            "titleHighlight": "أسرع 10 مرات",
+            "titleEnd": "بالذكاء الاصطناعي",
+            "subtitle": "Pretalk ينشئ تلقائياً تشخيصات مخصصة تحوّل زوارك إلى عملاء. أنشئ أول نموذج ذكاء اصطناعي في 5 دقائق.",
+            "cta": "ابدأ مجاناً",
+            "demo": "احجز عرضاً تجريبياً",
+            "noCreditCard": "بدون بطاقة ائتمان",
+            "stats": {
+                "consultants": "مستشارون",
+                "leadsProcessed": "عملاء معالجون",
+                "timeSaved": "وقت موفر"
+            }
+        },
+        "features": {
+            "sectionTitle": "الميزات",
+            "title": "كل ما تحتاجه",
+            "titleHighlight": "لأتمتة تقاريرك",
+            "ai": {
+                "title": "ذكاء اصطناعي توليدي",
+                "desc": "أنشئ تشخيصات مخصصة في ثوانٍ مع ذكائنا الاصطناعي المتقدم."
+            },
+            "automation": {
+                "title": "الأتمتة",
+                "desc": "سير عمل n8n مدمجة لأتمتة عملياتك من البداية للنهاية."
+            },
+            "pdf": {
+                "title": "تقارير PDF احترافية",
+                "desc": "تقارير مخصصة بهويتك، تُنشأ وتُرسل تلقائياً."
+            },
+            "analytics": {
+                "title": "تحليلات مدمجة",
+                "desc": "تابع أداءك وحسّن تقاريرك في الوقت الفعلي."
+            },
+            "security": {
+                "title": "أمان مؤسسي",
+                "desc": "بياناتك وبيانات عملائك محمية بتشفير مصرفي المستوى."
+            },
+            "multiUser": {
+                "title": "متعدد المستخدمين",
+                "desc": "تعاون كفريق مع أدوار وصلاحيات دقيقة."
+            }
+        },
+        "testimonials": {
+            "sectionTitle": "الشهادات",
+            "title": "حوّلوا أعمالهم",
+            "titleHighlight": "مع Pretalk"
+        },
+        "pricing": {
+            "sectionTitle": "الأسعار",
+            "title": "أسعار بسيطة،",
+            "titleHighlight": "بدون مفاجآت",
+            "monthly": "شهري",
+            "yearly": "سنوي",
+            "perMonth": "/شهر",
+            "popular": "الأكثر شعبية",
+            "plans": {
+                "starter": {
+                    "name": "المبتدئ",
+                    "price": "29$",
+                    "description": "مثالي للبدء",
+                    "cta": "ابدأ مجاناً"
+                },
+                "professional": {
+                    "name": "الاحترافي",
+                    "price": "89$",
+                    "description": "خطتنا الأكثر شعبية",
+                    "cta": "جرّب 14 يوماً مجاناً"
+                },
+                "enterprise": {
+                    "name": "المؤسسات",
+                    "price": "مخصص",
+                    "description": "للفرق الكبيرة",
+                    "cta": "اتصل بنا"
+                }
+            }
+        },
+        "cta": {
+            "title": "جاهز لتحويل تقاريرك؟",
+            "subtitle": "انضم للمستشارين الذين يوفرون الوقت مع Pretalk.",
+            "button": "ابدأ مجاناً",
+            "noCreditCard": "بدون بطاقة ائتمان • إعداد في 5 دقائق"
+        },
+        "footer": {
+            "description": "منصة الذكاء الاصطناعي للمستشارين الذين يريدون تأهيل المزيد من العملاء في وقت أقل.",
+            "product": "المنتج",
+            "features": "الميزات",
+            "pricing": "الأسعار",
+            "integrations": "التكاملات",
+            "changelog": "سجل التغييرات",
+            "company": "الشركة",
+            "about": "عن الشركة",
+            "blog": "المدونة",
+            "careers": "الوظائف",
+            "contact": "اتصل بنا",
+            "legal": "قانوني",
+            "privacy": "الخصوصية",
+            "terms": "الشروط",
+            "cookies": "الكوكيز",
+            "copyright": "© 2024 Pretalk. جميع الحقوق محفوظة."
+        }
+    },
+    "errors": {
+        "saveError": "خطأ في الحفظ",
+        "deleteError": "خطأ في الحذف",
+        "formTitleRequired": "عنوان النموذج مطلوب",
+        "formQuestionsRequired": "يرجى إضافة سؤال واحد على الأقل إلى النموذج",
+        "colorRequired": "يرجى اختيار لون أساسي",
+        "saveFailed": "فشل الحفظ. يرجى المحاولة مجددا.",
+        "generateFailed": "خطأ في الإنشاء"
+    }
+}

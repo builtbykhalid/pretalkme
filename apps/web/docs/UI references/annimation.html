@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CoreShift - Clone Landing Page</title>
+    <style>
+        /* --- VARIABLES & RESET --- */
+        :root {
+            --bg-color: #fbfbfe;
+            --text-main: #111111;
+            --text-muted: #666666;
+            --brand-purple: #9b51e0;
+            --brand-red: #ff5a5f;
+            --card-bg: #ffffff;
+            --border-radius-lg: 24px;
+            --border-radius-sm: 12px;
+            --transition-smooth: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+
+        /* --- UTILITAIRES D'ANIMATION (SCROLL) --- */
+        .reveal-up {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: var(--transition-smooth);
+        }
+
+        .reveal-up.in-view {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+        }
+
+        .nav-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .logo span {
+            color: var(--brand-red);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-text {
+            color: var(--text-main);
+        }
+
+        .btn-dark {
+            background: var(--text-main);
+            color: white;
+        }
+
+        .btn-red {
+            background: var(--brand-red);
+            color: white;
+        }
+
+        .btn-purple {
+            background: var(--brand-purple);
+            color: white;
+        }
+
+        /* --- SECTION 1: HERO (Éclatement radial) --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            text-align: center;
+            padding-top: 80px;
+        }
+
+        /* Conteneur des icônes flottantes */
+        .hero-visuals {
+            position: relative;
+            width: 600px;
+            height: 300px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .center-icon {
+            width: 100px;
+            height: 100px;
+            background: var(--brand-purple);
+            border-radius: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            box-shadow: 0 20px 40px rgba(155, 81, 224, 0.3);
+            animation: popIn 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .center-icon svg {
+            fill: white;
+            width: 50px;
+        }
+
+        /* Icônes périphériques (Positionnées au centre puis animées vers l'extérieur) */
+        .floating-item {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            opacity: 0;
+            transform: scale(0) translate(0, 0);
+            /* L'animation float-idle prendra le relais en JS une fois l'entrée terminée */
+        }
+
+        .hero h1 {
+            font-size: 4.5rem;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 500px;
+            margin-bottom: 30px;
+        }
+
+        /* --- SECTION 2: CORE HR (Défloutage et Expansion) --- */
+        .core-hr {
+            min-height: 100vh;
+            padding: 100px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .avatars-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .avatar-img {
+            position: absolute;
+            width: 120px;
+            height: 160px;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            /* État initial : Centré et flou */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            filter: blur(25px);
+            opacity: 0;
+            transition: all 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        /* État "In View" : Les avatars s'écartent et se défloutent */
+        .core-hr.in-view .avatar-img {
+            filter: blur(0px);
+            opacity: 1;
+        }
+
+        .core-hr.in-view .av-1 {
+            transform: translate(-350%, -120%) scale(1);
+        }
+
+        .core-hr.in-view .av-2 {
+            transform: translate(-220%, 50%) scale(1.2);
+        }
+
+        .core-hr.in-view .av-3 {
+            transform: translate(-300%, 180%) scale(0.9);
+        }
+
+        .core-hr.in-view .av-4 {
+            transform: translate(150%, -150%) scale(1.1);
+        }
+
+        .core-hr.in-view .av-5 {
+            transform: translate(250%, 20%) scale(1);
+        }
+
+        .core-hr.in-view .av-6 {
+            transform: translate(180%, 160%) scale(1.3);
+        }
+
+        .core-content {
+            background: rgba(251, 251, 254, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            max-width: 600px;
+        }
+
+        .core-content h2 {
+            font-size: 3.5rem;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+
+        .core-content p {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        /* --- SECTION 3: BUILT FOR EVERYONE (Grille Cascade) --- */
+        .bento-section {
+            padding: 100px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .bento-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .bento-header h2 {
+            font-size: 3.5rem;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .bento-header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .bento-card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bento-card.large {
+            grid-column: span 2;
+        }
+
+        .card-visual {
+            height: 150px;
+            background: #f9fafb;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bento-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .bento-card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        /* Faux graphiques pour les cartes */
+        .fake-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            height: 80%;
+        }
+
+        .bar {
+            width: 30px;
+            background: #e5e7eb;
+            border-radius: 4px 4px 0 0;
+        }
+
+        .bar.active {
+            background: var(--brand-purple);
+            height: 100% !important;
+        }
+
+        .bar.red {
+            background: var(--brand-red);
+        }
+
+        /* --- SECTION 4: INTÉGRATIONS (Arc Carousel) --- */
+        .integrations {
+            padding: 100px 20px;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .integrations h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+        }
+
+        .arc-carousel {
+            position: relative;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tool-icon {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            cursor: pointer;
+        }
+
+        /* Positions sur l'arc gérées par JS, voici les classes de base */
+        .tool-icon.center {
+            transform: translate(0, 0) scale(1.2);
+            z-index: 3;
+            opacity: 1;
+        }
+
+        .tool-icon.left-1 {
+            transform: translate(-150px, 30px) scale(0.8);
+            z-index: 2;
+            opacity: 0.6;
+        }
+
+        .tool-icon.right-1 {
+            transform: translate(150px, 30px) scale(0.8);
+            z-index: 2;
+            opacity: 0.6;
+        }
+
+        .tool-icon.left-2 {
+            transform: translate(-280px, 80px) scale(0.6);
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .tool-icon.right-2 {
+            transform: translate(280px, 80px) scale(0.6);
+            z-index: 1;
+            opacity: 0.3;
+        }
+
+        .tool-info {
+            margin-top: 40px;
+            height: 60px;
+        }
+
+        .tool-info h3 {
+            font-size: 1.5rem;
+            transition: opacity 0.3s;
+        }
+
+        .tool-info p {
+            color: var(--text-muted);
+            transition: opacity 0.3s;
+        }
+
+        /* --- SECTION 5: TÉMOIGNAGES (3D Cover Flow) --- */
+        .testimonials {
+            padding: 100px 20px;
+            text-align: center;
+        }
+
+        .testimonials h2 {
+            font-size: 3.5rem;
+            letter-spacing: -1px;
+            margin-bottom: 10px;
+        }
+
+        .testimonials>p {
+            color: var(--text-muted);
+            margin-bottom: 60px;
+        }
+
+        .carousel-3d-container {
+            perspective: 1000px;
+            /* Active la 3D */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 400px;
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .testimo-card {
+            position: absolute;
+            width: 350px;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            text-align: center;
+        }
+
+        .testimo-card img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        .stars {
+            color: #fbbf24;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+
+        .testimo-card p {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            font-style: italic;
+            line-height: 1.6;
+        }
+
+        /* États 3D */
+        .testimo-card.center {
+            transform: rotateY(0deg) translateZ(0) scale(1);
+            z-index: 3;
+            opacity: 1;
+        }
+
+        .testimo-card.left {
+            transform: rotateY(25deg) translateX(-60%) translateZ(-100px) scale(0.85);
+            z-index: 2;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .testimo-card.right {
+            transform: rotateY(-25deg) translateX(60%) translateZ(-100px) scale(0.85);
+            z-index: 2;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .controls button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #ddd;
+            background: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .controls button:hover {
+            background: #f0f0f0;
+        }
+
+        /* --- FOOTER (Texte Flouté Arrière-plan) --- */
+        footer {
+            position: relative;
+            padding: 100px 40px 40px;
+            margin-top: 100px;
+            overflow: hidden;
+            border-top: 1px solid #eee;
+        }
+
+        .bg-text {
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 15vw;
+            font-weight: 900;
+            color: var(--brand-red);
+            opacity: 0.15;
+            filter: blur(10px);
+            z-index: -1;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-col h4 {
+            margin-bottom: 20px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 10px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+
+        /* Keyframes */
+        @keyframes popIn {
+            0% {
+                transform: scale(0.5);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes floatIdle {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="nav-container">
+            <div class="logo"><span>❖</span> CoreShift</div>
+            <ul class="nav-links">
+                <li><a href="#">Product</a></li>
+                <li><a href="#">Features</a></li>
+                <li><a href="#">Pricing</a></li>
+                <li><a href="#">Resources</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="#" class="btn-text">Sign in</a>
+                <a href="#" class="btn btn-dark">Request a Demo</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-visuals">
+            <div class="floating-item bg-yellow" style="color: #eab308; top: 20%; left: 20%;">💡</div>
+            <div class="floating-item bg-blue" style="color: #3b82f6; top: 70%; left: 25%;">🗣️</div>
+            <div class="floating-item bg-red" style="color: white; background:#ef4444; top: 15%; right: 25%;">⚡</div>
+            <div class="floating-item" style="top: 60%; right: 15%;">👀</div>
+            <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=100&q=80"
+                class="floating-item" style="border-radius:50%; top: 40%; left: 5%; object-fit: cover;">
+            <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80"
+                class="floating-item" style="border-radius:50%; top: 50%; right: 30%; object-fit: cover;">
+
+            <div class="center-icon">
+                <svg viewBox="0 0 24 24">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                </svg>
+            </div>
+        </div>
+
+        <h1 class="reveal-up">All-in-one HR<br>platform</h1>
+        <p class="reveal-up delay-1">CoreShift is a modern, all-in-one HR platform designed to perfectly fit your
+            business needs</p>
+        <a href="#" class="btn btn-red reveal-up delay-2">Request a Demo</a>
+    </section>
+
+    <section class="core-hr" id="core-hr-section">
+        <div class="avatars-grid">
+            <img src="https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&w=300&q=80"
+                class="avatar-img av-1">
+            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&w=300&q=80"
+                class="avatar-img av-2">
+            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"
+                class="avatar-img av-3">
+            <img src="https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=300&q=80"
+                class="avatar-img av-4">
+            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80"
+                class="avatar-img av-5">
+            <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&w=300&q=80"
+                class="avatar-img av-6">
+        </div>
+
+        <div class="core-content reveal-up">
+            <div
+                style="width: 60px; height: 60px; background: #f3e8ff; border-radius: 50%; margin: 0 auto 20px; display: flex; align-items:center; justify-content:center; color: var(--brand-purple); font-size: 24px;">
+                👤</div>
+            <h2>Core HR solutions</h2>
+            <p>Streamline HR processes in one centralized platform, enhancing team transparency.</p>
+            <a href="#" class="btn btn-purple">Learn more</a>
+        </div>
+    </section>
+
+    <section class="bento-section">
+        <div class="bento-header reveal-up">
+            <h2>Built for everyone</h2>
+            <p>Thousands of businesses, from startups to enterprises, use CoreShift to handle payments.</p>
+        </div>
+
+        <div class="bento-grid">
+            <div class="bento-card reveal-up delay-1">
+                <div class="card-visual">
+                    <div class="fake-chart">
+                        <div class="bar" style="height: 40%"></div>
+                        <div class="bar active" style="height: 80%"></div>
+                        <div class="bar red" style="height: 60%"></div>
+                    </div>
+                </div>
+                <h3>For HR professionals</h3>
+                <p>Use a single cloud system for your employees, candidates and HR processes info.</p>
+            </div>
+            <div class="bento-card reveal-up delay-2">
+                <div class="card-visual">
+                    <div
+                        style="background: white; padding: 10px 20px; border-radius: 50px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display:flex; align-items:center; gap: 10px; color: var(--brand-red); font-weight: bold;">
+                        📈 Make Data-Driven Decisions
+                    </div>
+                </div>
+                <h3>For managers & leaders</h3>
+                <p>Get always up-to-date data and monitor performance of the company.</p>
+            </div>
+            <div class="bento-card reveal-up delay-3">
+                <div class="card-visual">
+                    <div
+                        style="width: 60px; height: 60px; background: var(--brand-purple); border-radius: 16px; display:flex; align-items:center; justify-content:center; color: white; font-size: 24px; box-shadow: 0 10px 20px rgba(155, 81, 224, 0.4);">
+                        📄</div>
+                </div>
+                <h3>For legal teams</h3>
+                <p>CoreShift helps legal teams by streamlining compliance, managing contracts and policies.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="integrations reveal-up">
+        <h2>Integrate with your existing<br>tools in seconds</h2>
+
+        <div class="arc-carousel" id="arc-container">
+        </div>
+
+        <div class="tool-info">
+            <h3 id="tool-title">Google Meet</h3>
+            <p id="tool-desc">Seamless video meetings</p>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <h2 class="reveal-up">Words of Appreciation</h2>
+        <p class="reveal-up delay-1">Thousands of businesses, from startups to enterprises, use<br>CoreShift to handle
+            payments.</p>
+
+        <div class="carousel-3d-container reveal-up delay-2" id="carousel-3d">
+        </div>
+
+        <div class="controls reveal-up delay-3">
+            <button onclick="rotateCarousel(-1)">❮</button>
+            <button onclick="rotateCarousel(1)">❯</button>
+        </div>
+    </section>
+
+    <footer class="reveal-up">
+        <div class="bg-text">CoreShift</div>
+        <div class="footer-content">
+            <div class="footer-col" style="grid-column: span 2;">
+                <p style="color: var(--text-muted); max-width: 250px; line-height: 1.6;">CoreShift is the HRM platform
+                    that build a thriving workplace culture—all in one place.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li>CoreHR</li>
+                    <li>Recruit</li>
+                    <li>Perform</li>
+                    <li>Pulse</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Features</h4>
+                <ul>
+                    <li>Desk</li>
+                    <li>Time</li>
+                    <li>Analytics</li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Follow us</h4>
+                <div style="display:flex; gap:10px; font-size:20px;">
+                    <span>📷</span> <span>🐦</span> <span>🎵</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            /* --- 1. ANIMATION HERO (Éclatement radial) --- */
+            const floatingItems = document.querySelectorAll('.floating-item');
+            setTimeout(() => {
+                floatingItems.forEach((item, index) => {
+                    // Calcul d'un délai pour l'effet d'éclatement
+                    setTimeout(() => {
+                        item.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                        item.style.opacity = '1';
+                        item.style.transform = 'scale(1) translate(0, 0)';
+
+                        // Lancer l'animation de flottement perpétuel après l'entrée
+                        setTimeout(() => {
+                            item.style.animation = `floatIdle ${3 + (index * 0.5)}s ease-in-out infinite`;
+                        }, 800);
+                    }, index * 100);
+                });
+            }, 500); // Démarre un peu après l'icône centrale
+
+            /* --- 2. INTERSECTION OBSERVER (Scroll Reveal & Défloutage) --- */
+            const observerOptions = { threshold: 0.2 };
+            const revealObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('in-view');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal-up, .core-hr').forEach(el => {
+                revealObserver.observe(el);
+            });
+
+            /* --- 3. ARC CAROUSEL (Intégrations) --- */
+            const tools = [
+                { icon: 'M', color: '#ea4335', name: 'Gmail', desc: 'Email communication' },
+                { icon: '⚙️', color: '#4f46e5', name: 'Zapier', desc: 'Automate your workflows' },
+                { icon: '🎥', color: '#0f9d58', name: 'Google Meet', desc: 'Seamless video meetings' },
+                { icon: 'O', color: '#0078d4', name: 'Microsoft Outlook', desc: 'Email & Schedule management' },
+                { icon: 'T', color: '#6264a7', name: 'Microsoft Teams', desc: 'Team collaboration' }
+            ];
+            const arcContainer = document.getElementById('arc-container');
+            const toolTitle = document.getElementById('tool-title');
+            const toolDesc = document.getElementById('tool-desc');
+            let activeToolIndex = 2; // Google Meet au centre au début
+
+            function renderArc() {
+                arcContainer.innerHTML = '';
+                tools.forEach((tool, i) => {
+                    const el = document.createElement('div');
+                    el.className = 'tool-icon';
+                    el.innerHTML = tool.icon;
+                    el.style.color = tool.color;
+
+                    // Calcul de la position sur l'arc
+                    let diff = i - activeToolIndex;
+                    if (diff === 0) el.classList.add('center');
+                    else if (diff === -1) el.classList.add('left-1');
+                    else if (diff === 1) el.classList.add('right-1');
+                    else if (diff <= -2) el.classList.add('left-2');
+                    else if (diff >= 2) el.classList.add('right-2');
+
+                    el.onclick = () => { activeToolIndex = i; renderArc(); };
+                    arcContainer.appendChild(el);
+                });
+
+                // Update text
+                toolTitle.style.opacity = 0; toolDesc.style.opacity = 0;
+                setTimeout(() => {
+                    toolTitle.innerText = tools[activeToolIndex].name;
+                    toolDesc.innerText = tools[activeToolIndex].desc;
+                    toolTitle.style.opacity = 1; toolDesc.style.opacity = 1;
+                }, 300);
+            }
+            renderArc(); // Init
+
+            /* --- 4. 3D COVER FLOW CAROUSEL (Témoignages) --- */
+            const testimonials = [
+                { name: 'Sarah Mitchell', role: 'HR Director', text: '"CoreShift has streamlined our HR processes, making tasks like onboarding and performance tracking more efficient."' },
+                { name: 'James Carter', role: 'HR Manager', text: '"The platform is easy to use, keeps everything in one place, and helps our team stay on top of things."' },
+                { name: 'Elena Rostova', role: 'CEO', text: '"A game changer for our company culture. The analytics feature gives us insights we never had before."' }
+            ];
+
+            const carousel3d = document.getElementById('carousel-3d');
+            let activeTestimonial = 0;
+
+            window.rotateCarousel = function (direction) {
+                activeTestimonial = (activeTestimonial + direction + testimonials.length) % testimonials.length;
+                render3DCarousel();
+            }
+
+            function render3DCarousel() {
+                carousel3d.innerHTML = '';
+                testimonials.forEach((testi, i) => {
+                    const el = document.createElement('div');
+                    el.className = 'testimo-card';
+
+                    let diff = i - activeTestimonial;
+                    // Gérer la boucle infinie visuellement pour 3 éléments
+                    if (diff === 2) diff = -1;
+                    if (diff === -2) diff = 1;
+
+                    if (diff === 0) el.classList.add('center');
+                    else if (diff === -1) el.classList.add('left');
+                    else if (diff === 1) el.classList.add('right');
+
+                    el.innerHTML = `
+                        <img src="https://ui-avatars.com/api/?name=${testi.name.replace(' ', '+')}&background=random">
+                        <h4>${testi.name}</h4>
+                        <p style="font-size: 12px; margin-bottom: 10px;">${testi.role}</p>
+                        <div class="stars">★★★★★</div>
+                        <p>${testi.text}</p>
+                    `;
+                    carousel3d.appendChild(el);
+                });
+            }
+            render3DCarousel(); // Init
+
+        });
+    </script>
+</body>
+
+</html>

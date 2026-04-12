@@ -1,0 +1,39 @@
+---
+import '../../components/ReactApp/index.css';
+import LegalTemplate from '../../components/ReactApp/components/layout/LegalTemplate';
+---
+
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CGV & CGU - PreTalk</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-white text-black">
+    <LegalTemplate title="Conditions Générales" badge="Ventes & Utilisation" lastUpdated="8 avril 2026" client:load>
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">1. Objet</h2>
+        <p>Pretalk est une plateforme SaaS destinée aux consultants et agences pour automatiser la qualification de leurs leads et la gestion de leur activité commerciale.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">2. Abonnements et Paiements</h2>
+        <p>Le service est proposé sous forme d'abonnements mensuels ou annuels. Les paiements sont gérés de manière sécurisée via notre prestataire de paiement Lemon Squeezy.</p>
+        <p>Tout abonnement est annulable à tout moment depuis l'espace client. Le service reste accessible jusqu'à la fin de la période facturée.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">3. Garanties</h2>
+        <p>Pretalk offre une garantie "Satisfait ou Remboursé" de 30 jours pour tout nouvel utilisateur d'un plan payant.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">4. Responsabilité</h2>
+        <p>Pretalk met à disposition des outils d'intelligence artificielle. Les résultats fournis par ces outils sont des aides à la décision et ne sauraient engager la responsabilité de l'éditeur du service en cas d'erreur de jugement commercial.</p>
+      </section>
+    </LegalTemplate>
+  </body>
+</html>

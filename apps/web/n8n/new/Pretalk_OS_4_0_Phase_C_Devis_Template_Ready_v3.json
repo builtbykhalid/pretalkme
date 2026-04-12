@@ -1,0 +1,408 @@
+{
+  "name": "Pretalk OS 4.0 - Phase C (Devis Template-Ready v3)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "generate-proposal",
+        "options": {}
+      },
+      "id": "4f5dd0f6-4d8a-4d59-8f6f-18f8f0e646b1",
+      "name": "Webhook Generate Proposal",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [
+        1320,
+        200
+      ],
+      "webhookId": "phase-c-generate-proposal-template-v3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-lead-id",
+              "leftValue": "={{ $json.body.lead_id || $json.lead_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a82cae61-84e4-4bd2-8b2b-f4e296f60539",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Webhook Generate Proposal').first().json.body.lead_id || $('Webhook Generate Proposal').first().json.lead_id }}",
+              "condition": "eq"
+            }
+          ]
+        }
+      },
+      "id": "9ea28093-aef7-47f4-91a7-c4e3742f7f72",
+      "name": "Get Lead (Supabase)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        120
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "profiles",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "keyValue": "={{ $('Get Lead (Supabase)').first().json.user_id || $('Webhook Generate Proposal').first().json.body.user_id }}",
+              "condition": "eq"
+            }
+          ]
+        }
+      },
+      "id": "d7f8a60d-6e52-4dc8-a1f2-c5f8cb26aa54",
+      "name": "Get Consultant Profile",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1920,
+        120
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      },
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $('Get Lead (Supabase)').first().json || {};\nconst profile = $('Get Consultant Profile').first().json || {};\nconst body = $('Webhook Generate Proposal').first().json.body || $('Webhook Generate Proposal').first().json || {};\n\nconst locale = body.locale || profile.locale || 'fr';\nconst LANG_MAP = { en:'English', fr:'French', es:'Spanish', ar:'Arabic', pt:'Portuguese', de:'German' };\nconst language = LANG_MAP[locale] || 'French';\n\nconst leadName = lead.respondent_info?.name || lead.respondent_info?.firstName || lead.full_name || 'Client';\nconst leadCompany = lead.respondent_info?.company || lead.company || '';\nconst leadEmail = lead.respondent_info?.email || lead.email || '';\n\nconst staticAnswers = JSON.stringify(lead.static_answers || lead.respondent_info || {}, null, 2).slice(0, 3500);\n\n// ── Extract audit context — supports both v2 (named blocks) and v1 (audit_blocks[]) ──\nconst auditJson = lead.ai_analysis_json || {};\nconst stripHtml = (s) => String(s || '').replace(/<[^>]+>/g, ' ').replace(/\\s+/g, ' ').trim();\nlet auditContext = 'No audit context available.';\n\nif (auditJson.version === 2 || auditJson.context_block) {\n  // V2 format — extract from named blocks\n  const parts = [];\n  if (auditJson.context_block?.content) parts.push(`[Contexte] ${stripHtml(auditJson.context_block.content)}`);\n  if (auditJson.analysis_block?.content) parts.push(`[Analyse] ${stripHtml(auditJson.analysis_block.content)}`);\n  if (Array.isArray(auditJson.problems_block?.items)) {\n    parts.push('[Problèmes] ' + auditJson.problems_block.items.map(i => `${i.title}: ${stripHtml(i.description)}`).join(' | '));\n  }\n  if (Array.isArray(auditJson.solutions_block?.items)) {\n    parts.push('[Solutions] ' + auditJson.solutions_block.items.map(i => `${i.title} (${i.impact}): ${stripHtml(i.description)}`).join(' | '));\n  }\n  if (auditJson.hero?.headline) parts.unshift(`[Score: ${auditJson.hero.score || '?'}/100] ${auditJson.hero.headline}`);\n  auditContext = parts.join('\\n\\n').slice(0, 5000) || auditContext;\n} else {\n  // V1 fallback — old audit_blocks format\n  const auditBlocks = Array.isArray(auditJson.audit_blocks) ? auditJson.audit_blocks : [];\n  auditContext = auditBlocks\n    .map((b) => `[${b.title || b.id || 'section'}] ${stripHtml(b.content)}`)\n    .filter(Boolean)\n    .join('\\n\\n')\n    .slice(0, 5000) || auditContext;\n}\n\nconst consultantName = body.consultant_name || profile.full_name || [profile.first_name, profile.last_name].filter(Boolean).join(' ') || 'Consultant';\nconst consultantEmail = body.consultant_email || profile.email || '';\nconst companyName = profile.company_name || 'Pretalk';\n\nconst prompt = `<role_et_expertise_metier>\nYou are a senior B2B commercial strategist and quotation engineer.\nYou design differentiated offers and legally-compliant French quote structures.\nOutput language for all user-visible text: ${language}.\n</role_et_expertise_metier>\n\n<consultant_persona>\nConsultant: ${consultantName}\nCompany: ${companyName}\nStyle anchor: specific, measurable, business-first, no generic claims.\n</consultant_persona>\n\n<context>\nProspect name: ${leadName}\nProspect company: ${leadCompany}\nProspect email: ${leadEmail}\nConsultant: ${consultantName}\nConsultant company: ${companyName}\n\nLead answers:\n${staticAnswers}\n\nAudit insights:\n${auditContext}\n</context>\n\n<objectif>\nGenerate exactly 3 offers (A/B/C) that are not generic and clearly anchored to this prospect's context and problems.\nFor each offer, generate a quote payload that satisfies the quote template variables exactly.\n</objectif>\n\n<contraintes_juridiques_devis_fr>\nEach quote payload must support mandatory French quote content:\n- quote number and validity period\n- provider/client identity and contact details\n- detailed line items with quantity and unit price HT\n- VAT rate and HT/TTC totals\n- payment terms and delivery/implementation delay\n- complaint/after-sales context via quoteNotes when relevant\n</contraintes_juridiques_devis_fr>\n\n<protocole_raisonnement_structure>\nReason internally, then provide a concise visible rationale_summary for the client.\nThis summary must explain framing choices and next step, without exposing hidden chain-of-thought.\n</protocole_raisonnement_structure>\n\n<quality_gate>\nIf the input is LOW quality, do not repeat unknown fields; ask only for the minimum needed information.\nIf the input is MEDIUM quality, infer sparingly and flag assumptions in the rationale_summary.\nIf the input is HIGH quality, use the data fully but stay within the requested scope.\nNever ask for information already collected in the initial answers.\n</quality_gate>\n\n\n\n<rules>\n1) Output ONLY raw valid JSON. No markdown, no extra text.\n2) Return exactly 3 offers and exactly 3 quote_template_payloads, aligned by index.\n3) quote_items must contain 2 to 6 lines per offer, each with realistic unit_price_ht, qty, and unit.\n4) All currency values must be numbers (not strings).\n5) Keep text concrete, measurable, and professional.\n6) recommended_tier must be one of \"A\", \"B\", \"C\".\n</rules>\n\n<schema>\n{\n  \"proposals\": [\n    {\n      \"name\": \"Option A - ...\",\n      \"price\": \"From 1200 EUR\",\n      \"tagline\": \"...\",\n      \"description\": \"...\",\n      \"features\": [\"...\",\"...\",\"...\",\"...\"],\n      \"recommended\": false,\n      \"cta\": \"...\"\n    }\n  ],\n  \"recommended_tier\": \"B\",\n  \"contract_summary\": \"3-5 sentences, assertive and specific\",\n  \"rationale_summary\": {\n    \"positioning_choice\": \"1 short paragraph\",\n    \"business_risks_covered\": [\"risk 1\", \"risk 2\"],\n    \"why_recommended_tier\": \"1-2 sentences\",\n    \"client_next_step\": \"1 sentence\"\n  },\n  \"quote_template_payloads\": [\n    {\n      \"quoteNumber\": \"DV-2026-001\",\n      \"validUntil\": \"31/12/2026\",\n      \"quoteSubject\": \"...\",\n      \"tvaRate\": 20,\n      \"paymentTerms\": \"...\",\n      \"deliveryDelay\": \"...\",\n      \"quoteNotes\": \"...\",\n      \"quote_items\": [\n        {\n          \"designation\": \"...\",\n          \"note\": \"...\",\n          \"unit_price_ht\": 600,\n          \"qty\": 1,\n          \"unit\": \"forfait\"\n        }\n      ]\n    }\n  ]\n}\n</schema>`;\n\nreturn [{\n  json: {\n    generated_prompt: prompt,\n    lead_id: lead.id,\n    locale,\n    consultant_name: consultantName,\n    consultant_email: consultantEmail,\n    company_name: companyName,\n    profile\n  }\n}];"
+      },
+      "id": "d6fd2512-13ea-4998-bc11-3fa2af49facc",
+      "name": "Prepare Prompt (Template Aware)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2120,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.generated_prompt }}"
+      },
+      "id": "be6b73ec-9fd0-4d69-a6f0-7ba293fcbe50",
+      "name": "Basic LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        2320,
+        120
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.25
+        }
+      },
+      "id": "6b7ae57f-5cb3-4da3-bb8b-ec77ccad6f13",
+      "name": "Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        2320,
+        320
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nlet content = response.text || '';\n\ncontent = content.replace(/<thinking>[\\s\\S]*?<\\/thinking>/gi, '').trim();\ncontent = content.replace(/```\\s*json\\s*\\n?/gi, '').replace(/```\\s*\\n?/g, '').trim();\n\nconst s = content.indexOf('{');\nconst e = content.lastIndexOf('}');\nlet parsed;\ntry {\n  parsed = JSON.parse(s !== -1 && e > s ? content.substring(s, e + 1) : content);\n} catch (err) {\n  throw new Error('DEVISE_PARSE_FAILED: invalid JSON from LLM. Raw: ' + content.substring(0, 260));\n}\n\nif (!Array.isArray(parsed.proposals) || parsed.proposals.length !== 3) {\n  throw new Error('DEVISE_SCHEMA_ERROR: proposals must contain exactly 3 entries');\n}\nif (!Array.isArray(parsed.quote_template_payloads) || parsed.quote_template_payloads.length !== 3) {\n  throw new Error('DEVISE_SCHEMA_ERROR: quote_template_payloads must contain exactly 3 entries');\n}\n\nconst prep = $('Prepare Prompt (Template Aware)').first().json;\nconst profile = prep.profile || {};\nconst lead = $('Get Lead (Supabase)').first().json || {};\n\nconst safe = (v, d = '') => (v === undefined || v === null || String(v).trim() === '' ? d : String(v));\nconst num = (v, d = 0) => {\n  const n = Number(v);\n  return Number.isFinite(n) ? n : d;\n};\nconst money = (n) => Number((num(n, 0)).toFixed(2));\nconst esc = (v) => String(v || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');\n\nconst now = new Date();\nconst fmtDate = (d) => d.toLocaleDateString('fr-FR');\n\nconst defaultTVA = 20;\n\nconst quoteTemplatePayloads = parsed.quote_template_payloads.map((raw, idx) => {\n  const items = Array.isArray(raw.quote_items) ? raw.quote_items : [];\n  const normalizedItems = items.slice(0, 8).map((it) => ({\n    designation: safe(it.designation, `Prestation ${idx + 1}`),\n    note: safe(it.note, ''),\n    unit_price_ht: money(it.unit_price_ht),\n    qty: num(it.qty, 1),\n    unit: safe(it.unit, 'forfait')\n  }));\n\n  if (normalizedItems.length === 0) {\n    normalizedItems.push({ designation: `Prestation principale ${idx + 1}`, note: '', unit_price_ht: 0, qty: 1, unit: 'forfait' });\n  }\n\n  const subtotalHT = money(normalizedItems.reduce((acc, it) => acc + (num(it.unit_price_ht) * num(it.qty, 1)), 0));\n  const tvaRate = num(raw.tvaRate, defaultTVA);\n  const tvaMontant = money(subtotalHT * tvaRate / 100);\n  const totalTTC = money(subtotalHT + tvaMontant);\n\n  const quoteItemsRows = normalizedItems.map((it) => {\n    const amount = money(num(it.unit_price_ht) * num(it.qty, 1));\n    return `<tr><td><span class=\"desc-main\">${esc(it.designation)}</span>${it.note ? `<span class=\"desc-sub\">${esc(it.note)}</span>` : ''}</td><td>${money(it.unit_price_ht).toFixed(2)} EUR</td><td>${num(it.qty, 1)}</td><td>${esc(it.unit)}</td><td>${amount.toFixed(2)} EUR</td></tr>`;\n  }).join('');\n\n  const quoteNumber = safe(raw.quoteNumber, `DV-${now.getFullYear()}-${String(idx + 1).padStart(3, '0')}-${String(lead.id || '').slice(0, 6)}`);\n  const validUntilDate = new Date(now.getTime() + 15 * 24 * 60 * 60 * 1000);\n\n  const logoTag = profile.company_logo_url\n    ? `<img src=\"${profile.company_logo_url}\" class=\"doc-logo\" alt=\"logo\" />`\n    : `<div class=\"doc-brand-name\">${esc(prep.company_name || 'Pretalk')}</div>`;\n\n  return {\n    primaryColor: safe(profile.branding_config?.primaryColor, '#48D951'),\n    accentColor: safe(profile.branding_config?.accentColor, '#221A40'),\n    logoTag,\n    date: fmtDate(now),\n    quoteNumber,\n    validUntil: safe(raw.validUntil, fmtDate(validUntilDate)),\n    consultantName: safe(prep.consultant_name, 'Consultant'),\n    companyName: safe(prep.company_name, 'Pretalk'),\n    consultantAddress: safe(raw.consultantAddress, safe(profile.address, 'Adresse du consultant')),\n    consultantEmail: safe(prep.consultant_email, safe(profile.email, 'consultant@pretalk.me')),\n    consultantPhone: safe(raw.consultantPhone, safe(profile.phone, '')),\n    clientName: safe(lead.respondent_info?.name || lead.respondent_info?.firstName || lead.full_name, 'Client'),\n    clientCompany: safe(lead.respondent_info?.company || lead.company, ''),\n    clientAddress: safe(raw.clientAddress, ''),\n    clientEmail: safe(lead.respondent_info?.email || lead.email, ''),\n    clientPhone: safe(raw.clientPhone, ''),\n    quoteSubject: safe(raw.quoteSubject, parsed.proposals[idx]?.name || `Offre ${idx + 1}`),\n    quoteItemsRows,\n    subtotalHT: money(subtotalHT),\n    tvaRate: num(tvaRate, defaultTVA),\n    tvaMontant: money(tvaMontant),\n    totalTTC: money(totalTTC),\n    paymentTerms: safe(raw.paymentTerms, '50% a la commande, 50% a la livraison.'),\n    deliveryDelay: safe(raw.deliveryDelay, 'Demarrage sous 5 jours ouvres apres validation.'),\n    quoteNotes: safe(raw.quoteNotes, '')\n  };\n});\n\nconst proposals = parsed.proposals.map((p, idx) => ({\n  name: safe(p.name, `Option ${idx + 1}`),\n  price: safe(p.price, `${quoteTemplatePayloads[idx].totalTTC} EUR TTC`),\n  tagline: safe(p.tagline, ''),\n  description: safe(p.description, ''),\n  features: Array.isArray(p.features) ? p.features.map((f) => safe(f)).filter(Boolean).slice(0, 8) : [],\n  recommended: !!p.recommended,\n  cta: safe(p.cta, 'Choisir cette offre')\n}));\n\nconst proposals_json = {\n  proposals,\n  options: proposals,\n  recommended_tier: ['A', 'B', 'C'].includes(safe(parsed.recommended_tier)) ? safe(parsed.recommended_tier) : 'B',\n  contract_summary: safe(parsed.contract_summary, ''),\n  rationale_summary: (() => {\n    const rs = parsed.rationale_summary;\n    if (typeof rs === 'string') {\n      return {\n        positioning_choice: safe(rs, ''),\n        business_risks_covered: [],\n        why_recommended_tier: '',\n        client_next_step: ''\n      };\n    }\n    return {\n      positioning_choice: safe(rs?.positioning_choice, ''),\n      business_risks_covered: Array.isArray(rs?.business_risks_covered) ? rs.business_risks_covered.map((v) => safe(v)).filter(Boolean).slice(0, 4) : [],\n      why_recommended_tier: safe(rs?.why_recommended_tier, ''),\n      client_next_step: safe(rs?.client_next_step, '')\n    };\n  })(),\n  quote_template_payloads: quoteTemplatePayloads\n};\n\nreturn [{\n  json: {\n    lead_id: prep.lead_id,\n    proposals_json\n  }\n}];"
+      },
+      "id": "2e6fd500-cfc8-4d34-a5fd-f903899443f9",
+      "name": "Parse + Build Template Payloads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2520,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.lead_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "proposal_sent"
+            },
+            {
+              "fieldId": "proposals_json",
+              "fieldValue": "={{ JSON.stringify($json.proposals_json) }}"
+            },
+            {
+              "fieldId": "contract_summary",
+              "fieldValue": "={{ $json.proposals_json.contract_summary || '' }}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{ new Date().toISOString() }}"
+            }
+          ]
+        }
+      },
+      "id": "73364f0f-200a-41da-a33d-53c9e00dca86",
+      "name": "Update Lead (Proposals JSON)",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2720,
+        120
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        },
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, lead_id: $('Parse + Build Template Payloads').first().json.lead_id, proposals: $('Parse + Build Template Payloads').first().json.proposals_json.proposals, recommended_tier: $('Parse + Build Template Payloads').first().json.proposals_json.recommended_tier, contract_summary: $('Parse + Build Template Payloads').first().json.proposals_json.contract_summary, rationale_summary: $('Parse + Build Template Payloads').first().json.proposals_json.rationale_summary, quote_template_payloads: $('Parse + Build Template Payloads').first().json.proposals_json.quote_template_payloads } }}"
+      },
+      "id": "0513f86f-5941-4518-9a33-8de8e47baa2f",
+      "name": "Respond Success",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2920,
+        120
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, error: 'MISSING_LEAD_ID', message: 'lead_id is required.' } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "f2d89156-9e6f-4a4a-96ee-c2d90d8f7c79",
+      "name": "Respond Error",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1720,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Generate Proposal": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Get Lead (Supabase)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Lead (Supabase)": {
+      "main": [
+        [
+          {
+            "node": "Get Consultant Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Consultant Profile": {
+      "main": [
+        [
+          {
+            "node": "Prepare Prompt (Template Aware)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Prompt (Template Aware)": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parse + Build Template Payloads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse + Build Template Payloads": {
+      "main": [
+        [
+          {
+            "node": "Update Lead (Proposals JSON)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Lead (Proposals JSON)": {
+      "main": [
+        [
+          {
+            "node": "Respond Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "3c43f9cd-e8fd-4ea4-b94f-5e6215b5dce1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "phase-c-devis-template-v3",
+  "tags": []
+}
+
+
+

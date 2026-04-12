@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Contrat de Prestation — Pretalk</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pc: {{primaryColor}};
+  --ac: {{accentColor}};
+  --pc-dark: #2fa837;
+  --pc-15: rgba(72,217,81,0.15);
+  --ac-10: rgba(34,26,64,0.08);
+  --white: #ffffff;
+  --ink: #0f0e17;
+  --body-txt: #374151;
+  --muted: #6b7280;
+  --light: #f5f4fb;
+  --border: #e5e7eb;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  font-family: var(--font-body);
+  background: #fff;
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-size: 10px;
+}
+@page { size: 5.8in 8.3in; margin: 0; }
+
+.page {
+  width: 5.8in;
+  min-height: 8.3in;
+  position: relative;
+  page-break-after: always;
+  overflow: hidden;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+.page:last-child { page-break-after: auto; }
+
+
+/* ═══════════ HEADER ═══════════ */
+.doc-header {
+  background: var(--ac);
+  padding: 0.3in 0.5in 0.25in;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+.doc-header-geo1 {
+  position: absolute; top: 0; right: 0;
+  width: 1.6in; height: 1.6in;
+  background: var(--pc); opacity: 0.10;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+.doc-header-geo2 {
+  position: absolute; top: 0; right: 0;
+  width: 0.75in; height: 0.75in;
+  background: var(--pc); opacity: 0.22;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+.doc-header-left { position: relative; z-index: 2; }
+.doc-logo { max-height: 28px; max-width: 110px; object-fit: contain; filter: brightness(0) invert(1); display: block; margin-bottom: 10px; }
+.doc-brand-name { font-size: 11px; font-weight: 900; color: var(--white); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.doc-header-right { position: relative; z-index: 2; text-align: right; }
+.doc-type-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--pc); color: var(--ac);
+  font-size: 7px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 4px 10px 4px 8px; border-radius: 2px; margin-bottom: 7px;
+}
+.doc-type-badge::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--ac); flex-shrink: 0; }
+.doc-number { font-family: var(--font-display); font-size: 20px; color: var(--white); line-height: 1; }
+.doc-date { font-size: 8px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+
+
+/* ═══════════ PARTIES ═══════════ */
+.parties-band {
+  background: var(--light);
+  padding: 0.16in 0.5in;
+  display: flex;
+  gap: 0.2in;
+  border-bottom: 2px solid var(--ac);
+  flex-shrink: 0;
+}
+.party-block { flex: 1; }
+.party-label { font-size: 6.5px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--pc-dark); margin-bottom: 5px; }
+.party-name { font-size: 10px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.party-detail { font-size: 8px; color: var(--muted); line-height: 1.55; }
+.party-divider { width: 1px; background: var(--border); flex-shrink: 0; margin: 4px 0; }
+
+
+/* ═══════════ BODY ═══════════ */
+.doc-body { flex: 1; padding: 0.22in 0.5in 0.55in; }
+
+.contract-intro {
+  font-size: 9px; color: var(--muted); line-height: 1.65;
+  padding: 10px 12px; background: var(--ac-10);
+  border-radius: 4px; margin-bottom: 0.18in;
+  border-left: 3px solid var(--pc-dark);
+}
+.contract-intro strong { color: var(--ac); font-weight: 700; }
+
+
+/* ═══════════ ARTICLES ═══════════ */
+.article { margin-bottom: 0.16in; }
+.article-header {
+  display: flex; align-items: center; gap: 9px;
+  margin-bottom: 7px;
+}
+.article-num {
+  background: var(--ac); color: var(--pc);
+  font-size: 7px; font-weight: 900; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 3px 8px; border-radius: 2px;
+  flex-shrink: 0;
+}
+.article-title {
+  font-size: 10px; font-weight: 700; color: var(--ac);
+  font-family: var(--font-display);
+}
+.article-body {
+  font-size: 8.5px; line-height: 1.72; color: var(--body-txt);
+  padding-left: 0.22in;
+}
+.article-body p { margin-bottom: 6px; }
+.article-body p:last-child { margin-bottom: 0; }
+.article-body strong { font-weight: 700; color: var(--ink); }
+.article-body em { color: var(--muted); font-style: italic; }
+
+.article-field {
+  display: flex; align-items: baseline; gap: 7px;
+  padding: 5px 0; border-bottom: 1px dashed var(--border);
+  margin-bottom: 3px;
+}
+.article-field:last-child { border-bottom: none; }
+.field-label { font-size: 8px; font-weight: 600; color: var(--ac); min-width: 1.2in; flex-shrink: 0; }
+.field-value { font-size: 8px; color: var(--body-txt); flex: 1; }
+.field-placeholder {
+  font-size: 8px; color: var(--muted); font-style: italic; flex: 1;
+  border-bottom: 1px solid var(--border); padding-bottom: 1px; min-width: 1in;
+}
+
+.checkbox-list { padding-left: 0; list-style: none; }
+.checkbox-list li {
+  display: flex; align-items: flex-start; gap: 7px;
+  font-size: 8.5px; color: var(--body-txt); margin-bottom: 5px;
+  line-height: 1.5;
+}
+.checkbox-list li::before {
+  content: '';
+  width: 10px; height: 10px; min-width: 10px;
+  border: 1.5px solid var(--border); border-radius: 2px;
+  display: inline-block; margin-top: 1px;
+}
+.checkbox-list li.checked::before {
+  background: var(--pc-dark); border-color: var(--pc-dark);
+}
+
+.two-col-art { display: flex; gap: 0.18in; }
+.two-col-art .article { flex: 1; }
+
+.highlight-box {
+  background: var(--ac); border-radius: 5px; padding: 11px 13px; margin: 8px 0;
+  position: relative; overflow: hidden;
+}
+.highlight-box::before { content: ''; position: absolute; right: -8px; top: -8px; width: 44px; height: 44px; border-radius: 50%; background: var(--pc); opacity: 0.15; }
+.highlight-label { font-size: 6.5px; font-weight: 900; letter-spacing: 0.2em; text-transform: uppercase; color: var(--pc); margin-bottom: 5px; }
+.highlight-value { font-family: var(--font-display); font-size: 18px; color: var(--white); }
+.highlight-sub { font-size: 7.5px; color: rgba(255,255,255,0.5); margin-top: 2px; }
+
+.divider-line { border: none; border-top: 1px solid var(--border); margin: 0.14in 0; }
+
+
+/* ═══════════ PAGE SIGNATURE ═══════════ */
+.sig-page-intro {
+  font-family: var(--font-display);
+  font-size: 16px; color: var(--ac); line-height: 1.15;
+  margin-bottom: 12px;
+}
+.sig-page-sub { font-size: 8.5px; color: var(--muted); line-height: 1.6; margin-bottom: 0.2in; }
+.sig-grid { display: flex; gap: 0.22in; margin-bottom: 0.18in; }
+.sig-block {
+  flex: 1; border: 1px solid var(--border); border-radius: 6px;
+  overflow: hidden;
+}
+.sig-block-header { background: var(--ac); padding: 8px 12px; }
+.sig-block-header-label { font-size: 6.5px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--pc); margin-bottom: 2px; }
+.sig-block-header-name { font-size: 10px; font-weight: 800; color: var(--white); }
+.sig-block-body { padding: 12px; background: var(--light); }
+.sig-info-row { display: flex; justify-content: space-between; font-size: 7.5px; color: var(--muted); margin-bottom: 4px; }
+.sig-info-row span:last-child { font-weight: 600; color: var(--ink); }
+.sig-zone {
+  border: 1px dashed var(--border); border-radius: 4px;
+  height: 0.55in; margin-top: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: #fff;
+}
+.sig-zone-text { font-size: 7.5px; color: var(--border); font-style: italic; }
+
+.sig-approval-check {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 8px; color: var(--muted); line-height: 1.5;
+  padding: 10px 12px; background: var(--ac-10); border-radius: 4px; margin-bottom: 14px;
+}
+.sig-approval-check::before {
+  content: '';
+  width: 11px; height: 11px; min-width: 11px;
+  border: 1.5px solid var(--border); border-radius: 2px; display: block; margin-top: 1px;
+}
+
+
+/* ═══════════ FOOTER ═══════════ */
+.page-hd {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 0.5in; border-bottom: 2px solid var(--ac); flex-shrink: 0;
+}
+.page-hd-left { display: flex; align-items: center; gap: 9px; }
+.chapter-tag {
+  font-size: 6.5px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--ac); background: var(--pc); padding: 3px 9px; border-radius: 2px;
+}
+.chapter-title { font-size: 8px; font-weight: 500; color: var(--muted); letter-spacing: 0.02em; }
+.page-hd-brand { font-size: 8px; font-weight: 900; color: var(--ac); text-transform: uppercase; letter-spacing: 0.08em; }
+
+.page-ft {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0.5in; border-top: 1px solid var(--border); flex-shrink: 0;
+}
+.ft-brand { font-size: 7px; color: var(--muted); }
+.ft-confidential { font-size: 6px; color: var(--border); letter-spacing: 0.1em; text-transform: uppercase; }
+.ft-pg { font-size: 7px; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.ft-pg-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--pc-dark); }
+</style>
+</head>
+<body>
+
+
+<!-- ══════════════════════════════
+     PAGE 1 — CONTRAT : INTRO + ART.1-4
+     ══════════════════════════════ -->
+<div class="page">
+
+  <div class="doc-header">
+    <div class="doc-header-geo1"></div>
+    <div class="doc-header-geo2"></div>
+    <div class="doc-header-left">
+      {{logoTag}}
+      <div class="doc-date">{{date}}</div>
+    </div>
+    <div class="doc-header-right">
+      <div class="doc-type-badge">Contrat de Prestation</div>
+      <div class="doc-number">N° {{contractNumber}}</div>
+    </div>
+  </div>
+
+  <div class="parties-band">
+    <div class="party-block">
+      <div class="party-label">Le Prestataire</div>
+      <div class="party-name">{{consultantName}}</div>
+      <div class="party-detail">
+        {{companyName}}<br>
+        {{consultantAddress}}<br>
+        {{consultantEmail}}
+      </div>
+    </div>
+    <div class="party-divider"></div>
+    <div class="party-block">
+      <div class="party-label">Le Client</div>
+      <div class="party-name">{{clientName}}</div>
+      <div class="party-detail">
+        {{clientCompany}}<br>
+        {{clientAddress}}<br>
+        {{clientEmail}}
+      </div>
+    </div>
+  </div>
+
+  <div class="doc-body">
+
+    <div class="contract-intro">
+      Ce contrat est conclu entre <strong>{{consultantName}}</strong> (ci-après « le Prestataire ») et <strong>{{clientName}}</strong> (ci-après « le Client »).
+      Les deux parties conviennent des conditions suivantes relatives à la prestation de services décrite ci-dessous.
+    </div>
+
+    <!-- ART 1 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 01</span>
+        <span class="article-title">Objet du Contrat</span>
+      </div>
+      <div class="article-body">
+        <p>Le Prestataire s'engage à réaliser pour le Client les prestations suivantes :</p>
+        <div class="article-field">
+          <span class="field-label">Mission :</span>
+          <span class="field-value">{{contractSubject}}</span>
+        </div>
+        <div class="article-field">
+          <span class="field-label">Description :</span>
+          <span class="field-value">{{contractDescription}}</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- ART 2 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 02</span>
+        <span class="article-title">Durée &amp; Calendrier</span>
+      </div>
+      <div class="article-body">
+        <div class="two-col-art">
+          <div style="flex:1">
+            <div class="highlight-box">
+              <div class="highlight-label">Date de début</div>
+              <div class="highlight-value">{{startDate}}</div>
+            </div>
+          </div>
+          <div style="flex:1">
+            <div class="highlight-box">
+              <div class="highlight-label">Date de fin prévue</div>
+              <div class="highlight-value">{{endDate}}</div>
+            </div>
+          </div>
+        </div>
+        <p style="margin-top:8px">{{contractDuration}}</p>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- ART 3 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 03</span>
+        <span class="article-title">Rémunération</span>
+      </div>
+      <div class="article-body">
+        <div class="article-field">
+          <span class="field-label">Montant HT :</span>
+          <span class="field-value">{{contractAmount}} €</span>
+        </div>
+        <div class="article-field">
+          <span class="field-label">TVA ({{tvaRate}}%) :</span>
+          <span class="field-value">{{tvaMontant}} €</span>
+        </div>
+        <div class="article-field">
+          <span class="field-label">Total TTC :</span>
+          <span class="field-value" style="font-weight:800;color:var(--ac)">{{totalTTC}} €</span>
+        </div>
+        <div class="article-field">
+          <span class="field-label">Modalités :</span>
+          <span class="field-value">{{paymentTerms}}</span>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- ART 4 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 04</span>
+        <span class="article-title">Résiliation</span>
+      </div>
+      <div class="article-body">
+        <p>Ce contrat prend fin lors de la survenue de l'une des conditions suivantes :</p>
+        <ul class="checkbox-list">
+          <li>Achèvement complet des prestations définies à l'Article 01.</li>
+          <li>Résiliation à l'amiable des deux parties avec un préavis de <strong>{{noticePeriod}}</strong>.</li>
+          <li>Manquement grave non corrigé dans un délai de <strong>15 jours</strong> après mise en demeure.</li>
+          <li>{{terminationOther}}</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-ft">
+    <span class="ft-brand">{{companyName}} — Contrat Confidentiel</span>
+    <span class="ft-confidential">Confidentiel</span>
+    <span class="ft-pg"><span class="ft-pg-dot"></span> 01</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     PAGE 2 — ART.5-8 + CLAUSES
+     ══════════════════════════════ -->
+<div class="page">
+
+  <div class="page-hd">
+    <div class="page-hd-left">
+      <span class="chapter-tag">Contrat</span>
+      <span class="chapter-title">Clauses Générales</span>
+    </div>
+    <span class="page-hd-brand">{{companyName}}</span>
+  </div>
+
+  <div class="doc-body" style="padding-top:0.2in">
+
+    <!-- ART 5 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 05</span>
+        <span class="article-title">Confidentialité</span>
+      </div>
+      <div class="article-body">
+        <p>Le Prestataire s'engage à traiter comme strictement confidentielles toutes informations transmises par le Client dans le cadre de cette mission, et à ne pas les divulguer à des tiers sans accord écrit préalable du Client.</p>
+        <p>Cette obligation de confidentialité est valable pendant la durée du contrat et pour une période de <strong>{{confidentialityPeriod}}</strong> après son terme.</p>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- ART 6 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 06</span>
+        <span class="article-title">Propriété Intellectuelle</span>
+      </div>
+      <div class="article-body">
+        <p>{{intellectualPropertyTerms}}</p>
+        <p>Le Client acquiert les droits d'utilisation des livrables uniquement après règlement intégral des sommes dues.</p>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- ART 7 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 07</span>
+        <span class="article-title">Responsabilité</span>
+      </div>
+      <div class="article-body">
+        <p>La responsabilité du Prestataire est limitée au montant total des sommes perçues au titre du présent contrat. Le Prestataire ne saurait être tenu responsable des dommages indirects ou consécutifs liés à l'utilisation des livrables.</p>
+      </div>
+    </div>
+
+    <hr class="divider-line">
+
+    <!-- ART 8 -->
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 08</span>
+        <span class="article-title">Droit Applicable &amp; Litiges</span>
+      </div>
+      <div class="article-body">
+        <div class="article-field">
+          <span class="field-label">Droit applicable :</span>
+          <span class="field-value">{{applicableLaw}}</span>
+        </div>
+        <div class="article-field">
+          <span class="field-label">Juridiction :</span>
+          <span class="field-value">{{jurisdiction}}</span>
+        </div>
+        <p style="margin-top:6px">En cas de litige, les parties s'engagent à rechercher une solution amiable avant tout recours judiciaire.</p>
+      </div>
+    </div>
+
+    {{#if additionalClauses}}
+    <hr class="divider-line">
+    <div class="article">
+      <div class="article-header">
+        <span class="article-num">Art. 09</span>
+        <span class="article-title">Clauses Particulières</span>
+      </div>
+      <div class="article-body">
+        <p>{{additionalClauses}}</p>
+      </div>
+    </div>
+    {{/if}}
+
+  </div>
+
+  <div class="page-ft">
+    <span class="ft-brand">{{companyName}} — Contrat Confidentiel</span>
+    <span class="ft-confidential">Confidentiel</span>
+    <span class="ft-pg"><span class="ft-pg-dot"></span> 02</span>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════
+     PAGE 3 — SIGNATURES
+     ══════════════════════════════ -->
+<div class="page">
+
+  <div class="page-hd">
+    <div class="page-hd-left">
+      <span class="chapter-tag">Contrat</span>
+      <span class="chapter-title">Signatures &amp; Validation</span>
+    </div>
+    <span class="page-hd-brand">{{companyName}}</span>
+  </div>
+
+  <div class="doc-body" style="padding-top:0.25in">
+
+    <div class="sig-page-intro">Accord &amp; Signatures</div>
+    <p class="sig-page-sub">
+      Les parties soussignées reconnaissent avoir lu et accepté l'intégralité du présent contrat.
+      En signant ce document, chacune des parties s'engage à respecter les termes et conditions établis ci-dessus.
+      Ce contrat constitue l'intégralité de l'accord entre les parties et annule tout accord antérieur.
+    </p>
+
+    <div class="sig-approval-check">
+      Lu et approuvé — les deux parties reconnaissent avoir pris connaissance de l'intégralité du document avant signature.
+    </div>
+
+    <div class="sig-grid">
+      <div class="sig-block">
+        <div class="sig-block-header">
+          <div class="sig-block-header-label">Le Prestataire</div>
+          <div class="sig-block-header-name">{{consultantName}}</div>
+        </div>
+        <div class="sig-block-body">
+          <div class="sig-info-row"><span>Société</span><span>{{companyName}}</span></div>
+          <div class="sig-info-row"><span>Email</span><span>{{consultantEmail}}</span></div>
+          <div class="sig-info-row"><span>Date</span><span>{{date}}</span></div>
+          <div class="sig-zone">
+            <span class="sig-zone-text">Signature</span>
+          </div>
+        </div>
+      </div>
+      <div class="sig-block">
+        <div class="sig-block-header">
+          <div class="sig-block-header-label">Le Client</div>
+          <div class="sig-block-header-name">{{clientName}}</div>
+        </div>
+        <div class="sig-block-body">
+          <div class="sig-info-row"><span>Société</span><span>{{clientCompany}}</span></div>
+          <div class="sig-info-row"><span>Email</span><span>{{clientEmail}}</span></div>
+          <div class="sig-info-row"><span>Date</span><span>&nbsp;</span></div>
+          <div class="sig-zone">
+            <span class="sig-zone-text">Signature précédée de « Bon pour accord »</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Récap mini -->
+    <div style="background:var(--ac-10);border-radius:5px;padding:12px 14px;border:1px solid var(--border);">
+      <div style="font-size:6.5px;font-weight:800;letter-spacing:0.15em;text-transform:uppercase;color:var(--pc-dark);margin-bottom:8px;">Récapitulatif du contrat</div>
+      <div style="display:flex;gap:0.18in;">
+        <div style="flex:1">
+          <div style="font-size:7.5px;color:var(--muted);margin-bottom:2px">Mission</div>
+          <div style="font-size:8.5px;font-weight:600;color:var(--ink)">{{contractSubject}}</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:7.5px;color:var(--muted);margin-bottom:2px">Montant TTC</div>
+          <div style="font-size:8.5px;font-weight:800;color:var(--ac)">{{totalTTC}} €</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:7.5px;color:var(--muted);margin-bottom:2px">Période</div>
+          <div style="font-size:8.5px;font-weight:600;color:var(--ink)">{{startDate}} → {{endDate}}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="page-ft">
+    <span class="ft-brand">{{companyName}} — Contrat Confidentiel</span>
+    <span class="ft-confidential">Confidentiel</span>
+    <span class="ft-pg"><span class="ft-pg-dot"></span> 03</span>
+  </div>
+</div>
+
+
+</body>
+</html>

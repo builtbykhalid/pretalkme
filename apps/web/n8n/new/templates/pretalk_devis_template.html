@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Devis — Pretalk</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pc: {{primaryColor}};
+  --ac: {{accentColor}};
+  --pc-dark: #2fa837;
+  --pc-15: rgba(72,217,81,0.15);
+  --ac-10: rgba(34,26,64,0.08);
+  --white: #ffffff;
+  --ink: #0f0e17;
+  --body-txt: #374151;
+  --muted: #6b7280;
+  --light: #f5f4fb;
+  --border: #e5e7eb;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html, body {
+  font-family: var(--font-body);
+  background: #fff;
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  font-size: 10px;
+}
+@page { size: 5.8in 8.3in; margin: 0; }
+
+.page {
+  width: 5.8in;
+  min-height: 8.3in;
+  position: relative;
+  page-break-after: always;
+  overflow: hidden;
+  background: #fff;
+}
+.page:last-child { page-break-after: auto; }
+
+
+/* ═══════════ HEADER ═══════════ */
+.doc-header {
+  background: var(--ac);
+  padding: 0.3in 0.5in 0.28in;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.doc-header-geo1 {
+  position: absolute; top: 0; right: 0;
+  width: 1.6in; height: 1.6in;
+  background: var(--pc); opacity: 0.10;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+.doc-header-geo2 {
+  position: absolute; top: 0; right: 0;
+  width: 0.75in; height: 0.75in;
+  background: var(--pc); opacity: 0.22;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+.doc-header-left { position: relative; z-index: 2; }
+.doc-logo { max-height: 28px; max-width: 110px; object-fit: contain; filter: brightness(0) invert(1); display: block; margin-bottom: 10px; }
+.doc-brand-name { font-size: 11px; font-weight: 900; color: var(--white); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.doc-header-right { position: relative; z-index: 2; text-align: right; }
+.doc-type-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--pc); color: var(--ac);
+  font-size: 7px; font-weight: 900; letter-spacing: 0.18em; text-transform: uppercase;
+  padding: 4px 10px 4px 8px; border-radius: 2px; margin-bottom: 7px;
+}
+.doc-type-badge::before { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--ac); flex-shrink: 0; }
+.doc-number { font-family: var(--font-display); font-size: 22px; color: var(--white); line-height: 1; }
+.doc-date { font-size: 8px; color: rgba(255,255,255,0.45); margin-top: 3px; }
+
+
+/* ═══════════ PARTIES ═══════════ */
+.parties-band {
+  background: var(--light);
+  padding: 0.18in 0.5in;
+  display: flex;
+  gap: 0.2in;
+  border-bottom: 1px solid var(--border);
+}
+.party-block { flex: 1; }
+.party-label {
+  font-size: 6.5px; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--pc-dark); margin-bottom: 6px;
+}
+.party-name { font-size: 10px; font-weight: 800; color: var(--ink); margin-bottom: 2px; }
+.party-detail { font-size: 8px; color: var(--muted); line-height: 1.55; }
+.party-divider { width: 1px; background: var(--border); flex-shrink: 0; }
+
+
+/* ═══════════ BODY ═══════════ */
+.doc-body { padding: 0.28in 0.5in 0.2in; }
+
+.doc-subject-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 0.2in;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--border);
+}
+.doc-subject-label { font-size: 7px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); }
+.doc-subject-text { font-size: 10px; font-weight: 700; color: var(--ac); }
+.doc-validity { margin-left: auto; font-size: 7.5px; color: var(--muted); }
+.doc-validity strong { color: var(--ac); font-weight: 700; }
+
+
+/* ═══════════ TABLE ═══════════ */
+.items-table { width: 100%; border-collapse: collapse; margin-bottom: 16px; }
+.items-table thead tr {
+  background: var(--ac);
+}
+.items-table thead th {
+  font-size: 7px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--pc); padding: 7px 10px; text-align: left;
+}
+.items-table thead th:last-child,
+.items-table thead th:nth-child(3),
+.items-table thead th:nth-child(4) { text-align: right; }
+.items-table tbody tr { border-bottom: 1px solid var(--border); }
+.items-table tbody tr:nth-child(even) { background: var(--ac-10); }
+.items-table tbody td { font-size: 8.5px; color: var(--body-txt); padding: 8px 10px; line-height: 1.45; }
+.items-table tbody td:last-child,
+.items-table tbody td:nth-child(3),
+.items-table tbody td:nth-child(4) { text-align: right; }
+.items-table tbody td.desc-main { font-weight: 600; color: var(--ink); }
+.items-table tbody td.desc-sub { font-size: 7.5px; color: var(--muted); display: block; font-weight: 400; }
+
+
+/* ═══════════ TOTAUX ═══════════ */
+.totals-wrap { display: flex; justify-content: flex-end; margin-bottom: 0.2in; }
+.totals-table { width: 2.1in; }
+.totals-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--border); }
+.totals-row:last-child { border-bottom: none; }
+.totals-label { font-size: 8px; color: var(--muted); }
+.totals-value { font-size: 8.5px; font-weight: 600; color: var(--ink); }
+.totals-row.total-ht .totals-label { font-weight: 700; color: var(--ac); }
+.totals-row.total-ht .totals-value { font-weight: 700; color: var(--ac); }
+.totals-row.grand-total {
+  background: var(--ac); border-radius: 4px;
+  padding: 7px 10px; margin-top: 4px;
+  border-bottom: none;
+}
+.totals-row.grand-total .totals-label { font-size: 8px; font-weight: 800; color: rgba(255,255,255,0.7); letter-spacing: 0.08em; text-transform: uppercase; }
+.totals-row.grand-total .totals-value { font-size: 11px; font-weight: 900; color: var(--pc); }
+
+
+/* ═══════════ CONDITIONS & NOTES ═══════════ */
+.conditions-grid { display: flex; gap: 0.18in; margin-bottom: 0.18in; }
+.condition-box {
+  flex: 1; background: var(--light); border-radius: 5px;
+  padding: 10px 12px; border: 1px solid var(--border);
+}
+.condition-label { font-size: 6.5px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pc-dark); margin-bottom: 5px; }
+.condition-text { font-size: 8px; color: var(--body-txt); line-height: 1.55; }
+
+.note-box {
+  background: var(--ac-10); border-left: 3px solid var(--pc-dark);
+  border-radius: 0 4px 4px 0; padding: 10px 12px; margin-bottom: 0.18in;
+}
+.note-label { font-size: 6.5px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--pc-dark); margin-bottom: 4px; }
+.note-text { font-size: 8px; color: var(--body-txt); line-height: 1.55; }
+
+
+/* ═══════════ SIGNATURE ═══════════ */
+.signature-row { display: flex; gap: 0.2in; margin-bottom: 0.18in; }
+.signature-block { flex: 1; }
+.sig-label { font-size: 7px; font-weight: 700; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.06em; text-transform: uppercase; }
+.sig-name { font-size: 9.5px; font-weight: 700; color: var(--ink); margin-bottom: 3px; }
+.sig-line {
+  border-top: 1px dashed var(--border); margin-top: 28px; padding-top: 5px;
+  font-size: 7px; color: var(--muted);
+}
+.sig-approval-box {
+  border: 1px solid var(--border); border-radius: 4px; padding: 8px 12px;
+  background: var(--light); text-align: center;
+}
+.sig-approval-text { font-size: 7.5px; color: var(--muted); margin-bottom: 18px; font-style: italic; }
+.sig-date-line { border-top: 1px dashed var(--border); padding-top: 5px; font-size: 7px; color: var(--muted); }
+
+
+/* ═══════════ FOOTER ═══════════ */
+.page-ft {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 0.5in; border-top: 1px solid var(--border);
+  background: #fff;
+}
+.ft-brand { font-size: 7px; color: var(--muted); }
+.ft-confidential { font-size: 6px; color: var(--border); letter-spacing: 0.1em; text-transform: uppercase; }
+.ft-pg { font-size: 7px; font-weight: 700; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+.ft-pg-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--pc-dark); }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-header-geo1"></div>
+    <div class="doc-header-geo2"></div>
+    <div class="doc-header-left">
+      {{logoTag}}
+      <div class="doc-date">Émis le {{date}}</div>
+    </div>
+    <div class="doc-header-right">
+      <div class="doc-type-badge">Devis</div>
+      <div class="doc-number">N° {{quoteNumber}}</div>
+      <div class="doc-date">Valable jusqu'au {{validUntil}}</div>
+    </div>
+  </div>
+
+  <!-- PARTIES -->
+  <div class="parties-band">
+    <div class="party-block">
+      <div class="party-label">Émetteur</div>
+      <div class="party-name">{{consultantName}}</div>
+      <div class="party-detail">
+        {{companyName}}<br>
+        {{consultantAddress}}<br>
+        {{consultantEmail}}<br>
+        {{consultantPhone}}
+      </div>
+    </div>
+    <div class="party-divider"></div>
+    <div class="party-block">
+      <div class="party-label">Préparé pour</div>
+      <div class="party-name">{{clientName}}</div>
+      <div class="party-detail">
+        {{clientCompany}}<br>
+        {{clientAddress}}<br>
+        {{clientEmail}}<br>
+        {{clientPhone}}
+      </div>
+    </div>
+  </div>
+
+  <!-- BODY -->
+  <div class="doc-body">
+
+    <div class="doc-subject-row">
+      <span class="doc-subject-label">Objet :</span>
+      <span class="doc-subject-text">{{quoteSubject}}</span>
+      <span class="doc-validity">Offre valable jusqu'au <strong>{{validUntil}}</strong></span>
+    </div>
+
+    <!-- TABLE PRESTATIONS -->
+    <table class="items-table">
+      <thead>
+        <tr>
+          <th style="width:44%">Désignation</th>
+          <th style="width:14%">P.U. HT</th>
+          <th style="width:10%">Qté</th>
+          <th style="width:13%">Unité</th>
+          <th style="width:19%">Montant HT</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{quoteItemsRows}}
+      </tbody>
+    </table>
+
+    <!-- TOTAUX -->
+    <div class="totals-wrap">
+      <div class="totals-table">
+        <div class="totals-row">
+          <span class="totals-label">Sous-total HT</span>
+          <span class="totals-value">{{subtotalHT}} €</span>
+        </div>
+        <div class="totals-row">
+          <span class="totals-label">TVA ({{tvaRate}}%)</span>
+          <span class="totals-value">{{tvaMontant}} €</span>
+        </div>
+        <div class="totals-row total-ht">
+          <span class="totals-label">Total HT</span>
+          <span class="totals-value">{{subtotalHT}} €</span>
+        </div>
+        <div class="totals-row grand-total">
+          <span class="totals-label">Total TTC</span>
+          <span class="totals-value">{{totalTTC}} €</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONDITIONS -->
+    <div class="conditions-grid">
+      <div class="condition-box">
+        <div class="condition-label">Modalités de paiement</div>
+        <div class="condition-text">{{paymentTerms}}</div>
+      </div>
+      <div class="condition-box">
+        <div class="condition-label">Délai de réalisation</div>
+        <div class="condition-text">{{deliveryDelay}}</div>
+      </div>
+    </div>
+
+    {{#if quoteNotes}}
+    <div class="note-box">
+      <div class="note-label">Notes & conditions particulières</div>
+      <div class="note-text">{{quoteNotes}}</div>
+    </div>
+    {{/if}}
+
+    <!-- SIGNATURE -->
+    <div class="signature-row">
+      <div class="signature-block">
+        <div class="sig-label">Signature prestataire</div>
+        <div class="sig-name">{{consultantName}}</div>
+        <div class="sig-line">Date &amp; signature</div>
+      </div>
+      <div class="signature-block">
+        <div class="sig-label">Bon pour accord — client</div>
+        <div class="sig-approval-box">
+          <div class="sig-approval-text">Lu et approuvé — signature précédée de la mention « Bon pour accord »</div>
+          <div class="sig-date-line">Date &amp; signature</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <div class="page-ft">
+    <span class="ft-brand">{{companyName}} — Devis Confidentiel</span>
+    <span class="ft-confidential">Confidentiel</span>
+    <span class="ft-pg"><span class="ft-pg-dot"></span> 01</span>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,499 @@
+---
+import { 
+  Linkedin, Twitter, Instagram, Github, Youtube, Globe, ExternalLink, ChevronRight, 
+  Share2, MoreHorizontal, Sparkles, Clock, Calendar, ArrowRight, Star,
+  Facebook, MonitorPlay, MessageCircle, Zap, Heart, Shield, Trophy, Target, 
+  Rocket, Box, Camera, Code 
+} from 'lucide-react';
+
+const { profile, forms, services, username } = Astro.props;
+
+if (!profile) return null;
+
+const config = profile.page_config || { theme: 'dark', color: '#48D951', font: 'inter', layout: 'linktree' };
+const vis = profile.public_visibility || {};
+const displayName = [profile.first_name, profile.last_name].filter(Boolean).join(' ') || username || 'Utilisateur';
+const initials = profile.first_name ? `${profile.first_name[0]}${profile.last_name?.[0] || ''}`.toUpperCase() : username?.[0]?.toUpperCase() || 'U';
+
+const SOCIAL_ICONS = {
+  linkedin: Linkedin,
+  twitter: Twitter,
+  instagram: Instagram,
+  github: Github,
+  youtube: Youtube,
+  globe: Globe,
+};
+
+// Custom links
+const links = profile.custom_links?.filter((l: any) => l.label && l.url) || [];
+
+// Filter visible social networks
+let socialLinks: [string, string][] = [];
+if (vis.social_networks && profile.social_networks) {
+  if (Array.isArray(profile.social_networks)) {
+    socialLinks = profile.social_networks
+      .filter((item: any) => item.url && item.url.trim())
+      .map((item: any) => [item.platform, item.url] as [string, string]);
+  } else {
+    socialLinks = Object.entries(profile.social_networks as Record<string, string>)
+      .filter(([_, v]) => v && v.trim());
+  }
+}
+
+const isDark = config.theme === 'dark' || config.theme === 'glass' || config.theme === 'black';
+
+// Apply theme specificities on top of the Linktree layout
+const bgClass = config.theme === 'minimal' ? 'bg-[#f0f0f0]'
+  : config.theme === 'glass' ? 'bg-[#2B234D]' 
+  : config.theme === 'black' ? 'bg-[#000000]'
+  : 'bg-[#504A70]';
+
+const bgStyle = (config.theme === 'glass' || config.theme === 'dark') && !isDark
+  ? `background-image: linear-gradient(to bottom, ${config.color || '#504A70'}80 0%, #302C48 100%);`
+  : '';
+
+const textColor = isDark ? 'text-white' : 'text-[#111]';
+const subtextColor = isDark ? 'text-white/80' : 'text-neutral-600';
+
+const cardBg = config.theme === 'minimal' ? 'bg-white shadow-sm border border-black/5 hover:scale-[1.02]'
+  : config.theme === 'glass' ? 'bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20'
+  : config.theme === 'black' ? 'bg-[#222] border border-neutral-800'
+  : 'bg-[#3A3358] hover:scale-[1.02]';
+
+const cardTextColor = isDark ? 'text-white' : 'text-black';
+const cardSubtextColor = isDark ? 'text-white/70' : 'text-neutral-500';
+const cardRadius = config.hero_shape === 'rounded-rect' ? 'rounded-2xl' : config.hero_shape === 'square' ? 'rounded-md' : 'rounded-[32px]';
+
+const linksLayout = config.links_layout || 'list';
+const servicesLayout = config.services_layout || 'carousel';
+
+const adjustHex = (hex: string, percent: number) => {
+  try {
+    const cleanHex = hex.replace("#", "");
+    const num = parseInt(cleanHex, 16);
+    const amt = Math.round(2.55 * percent);
+    const R = (num >> 16) + amt;
+    const G = (num >> 8 & 0x00FF) + amt;
+    const B = (num & 0x0000FF) + amt;
+    const finalR = Math.max(0, Math.min(255, R));
+    const finalG = Math.max(0, Math.min(255, G));
+    const finalB = Math.max(0, Math.min(255, B));
+    return "#" + (0x1000000 + finalR * 0x10000 + finalG * 0x100 + finalB).toString(16).slice(1);
+  } catch { return hex; }
+};
+
+const brandColor = config.color || '#48D951';
+
+const outerBg = isDark
+  ? (config.theme === 'black' ? '#000000' : adjustHex(brandColor, -85))
+  : '#f8fafc';
+
+const containerBg = isDark
+  ? (config.theme === 'black' ? '#0a0a0a' : adjustHex(brandColor, -70))
+  : '#ffffff';
+---
+
+<div class="profile-static-content min-h-screen relative flex flex-col" style={`font-family: inherit; background-color: ${outerBg};`}>
+  <div class="flex-1 flex flex-col items-center pt-8 md:pt-12 px-4 pb-12">
+    {/* MAIN CONTAINER WITH ROUNDED TOP EFFECT */}
+    <div
+      class="w-full max-w-[640px] flex-1 flex flex-col rounded-[48px] overflow-hidden shadow-2xl relative"
+      style={`background-color: ${containerBg};`}
+    >
+      {/* Grain/Noise Overlay */}
+      <div class="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay" style='background-image: url("https://www.transparenttextures.com/patterns/carbon-fibre.png")'></div>
+
+      {/* Container Header/Background Area */}
+      <div class="relative h-32 md:h-40 shrink-0 overflow-hidden">
+        {/* Dynamic Gradient Background in Container */}
+        <div class="absolute inset-0 opacity-40 blur-3xl"
+          style={`background: radial-gradient(circle at 50% 50%, ${brandColor}80 0%, transparent 70%);`}
+        ></div>
+        <div class="absolute inset-4 flex items-start justify-between z-10">
+          <div class={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer backdrop-blur-xl ${isDark ? 'bg-white/10 text-white' : 'bg-black/5 text-black'}`}>
+            <span class="font-bold text-xl leading-none mt-1">*</span>
+          </div>
+
+          <button class={`w-10 h-10 rounded-full flex items-center justify-center cursor-pointer backdrop-blur-xl ${isDark ? 'bg-white/10 text-white' : 'bg-black/5 text-black'}`}>
+            <Share2 size={18} />
+          </button>
+        </div>
+      </div>
+
+      {/* Content Body */}
+      <div class="px-6 sm:px-10 relative -mt-16 pb-12 flex-1 flex flex-col items-center">
+        {/* Avatar Section */}
+        <div class="flex flex-col items-center mb-8">
+          <div
+            class={`w-[100px] h-[100px] ${config.hero_shape === 'circle' ? 'rounded-full' : 'rounded-[32px]'} overflow-hidden mb-5 shadow-2xl border-[3px]`}
+            style={`background-color: ${brandColor}; border-color: ${containerBg};`}
+          >
+            {profile.avatar_url && profile.avatar_url.startsWith('http') ? (
+              <img src={profile.avatar_url} alt={displayName} class="w-full h-full object-cover" />
+            ) : (
+              <div class="w-full h-full flex items-center justify-center text-white text-3xl font-black">
+                {initials}
+              </div>
+            )}
+          </div>
+
+          <h1 class={`text-[22px] md:text-[24px] font-black ${textColor} tracking-tight text-center leading-tight`}>{displayName}</h1>
+          {vis.job_title && profile.job_title && (
+            <p class={`text-[15px] font-bold mt-1.5 ${textColor} opacity-70`}>{profile.job_title}</p>
+          )}
+          {vis.bio && profile.bio && (
+            <p class={`text-[14px] mt-3 max-w-[420px] text-center leading-relaxed font-medium ${textColor} opacity-80`}>{profile.bio}</p>
+          )}
+
+          {/* Social Row */}
+          {socialLinks && socialLinks.length > 0 && (
+            <div class="flex items-center justify-center flex-wrap gap-5 mt-6 px-4">
+              {socialLinks.map(([key, url]: any) => {
+                const Icon = key === 'linkedin' ? Linkedin : 
+                            key === 'twitter' ? Twitter : 
+                            key === 'instagram' ? Instagram : 
+                            key === 'github' ? Github : 
+                            key === 'youtube' ? Youtube : 
+                            key === 'facebook' ? Facebook : 
+                            key === 'tiktok' ? MonitorPlay : 
+                            key === 'whatsapp' ? MessageCircle : ExternalLink;
+                return (
+                  <a href={url} target="_blank" rel="noopener noreferrer" class={`hover:scale-125 transition-transform ${textColor} hover:opacity-100 opacity-60`}>
+                    <Icon size={22} strokeWidth={2.5} />
+                  </a>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Segmented Toggles (Visual only for static) */}
+        <div class="flex justify-center mb-10 w-full max-w-[320px]">
+          <div class={`flex items-center gap-1 p-1 rounded-2xl ${isDark ? 'bg-white/5' : 'bg-black/5'} w-full`}>
+            <div class="flex-1 py-3 px-4 rounded-xl text-[13px] font-black text-center bg-white text-black shadow-lg shadow-black/5">
+              Links
+            </div>
+            <div class="flex-1 py-3 px-4 rounded-xl text-[13px] font-black text-center text-neutral-500 opacity-50">
+              Shop
+            </div>
+          </div>
+        </div>
+
+    <div class="w-full flex-1 flex flex-col gap-8 pb-8 text-left">
+      {config.profile_structure ? (
+        config.profile_structure.map((tab: any, tabIdx: number) => (
+          <div class={`flex flex-col gap-10 ${tabIdx > 0 ? 'hidden' : ''}`}>
+            {tab.sections.map((section: any) => (
+              <div class="w-full">
+                {section.title && (
+                  <h2 class={`text-[15px] font-semibold text-center mb-6 drop-shadow-sm tracking-wide ${isDark ? 'text-white' : 'text-black'}`}>
+                    {section.title}
+                  </h2>
+                )}
+                
+                {section.layout === 'carousel' ? (
+                  <div class="relative group/carousel">
+                    <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-left hidden">
+                      <ArrowRight size={20} className="rotate-180" />
+                    </button>
+                    <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-right">
+                      <ArrowRight size={20} />
+                    </button>
+                    <div class="flex overflow-x-auto gap-4 pb-8 snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth carousel-container">
+                      {section.items.map((item: any) => {
+                        let href = item.url;
+                        let subtitle = item.subtitle;
+                        if (item.type === 'form') {
+                          const form = forms.find((f: any) => f.id === item.targetId);
+                          if (form) { href = `/${username}/${form.slug}`; subtitle = form.description || subtitle; }
+                        } else if (item.type === 'service') {
+                          const service = services.find((s: any) => s.id === item.targetId);
+                          if (service) { subtitle = service.price_type === 'free' ? 'Gratuit' : service.price_type === 'quote' ? 'Devis' : `${service.price_amount}€`; }
+                        }
+                        return (
+                          <a href={href} class="snap-start shrink-0 w-[225px] rounded-[40px] overflow-hidden flex flex-col cursor-pointer shadow-md bg-white text-left">
+                            <div class="w-full aspect-square relative flex items-center justify-center p-0 overflow-hidden" style={`background-color: ${brandColor}`}>
+                              {item.imageUrl ? <img src={item.imageUrl} alt={item.title} class="w-full h-full object-cover" /> : <div class="w-16 h-16 rounded-full bg-black/10 flex items-center justify-center backdrop-blur-md"><Zap size={32} className="text-white" /></div>}
+                              {subtitle && <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[11px] font-black text-black shadow-lg">{subtitle}</div>}
+                            </div>
+                            <div class="w-full h-[64px] px-5 flex items-center justify-between bg-white text-neutral-900 border-t border-black/5">
+                              <div class="flex-1 overflow-hidden pr-1"><h3 class="text-[14px] font-bold truncate text-left">{item.title}</h3></div>
+                              <div class="text-neutral-400 shrink-0"><ChevronRight size={16} /></div>
+                            </div>
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div class="flex flex-col">
+                    {section.items.map((item: any) => {
+                      let href = item.url;
+                      let subtitle = item.subtitle;
+                      if (item.type === 'form') {
+                        const form = forms.find((f: any) => f.id === item.targetId);
+                        if (form) { href = `/${username}/${form.slug}`; subtitle = form.description || subtitle; }
+                      } else if (item.type === 'service') {
+                        const service = services.find((s: any) => s.id === item.targetId);
+                        if (service) { subtitle = service.price_type === 'free' ? 'Gratuit' : service.price_type === 'quote' ? 'Devis' : `${service.price_amount}€`; }
+                      }
+                      return (
+                        <a href={href} class={`w-full min-h-[64px] relative flex flex-row items-center p-2 mb-4 group transition-transform hover:scale-[1.02] cursor-pointer ${cardBg} ${cardRadius}`}>
+                          <div class="flex-shrink-0 w-12 h-12 ml-1 rounded-full overflow-hidden flex items-center justify-center" style="background-color: rgba(0,0,0,0.05)">
+                            {item.imageUrl ? <img src={item.imageUrl} alt={item.title} class="w-full h-full object-cover" /> : <Zap size={20} className={cardTextColor} />}
+                          </div>
+                          <div class="flex-1 text-center px-4 overflow-hidden">
+                            <h3 class={`text-[15px] font-bold truncate ${cardTextColor}`}>{item.title}</h3>
+                            {subtitle && <p class={`text-[12px] font-medium truncate mt-0.5 ${cardSubtextColor}`}>{subtitle}</p>}
+                          </div>
+                          <div class={`flex-shrink-0 w-10 h-10 mr-1 rounded-full flex items-center justify-center transition-colors group-hover:bg-black/5 ${cardTextColor}`}>
+                            <ChevronRight size={20} />
+                          </div>
+                        </a>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        ))
+      ) : (
+        <>
+          {services.length > 0 && (
+            <div class="mb-6 relative group/carousel">
+              <h2 class={`text-[15px] font-semibold text-center mb-5 ${cardTextColor} drop-shadow-sm tracking-wide`}>Mes Services</h2>
+               {servicesLayout === 'carousel' ? (
+                 <div class="relative">
+                   <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-left hidden">
+                     <ArrowRight size={20} className="rotate-180" />
+                   </button>
+                   <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-right">
+                     <ArrowRight size={20} />
+                   </button>
+                   <div class="flex overflow-x-auto gap-4 pb-8 snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth carousel-container">
+                     {services.map((service: any) => (
+                       <a href="#" class={`snap-start shrink-0 w-[225px] rounded-[40px] overflow-hidden flex flex-col cursor-pointer shadow-md bg-white text-left`}>
+                          <div class="w-full aspect-square relative flex items-center justify-center p-0 overflow-hidden" style={`background-color: ${config.color || '#48D951'}`}>
+                             {service.image_url ? (
+                               <img src={service.image_url} alt={service.name} class="w-full h-full object-cover" />
+                             ) : (
+                               <div class="w-16 h-16 rounded-full bg-black/10 flex items-center justify-center backdrop-blur-md">
+                                 <Calendar size={32} className="text-white" />
+                               </div>
+                             )}
+                             <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-full text-[11px] font-black text-black shadow-lg">
+                                {service.price_type === 'free' ? 'Gratuit' : service.price_type === 'quote' ? 'Devis' : `${service.price_amount}€`}
+                             </div>
+                          </div>
+                          <div class="w-full h-[64px] px-5 flex items-center justify-between bg-white text-neutral-900 border-t border-black/5">
+                             <div class="flex-1 overflow-hidden pr-1">
+                                <h3 class="text-[14px] font-bold truncate text-left">{service.name}</h3>
+                             </div>
+                             <div class="text-neutral-400 shrink-0">
+                                <ChevronRight size={16} />
+                             </div>
+                          </div>
+                       </a>
+                     ))}
+                   </div>
+                 </div>
+               ) : (
+                 services.map((service: any) => (
+                    <a href="#" class={`w-full min-h-[64px] relative flex flex-row items-center p-2 mb-4 group transition-transform hover:scale-[1.02] cursor-pointer ${cardBg} ${cardRadius}`}>
+                       <div class="flex-shrink-0 w-12 h-12 ml-1 rounded-full overflow-hidden flex items-center justify-center" style="background-color: rgba(0,0,0,0.05)">
+                          {service.image_url ? (
+                            <img src={service.image_url} alt={service.name} class="w-full h-full object-cover" />
+                          ) : (
+                            <Calendar size={20} className={cardTextColor} />
+                          )}
+                       </div>
+                       <div class="flex-1 text-center px-4 overflow-hidden">
+                          <h3 class={`text-[15px] font-bold truncate ${cardTextColor}`}>{service.name}</h3>
+                       </div>
+                       <div class={`flex-shrink-0 w-10 h-10 mr-1 rounded-full flex items-center justify-center transition-colors group-hover:bg-black/5 ${cardTextColor}`}>
+                          <ChevronRight size={20} />
+                       </div>
+                    </a>
+                 ))
+               )}
+            </div>
+          )}
+    
+          {links.length > 0 && (
+            <div class="mb-6 relative group/carousel">
+              <h2 class={`text-[15px] font-semibold text-center mb-5 ${cardTextColor} drop-shadow-sm tracking-wide`}>Liens Principaux</h2>
+              {linksLayout === 'carousel' ? (
+                 <div class="relative">
+                   <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-left hidden">
+                     <ArrowRight size={20} className="rotate-180" />
+                   </button>
+                   <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-right">
+                     <ArrowRight size={20} />
+                   </button>
+                   <div class="flex overflow-x-auto gap-4 pb-8 snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth carousel-container">
+                     {links.map((link: any, i: number) => {
+                       return (
+                         <a href={link.url} target="_blank" rel="noopener noreferrer" class={`snap-start shrink-0 w-[225px] rounded-[40px] overflow-hidden flex flex-col cursor-pointer shadow-md bg-white text-left`}>
+                            <div class="w-full aspect-square relative flex items-center justify-center p-0 overflow-hidden" style={`background-color: ${config.color || '#48D951'}`}>
+                               {link.image_url ? (
+                                 <img src={link.image_url} alt={link.label} class="w-full h-full object-cover" />
+                               ) : (
+                                 <div class="w-16 h-16 rounded-full bg-black/10 flex items-center justify-center backdrop-blur-md">
+                                   <Zap size={32} className="text-white" />
+                                 </div>
+                               )}
+                            </div>
+                            <div class="w-full h-[64px] px-5 flex items-center justify-between bg-white text-neutral-900 border-t border-black/5">
+                               <div class="flex-1 overflow-hidden pr-1">
+                                  <h3 class="text-[14px] font-bold truncate text-left">{link.label}</h3>
+                               </div>
+                               <div class="text-neutral-400 shrink-0">
+                                  <ExternalLink size={16} />
+                               </div>
+                            </div>
+                         </a>
+                       );
+                     })}
+                   </div>
+                 </div>
+              ) : (
+                 links.map((link: any) => (
+                    <a href={link.url} target="_blank" rel="noopener noreferrer" class={`w-full min-h-[64px] relative flex flex-row items-center p-2 mb-4 group transition-transform hover:scale-[1.02] cursor-pointer ${cardBg} ${cardRadius}`}>
+                       <div class="flex-shrink-0 w-12 h-12 ml-1 rounded-full overflow-hidden flex items-center justify-center" style="background-color: rgba(0,0,0,0.05)">
+                          {link.image_url ? (
+                            <img src={link.image_url} alt={link.label} class="w-full h-full object-cover" />
+                          ) : (
+                            <ExternalLink size={20} className={cardTextColor} />
+                          )}
+                       </div>
+                       <div class="flex-1 text-center px-4 overflow-hidden">
+                          <h3 class={`text-[15px] font-bold truncate ${cardTextColor}`}>{link.label}</h3>
+                       </div>
+                       <div class={`flex-shrink-0 w-10 h-10 mr-1 rounded-full flex items-center justify-center transition-colors group-hover:bg-black/5 ${cardTextColor}`}>
+                          <MoreHorizontal size={20} />
+                       </div>
+                    </a>
+                 ))
+              )}
+            </div>
+          )}
+    
+          {forms.length > 0 && (
+            <div class="mb-6 relative group/carousel px-0">
+              <h2 class={`text-[15px] font-semibold text-center mb-5 ${cardTextColor} drop-shadow-sm tracking-wide`}>Mon Portfolio</h2>
+              {linksLayout === 'carousel' ? (
+                 <div class="relative">
+                   <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-left hidden">
+                     <ArrowRight size={20} className="rotate-180" />
+                   </button>
+                   <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 z-20 w-10 h-10 rounded-full bg-white/70 backdrop-blur-xl shadow-xl flex items-center justify-center text-black hover:scale-110 transition-all border border-black/5 carousel-arrow-right">
+                     <ArrowRight size={20} />
+                   </button>
+                   <div class="flex overflow-x-auto gap-4 pb-8 snap-x scrollbar-hide -mx-4 px-4 sm:mx-0 sm:px-0 scroll-smooth carousel-container">
+                     {forms.map((f: any) => (
+                       <a href={`/${username}/${f.slug}`} class={`snap-start shrink-0 w-[225px] rounded-[40px] overflow-hidden flex flex-col cursor-pointer shadow-md bg-white text-left`}>
+                          <div class="w-full aspect-square relative flex items-center justify-center p-0 overflow-hidden" style={`background-color: ${config.color || '#48D951'}`}>
+                             {f.image_url ? (
+                               <img src={f.image_url} alt={f.title} class="w-full h-full object-cover" />
+                             ) : (
+                               <div class="w-16 h-16 rounded-full bg-black/10 flex items-center justify-center backdrop-blur-md">
+                                 <Star size={32} className="text-white" />
+                               </div>
+                             )}
+                          </div>
+                          <div class="w-full h-[64px] px-5 flex items-center justify-between bg-white text-neutral-900 border-t border-black/5">
+                             <div class="flex-1 overflow-hidden pr-1">
+                                <h3 class="text-[14px] font-bold truncate text-left">{f.title}</h3>
+                             </div>
+                             <div class="text-neutral-400 shrink-0">
+                                <Star size={16} />
+                             </div>
+                          </div>
+                       </a>
+                     ))}
+                   </div>
+                 </div>
+              ) : (
+                 forms.map((f: any) => (
+                   <a href={`/${username}/${f.slug}`} class={`w-full relative flex flex-col p-4 mb-4 group transition-transform hover:scale-[1.02] cursor-pointer ${cardBg} ${cardRadius}`}>
+                      <div class="flex items-center justify-between mb-4">
+                         <h3 class={`text-[16px] font-bold ${cardTextColor}`}>{f.title}</h3>
+                         <ChevronRight size={20} className={cardTextColor} />
+                      </div>
+                       {f.image_url ? (
+                         <div class="w-full aspect-video rounded-xl overflow-hidden mb-2">
+                            <img src={f.image_url} alt={f.title} class="w-full h-full object-cover" />
+                         </div>
+                       ) : (
+                         <div class="w-full bg-black/5 rounded-xl p-4 flex flex-col gap-3 pointer-events-none" style={`border-color: ${config.color}20; border-width: 1px;`}>
+                            <div class="w-[60%] h-3 rounded bg-black/10"></div>
+                            <div class="w-full h-8 rounded-md bg-white/50 border border-black/10"></div>
+                            <div class="w-[40%] h-3 rounded bg-black/10"></div>
+                            <div class="w-full h-8 rounded-md bg-white/50 border border-black/10"></div>
+                            <div class="mt-2 w-[40%] h-8 rounded-lg" style={`background-color: ${config.color};`}></div>
+                         </div>
+                       )}
+                      {f.description && <p class={`text-[13px] font-medium mt-3 ${cardSubtextColor}`}>{f.description}</p>}
+                   </a>
+                 ))
+              )}
+            </div>
+          )}
+        </>
+      )}
+    </div>
+
+      {/* Branding */}
+      <div class="mt-auto pt-12 pb-2 w-full flex flex-col items-center">
+        <a href="/" class={`inline-flex items-center gap-2.5 px-8 py-4.5 rounded-[20px] text-[15px] font-black shadow-2xl hover:scale-[1.03] transition-all active:scale-95 ${isDark ? 'bg-white text-dark' : 'bg-dark text-white'}`}>
+          <Sparkles size={18} color={brandColor} className="animate-pulse" />
+          Créer votre Pretalk
+        </a>
+
+        <div class={`flex flex-wrap items-center justify-center gap-x-6 gap-y-3 mt-10 text-[10px] font-black uppercase tracking-widest ${isDark ? 'text-white/30 hover:text-white/50' : 'text-black/30'}`}>
+          <a href="#" class="hover:underline">Privacy</a>
+          <a href="#" class="hover:underline">Terms</a>
+          <a href="#" class="hover:underline">Report</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function setupCarousels() {
+    const carousels = document.querySelectorAll('.group\\/carousel');
+    
+    carousels.forEach(group => {
+      const container = group.querySelector('.carousel-container') as HTMLElement;
+      const leftBtn = group.querySelector('.carousel-arrow-left') as HTMLElement;
+      const rightBtn = group.querySelector('.carousel-arrow-right') as HTMLElement;
+      
+      if (!container || !leftBtn || !rightBtn) return;
+      
+      const updateArrows = () => {
+        const { scrollLeft, scrollWidth, clientWidth } = container;
+        leftBtn.classList.toggle('hidden', scrollLeft < 10);
+        rightBtn.classList.toggle('hidden', scrollLeft >= scrollWidth - clientWidth - 10);
+      };
+      
+      leftBtn.addEventListener('click', () => {
+        container.scrollBy({ left: -container.clientWidth * 0.8, behavior: 'smooth' });
+      });
+      
+      rightBtn.addEventListener('click', () => {
+        container.scrollBy({ left: container.clientWidth * 0.8, behavior: 'smooth' });
+      });
+      
+      container.addEventListener('scroll', updateArrows);
+      window.addEventListener('resize', updateArrows);
+      updateArrows();
+    });
+  }
+
+  // Run on initial load
+  setupCarousels();
+  // Run on view transitions/navigation
+  document.addEventListener('astro:page-load', setupCarousels);
+</script>

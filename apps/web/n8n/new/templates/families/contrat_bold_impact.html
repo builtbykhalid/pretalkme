@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Contrat Bold Impact</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:#0A0A0A;--line:#dfdfdf;--stripe:#f8f8f8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#111}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;background:#fff;position:relative;padding-bottom:.38in}
+.header{background:#0A0A0A;color:#fff;padding:.25in .5in}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.title{font-family:"Arial Black",Arial,sans-serif;font-size:23px;line-height:1.1;margin-top:8px}
+.meta{font-size:8px;color:#cdcdcd;line-height:1.5}
+.parties{display:flex;gap:12px;padding:.14in .5in;border-bottom:1px solid var(--line)}
+.parties .c{flex:1}
+.lbl{font-size:6px;letter-spacing:.14em;text-transform:uppercase;color:#6b7280;margin-bottom:4px}
+.txt{font-size:8px;line-height:1.55;color:#1f2937}
+.body{padding:.2in .5in}
+.article{display:grid;grid-template-columns:28px 1fr;gap:8px;margin-bottom:10px;page-break-inside:avoid;break-inside:avoid}
+.article .n{font-family:"Arial Black",Arial,sans-serif;font-size:18px;color:var(--pc,#1782C5);line-height:1}
+.article h3{font-family:"Arial Black",Arial,sans-serif;font-size:10px;color:#111;margin-bottom:4px}
+.article p{font-size:8.2px;line-height:1.68;color:#1f2937}
+.kpi{display:flex;gap:10px;margin-top:8px}
+.kpi .box{flex:1;border:1px solid var(--line);border-radius:6px;padding:8px;background:var(--stripe)}
+.kpi .box small{display:block;font-size:6px;letter-spacing:.1em;text-transform:uppercase;color:#6b7280;margin-bottom:4px}
+.kpi .box strong{font-family:"Arial Black",Arial,sans-serif;font-size:10px;color:#111}
+.sign{display:flex;gap:10px;margin-top:12px}
+.sign .c{flex:1;border:1px dashed #c3ccd9;border-radius:6px;padding:8px;background:#fbfcfe;min-height:78px}
+.sign .t{font-size:8px;font-weight:700;color:#1f2937;margin-bottom:4px}
+.sign .l{font-size:7px;color:#4b5563}
+.footer{position:absolute;left:0;right:0;bottom:0;background:#0A0A0A;color:#fff;padding:8px .5in;display:flex;justify-content:space-between;align-items:center;font-size:7px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="row">
+      <div>{{logoTag}}</div>
+      <div class="meta">{{companyName}}<br>Contrat {{contractNumber}} - {{date}}</div>
+    </div>
+    <div class="title">Contrat Bold Impact</div>
+  </div>
+
+  <div class="parties">
+    <div class="c"><div class="lbl">Prestataire</div><div class="txt">{{consultantName}}<br>{{companyName}}<br>{{consultantEmail}}</div></div>
+    <div class="c"><div class="lbl">Client</div><div class="txt">{{clientName}}<br>{{clientCompany}}<br>{{clientEmail}}</div></div>
+  </div>
+
+  <div class="body">
+    <div class="article"><div class="n">01</div><div><h3>Objet</h3><p>{{serviceScope}}</p></div></div>
+    <div class="article"><div class="n">02</div><div><h3>Livrables</h3><p>{{deliverablesHtml}}</p></div></div>
+    <div class="article"><div class="n">03</div><div><h3>Conditions financieres</h3><p>{{pricingTerms}}</p></div></div>
+    <div class="article"><div class="n">04</div><div><h3>Calendrier</h3><p>Debut: {{contractStartDate}} - Fin: {{contractEndDate}}</p></div></div>
+    <div class="article"><div class="n">05</div><div><h3>Resiliation</h3><p>{{terminationClause}}</p></div></div>
+
+    <div class="kpi">
+      <div class="box"><small>Montant</small><strong>{{totalAmount}}</strong></div>
+      <div class="box"><small>Paiement</small><strong>{{paymentSchedule}}</strong></div>
+    </div>
+
+    <div class="sign">
+      <div class="c"><div class="t">Le Prestataire</div><div class="l">Nom: {{consultantName}}<br>Date: {{date}}<br>Signature:</div></div>
+      <div class="c"><div class="t">Le Client</div><div class="l">Nom: {{clientName}}<br>Date:<br>Signature:</div></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <span>Propulse par PreTalk</span>
+    <span>{{pretalkLogo}}</span>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,189 @@
+﻿GUIDE OFFICIEL DE STRUCTURATION ET RESTRICTION DES PROMPTS (PRETALK.ME / N8N)
+Version 2.0 — Référence validée le 08/03/2026
+
+Ce guide est la référence absolue pour tout prompt écrit dans les workflows n8n de Pretalk.me.
+Tout nouveau prompt DOIT respecter cette architecture. Le workflow de référence de conformité est :
+workflow_audit_v2_gemini_complet.json
+
+════════════════════════════════════════════════════════════════
+1. LANGUE ET RÔLE (Fondations)
+════════════════════════════════════════════════════════════════
+
+Langue des instructions :
+Rédigez TOUJOURS les instructions système en ANGLAIS, même si la langue de sortie attendue
+est le français, l'espagnol ou l'arabe. Les LLM (Gemini, Claude) comprennent et exécutent
+les instructions complexes avec beaucoup plus de précision en anglais.
+
+Contrôle de la langue de sortie :
+Séparez TOUJOURS la langue des instructions de la langue du contenu généré. Utilisez une
+variable dynamique pour la langue et déclarez-la explicitement dans <instructions> :
+
+  <instructions>
+  All reasoning and instructions are in English.
+  Output language: ${language}
+  All text visible to the end-user (labels, titles, placeholders, descriptions)
+  MUST be written in ${language}. Do NOT mix languages in the output.
+  </instructions>
+
+  Où ${language} est la valeur calculée dans le nœud Code préparatoire :
+  const language = input.locale === 'en' ? 'English'
+                 : input.locale === 'es' ? 'Spanish'
+                 : input.locale === 'ar' ? 'Arabic'
+                 : 'French';
+
+Définition du Rôle :
+Ne commencez jamais sans assigner une identité d'expert forte via la balise <system>.
+
+  Exemple :
+  <system>
+  You are an elite Lead Generation form designer and UX expert specializing
+  in professional consulting services.
+  </system>
+
+════════════════════════════════════════════════════════════════
+2. ARCHITECTURE XML (Hiérarchie de l'Information)
+════════════════════════════════════════════════════════════════
+
+Segmentez STRICTEMENT chaque partie du prompt avec des balises XML. Cela empêche l'IA de
+confondre vos instructions avec les données dynamiques injectées.
+
+Balises standard (dans cet ordre) :
+
+  <system>        — Le rôle global et l'identité de l'IA.
+  <persona>       — L'identité spécifique à adopter. Voir règle 6 pour la hiérarchie.
+  <instructions>  — Les règles absolues (verbes impératifs : Generate, Analyze, Do not).
+  <output_format> — La structure exacte de la réponse attendue (schéma JSON, etc.).
+  <context>       — Les données dynamiques : profil consultant, réponses prospect, etc.
+
+Exemple de squelette complet :
+
+  <system>You are an expert lead qualification specialist.</system>
+
+  <persona>
+  ${agentBasePrompt || consultantSystemPrompt}
+  </persona>
+
+  <instructions>
+  Output language: ${language}
+  1. Analyze the prospect answers provided in <context>.
+  2. Score the lead on a 100-point scale.
+  3. Do not invent data not present in <context>.
+  First, briefly outline your strategy inside <thinking> tags. Then output the final result.
+  </instructions>
+
+  <output_format>
+  Output ONLY a valid raw JSON object. No markdown, no backticks, no explanation.
+  Schema: {{ "score": number, "summary": "string" }}
+  </output_format>
+
+  <context>
+  Consultant: ${consultantName} — ${consultantRole}
+  Prospect answers: ${JSON.stringify(staticAnswers)}
+  </context>
+
+════════════════════════════════════════════════════════════════
+3. RAISONNEMENT FORCÉ (Anti-Hallucination)
+════════════════════════════════════════════════════════════════
+
+Pour toute tâche complexe (scoring, audit, génération de formulaire) :
+Exigez TOUJOURS que l'IA réfléchisse avant de produire le résultat final.
+
+Règle à insérer dans <instructions> :
+  First, briefly outline your strategy inside <thinking> tags. Then, output the final result.
+
+Avantage : améliore la qualité et empêche la génération de texte parasite dans le JSON.
+
+IMPORTANT — Stripping obligatoire dans le nœud "Parse JSON" suivant :
+Le bloc <thinking> doit être retiré avant tout parsing. Sans ce nettoyage, JSON.parse()
+échouera si l'IA place le <thinking> avant le JSON.
+
+  // À placer EN PREMIER dans tout nœud Code qui parse la réponse LLM
+  content = content.replace(/<thinking>[\s\S]*?<\/thinking>/gi, '').trim();
+  content = content.replace(/```\s*json\s*\n?/gi, '').replace(/```\s*\n?/g, '').trim();
+
+════════════════════════════════════════════════════════════════
+4. FORMAT DE SORTIE (Le JSON Strict)
+════════════════════════════════════════════════════════════════
+
+Lorsque le nœud suivant attend du JSON (ex: Parse & Validate JSON) :
+
+Règle à insérer dans <output_format> :
+  Output ONLY a valid raw JSON object matching the exact schema below.
+  Do not use markdown blocks (no ```json). Do not add any text before or after the JSON.
+
+Conseil robustesse — même avec ces instructions, le LLM peut parfois ajouter du texte.
+Utilisez systématiquement cette extraction défensive dans le nœud de parsing :
+
+  const s = content.indexOf('{');
+  const e = content.lastIndexOf('}');
+  if (s !== -1 && e > s) {
+    parsed = JSON.parse(content.substring(s, e + 1));
+  } else {
+    parsed = JSON.parse(content); // fallback
+  }
+
+════════════════════════════════════════════════════════════════
+5. SÉCURITÉ TECHNIQUE : Contournement n8n / LangChain
+════════════════════════════════════════════════════════════════
+
+Le Piège :
+LangChain interprète les accolades simples { } dans le champ "text" d'un nœud comme des
+variables de template. Si vous écrivez { "titre": "..." } en dur dans le champ text,
+le workflow crashera avec : Cannot read properties of undefined (reading 'reduce').
+
+RÈGLE CORRIGÉE — La solution s'applique UNIQUEMENT dans ce cas :
+  → JSON écrit EN DUR dans le champ "text" du nœud LangChain (chainLlm).
+
+La règle NE s'applique PAS dans ce cas (le plus courant dans nos workflows) :
+  → Le prompt est construit dans un nœud Code (jsCode) et passé via ={{ $json.generated_prompt }}
+  → Dans ce pattern, LangChain reçoit une chaîne déjà résolue. Les { } ne sont PAS interprétés.
+  → Appliquer le replace() dans ce cas casserait les exemples JSON du prompt.
+
+Solution pour les prompts écrits en dur dans le champ "text" du nœud LangChain :
+  Doublez les accolades dans les exemples JSON : {{ "titre": "..." }}
+
+Solution pour les prompts construits dans un nœud Code (notre pattern standard) :
+  Aucun échappement nécessaire. Passez directement via ={{ $json.generated_prompt }}.
+
+  // N'utilisez ce replace() QUE si vous écrivez le prompt directement dans le champ "text"
+  const safePrompt = rawPrompt.replace(/\{/g, '{{').replace(/\}/g, '}}');
+
+════════════════════════════════════════════════════════════════
+6. HIÉRARCHIE DE PERSONA (Règle Métier Pretalk)
+════════════════════════════════════════════════════════════════
+
+Chaque formulaire Pretalk peut avoir un agent actif ET/OU un prompt personnalisé.
+L'ordre de priorité est ABSOLU et doit être respecté dans TOUS les workflows :
+
+  Priorité 1 — Agent actif avec base_prompt renseigné
+    → Le base_prompt de l'agent EST la persona. Il remplace tout le reste.
+    → L'agent a été choisi par le consultant précisément pour définir le comportement IA.
+
+  Priorité 2 — Prompt personnalisé du consultant (onglet "Intelligence")
+    → Utilisé uniquement si aucun agent n'est actif (aiConfig.systemPrompt).
+
+  Priorité 3 — Fallback par défaut
+    → Construire la persona depuis le profil consultant (job_title, bio, specialties).
+
+Implémentation standard dans le nœud Code préparatoire :
+
+  const agentIsActive = !!(agent && agent.name);
+  const agentBasePrompt = agentIsActive ? (agent.base_prompt || '') : '';
+  const customSystemPrompt = !agentIsActive ? (aiConfig.systemPrompt || '') : '';
+
+  let personaContent;
+  if (agentIsActive && agentBasePrompt) {
+    personaContent = agentBasePrompt; // Priorité absolue
+  } else if (agentIsActive) {
+    personaContent = `Agent: ${agent.name}. ${agent.description || ''}`;
+  } else if (customSystemPrompt) {
+    personaContent = customSystemPrompt;
+  } else {
+    personaContent = `You are acting on behalf of: ${consultantName}, ${consultantRole}.`;
+  }
+
+  // Dans le prompt final :
+  // <persona>${personaContent}</persona>
+
+Note : le champ DB de l'agent est agents_library.base_prompt (pas system_prompt).
+      L'interface Agent expose ce champ via la propriété base_prompt.

@@ -1,0 +1,283 @@
+{
+  "name": "Pretalk - Cerveau Interactif (Questions IA)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "7a84dac7-7a65-40ae-8149-53959ea917fb",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "699f03e8-1284-4b1f-8e62-d01fa5a80a9f",
+      "name": "Webhook Trigger Cerveau",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "7a84dac7-7a65-40ae-8149-53959ea917fb"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-static-answers",
+              "leftValue": "={{ $json.body.static_answers }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "d2f6a01a-07c7-4415-be79-83cf38fcc68a",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const input = $input.first().json.body;\n\nconst locale = input.locale || 'fr';\nconst LANG_MAP = {\n  en:'English', fr:'French', es:'Spanish', ar:'Arabic',\n  pt:'Portuguese', de:'German', it:'Italian', nl:'Dutch', tr:'Turkish'\n};\nconst language = LANG_MAP[locale] || 'French';\n\nconst aiConfig    = input.ai_config || {};\nconst nbQuestions = Math.max(1, Math.min(10, parseInt(aiConfig.numberOfQuestions) || 3));\nconst complexity  = aiConfig.questionComplexity || 'intermediate';\nconst tone        = aiConfig.tone || 'professional';\nconst extraCtx    = aiConfig.questionContext || '';\n\nconst agent = input.active_agent || null;\nconst agentActive = !!(agent?.name);\nlet persona;\nif (agentActive && agent.base_prompt) {\n  persona = agent.base_prompt + (agent.description ? '\\n(Agent context: ' + agent.description + ')' : '');\n} else if (agentActive) {\n  persona = 'Agent: ' + agent.name + (agent.description ? '. ' + agent.description : '');\n} else if (aiConfig.systemPrompt) {\n  persona = aiConfig.systemPrompt;\n} else {\n  persona = 'You are an expert lead qualification consultant. Your role is to ask targeted follow-up questions that uncover the prospect\\'s real needs, context, budget signals, and readiness to act.';\n}\n\nconst staticAnswers = input.static_answers || {};\nconst answersBlock = Object.entries(staticAnswers)\n  .map(([k, v]) => '- ' + k + ': ' + String(v))\n  .join('\\n') || '(No answers provided yet)';\n\nconst formTitle = (input.form_title || 'Qualification form').replace(/\"/g, '\\\\\"');\n\nconst prompt =\n`<s>\nYou are an elite prospect qualification AI. Your mission: generate precise, high-value follow-up questions based strictly on the prospect's existing answers.\nEvery question you generate must deepen qualification — uncovering need depth, budget signals, urgency, timeline, or decision authority.\nReason internally before generating. Then output ONLY the JSON.\n</s>\n\n<persona>\n${persona}\n</persona>\n\n<output_language>\nALL user-visible text (labels, placeholders, options) MUST be written in ${language}.\nInstructions and reasoning are in English.\n</output_language>\n\n<rules>\n1. Generate EXACTLY ${nbQuestions} questions — not one more, not one less.\n2. Every question MUST be a direct logical follow-up to the existing answers — zero generic questions.\n3. Qualification priorities in order: need depth → budget signal → urgency/timeline → decision authority.\n4. Complexity: ${complexity}\n   - simple = short, direct, easy to answer in one word or choice\n   - intermediate = requires the prospect to think and reflect\n   - expert = precise, strategic, requires domain knowledge\n5. Tone: ${tone}\n6. Allowed types: text | textarea | select | radio | email | url | number\n7. Types \"select\" and \"radio\" MUST include an \"options\" array with 2-5 mutually exclusive choices (max 5 words each).\n8. Use \"text\" for short free answers. Use \"textarea\" only for open-ended deep reflection.\n9. Do NOT ask for information already collected in the static answers.\n10. Do NOT use \"section\" type — it is not allowed here.\n</rules>\n\n<output_format>\nOutput ONLY valid raw JSON. No markdown fences. No preamble. No explanation. Just the JSON object.\n\n{\n  \"questions\": [\n    { \"id\": \"dq1\", \"type\": \"text\",     \"label\": \"Question in ${language}?\",    \"placeholder\": \"Short hint...\",  \"required\": true  },\n    { \"id\": \"dq2\", \"type\": \"select\",   \"label\": \"Choice question?\",             \"options\": [\"A\", \"B\", \"C\"],       \"required\": true  },\n    { \"id\": \"dq3\", \"type\": \"textarea\", \"label\": \"Open reflection question?\",    \"placeholder\": \"Describe...\",    \"required\": false }\n  ]\n}\n</output_format>\n\n<context>\nForm: \"${formTitle}\"\n${extraCtx ? 'Consultant context: ' + extraCtx + '\\n' : ''}\nProspect answers collected so far:\n${answersBlock}\n\nObjective: generate exactly ${nbQuestions} high-value follow-up questions.\n</context>`;\n\nreturn [{\n  json: {\n    ...$input.first().json,\n    generated_prompt: prompt,\n    _meta: { nbQuestions, language, agentActive }\n  }\n}];\n"
+      },
+      "id": "55686d4c-c31a-4c76-8cdb-33bd6981e255",
+      "name": "Prepare Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.generated_prompt }}"
+      },
+      "id": "356f5b42-c519-4de0-9924-1f68a53f972e",
+      "name": "Gemini LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        688,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.5
+        }
+      },
+      "id": "2927a50b-f185-476a-9a64-72b79a6d7e0b",
+      "name": "Gemini Flash Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        688,
+        208
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 3000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nlet content = response.text || response.message?.content || JSON.stringify(response);\n\n// Strip thinking tags and markdown fences\ncontent = content.replace(/<thinking>[\\s\\S]*?<\\/thinking>/gi, '').trim();\nconst fenceStart = content.indexOf('```');\nif (fenceStart !== -1) {\n  const fenceEnd = content.lastIndexOf('```');\n  if (fenceEnd > fenceStart) {\n    const afterFirstLine = content.indexOf('\\n', fenceStart);\n    content = content.substring(afterFirstLine > -1 ? afterFirstLine + 1 : fenceStart + 3, fenceEnd).trim();\n  }\n}\n\nconst s = content.indexOf('{'); const e = content.lastIndexOf('}');\nlet parsed;\ntry {\n  parsed = JSON.parse(s !== -1 && e > s ? content.substring(s, e + 1) : content);\n} catch(err) {\n  throw new Error('PARSE_FAILED: Gemini returned invalid JSON. Raw: ' + content.substring(0, 300));\n}\n\nif (!Array.isArray(parsed.questions) || parsed.questions.length === 0) {\n  throw new Error('SCHEMA_ERROR: questions array missing or empty');\n}\n\nconst ALLOWED = ['text','textarea','select','radio','email','url','number'];\nconst questions = parsed.questions.map((q, i) => {\n  const type = ALLOWED.includes(q.type) ? q.type : 'text';\n  const base = {\n    id: q.id || ('dq' + (i + 1)),\n    type,\n    label: q.label || ('Question ' + (i + 1)),\n    placeholder: q.placeholder || '',\n    required: q.required !== false\n  };\n  if (['select','radio'].includes(type)) {\n    base.options = Array.isArray(q.options) && q.options.length > 0 ? q.options : ['Option A', 'Option B'];\n  }\n  return base;\n});\n\nreturn [{ json: { questions } }];\n"
+      },
+      "id": "7e2e962e-0a6a-45a0-9cab-e4f2f6cd9736",
+      "name": "Parse & Validate JSON",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        928,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, questions: $json.questions } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "9bde7089-f12a-4312-9c11-eedbc677bf25",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1168,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, questions: [], error: 'VALIDATION_ERROR', message: 'static_answers is required.' } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "d795ee26-d16d-4588-b91c-63a120636526",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        224,
+        208
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Trigger Cerveau": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Prepare Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parse & Validate JSON",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse & Validate JSON": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "0d16c758-5479-478d-8c82-9259944c0806",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "Qb3ny2Q6sfo6NLpK",
+  "tags": [
+    {
+      "updatedAt": "2026-02-17T11:32:16.540Z",
+      "createdAt": "2026-02-17T11:32:16.540Z",
+      "id": "AkMeZasep98HCHxU",
+      "name": "Pretalk"
+    },
+    {
+      "updatedAt": "2026-03-03T13:48:57.267Z",
+      "createdAt": "2026-03-03T13:48:57.267Z",
+      "id": "afjPKj9wkIDcD8x8",
+      "name": "Forms"
+    }
+  ]
+}

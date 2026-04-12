@@ -1,0 +1,8 @@
+Full first test
+Notifications
+form builder, je veux que l'utilisateur a le choix de definir la premiere section de formulaire etre titre + descreption de formulaire, aussi a le choix de rendre si la relation entre radio question et la visibilite d une question ou une section !
+corrige la section parcours, les parcours sont pas ajour avec l enregistrement de form
+Configure le enhacement via des prompt dedie a chaque enhancement ! et non pas standard
+Revoir le ui de modal share
+Add onboarding enhancement (je veux ici integre la possibilite de parle a un bot pour qu il elabore un profil de consultant complete comme c est planifier sur gemini)
+Ajouter la possibilite aux prospects de repondant audio sur les section de formulaire (le workflow traite les reponse et remplir les champs automatiquement)

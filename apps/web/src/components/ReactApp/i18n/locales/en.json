@@ -1,0 +1,992 @@
+{
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "create": "Create",
+        "close": "Close",
+        "confirm": "Confirm",
+        "search": "Search",
+        "filter": "Filter",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "warning": "Warning",
+        "info": "Information",
+        "yes": "Yes",
+        "no": "No",
+        "back": "Back",
+        "next": "Next",
+        "previous": "Previous",
+        "submit": "Submit",
+        "reset": "Reset",
+        "view": "View",
+        "download": "Download",
+        "upload": "Upload",
+        "copy": "Copy",
+        "copied": "Copied!",
+        "share": "Share",
+        "settings": "Settings",
+        "help": "Help",
+        "logout": "Logout",
+        "login": "Login",
+        "signup": "Sign up",
+        "email": "Email",
+        "password": "Password",
+        "name": "Name",
+        "phone": "Phone",
+        "company": "Company",
+        "website": "Website",
+        "message": "Message",
+        "date": "Date",
+        "time": "Time",
+        "status": "Status",
+        "action": "Action",
+        "actions": "Actions",
+        "all": "All",
+        "none": "None",
+        "other": "Other",
+        "more": "More",
+        "less": "Less",
+        "showMore": "Show more",
+        "showLess": "Show less",
+        "noResults": "No results",
+        "comingSoon": "Coming soon",
+        "beta": "Beta",
+        "new": "New",
+        "viewAll": "View all",
+        "consultant": "Consultant",
+        "active": "Active",
+        "inactive": "Inactive",
+        "soon": "Soon",
+        "today": "today",
+        "saving": "Saving...",
+        "update": "Update",
+        "or": "or",
+        "install": "Install",
+        "installed": "Installed",
+        "uninstall": "Uninstall",
+        "send": "Send",
+        "sending": "Sending...",
+        "proPlan": "Pro Plan",
+        "notifications": "Notifications",
+        "noNotifications": "No notifications",
+        "justNow": "Just now",
+        "markAllAsRead": "Mark all as read",
+        "configureNotifications": "Configure notifications",
+        "clearAll": "Clear all"
+    },
+    "nav": {
+        "dashboard": "Dashboard",
+        "agents": "My Agents",
+        "leads": "Leads & Scoring",
+        "statistics": "Statistics",
+        "forms": "My Forms",
+        "automations": "Automations",
+        "settings": "Settings",
+        "features": "Features",
+        "testimonials": "Testimonials",
+        "pricing": "Pricing",
+        "demo": "Demo"
+    },
+    "auth": {
+        "welcomeBack": "Welcome",
+        "createAccount": "Create account",
+        "loginTitle": "Login to your consultant space",
+        "signupTitle": "Get started for free now",
+        "emailPlaceholder": "you@example.com",
+        "passwordPlaceholder": "••••••••",
+        "fullNamePlaceholder": "John Doe",
+        "forgotPassword": "Forgot password?",
+        "noAccount": "Don't have an account?",
+        "hasAccount": "Already have an account?",
+        "continueWithGoogle": "Continue with Google",
+        "orContinueWith": "or",
+        "termsAgree": "By signing in, you agree to our",
+        "termsOfService": "Terms of Service",
+        "and": "and",
+        "privacyPolicy": "Privacy Policy",
+        "loginButton": "Sign in",
+        "signupButton": "Create my account",
+        "magicLinkButton": "Send magic link",
+        "loggingIn": "Loading...",
+        "signingUp": "Signing up...",
+        "loginTab": "Login",
+        "registerTab": "Register",
+        "magicLinkTab": "Magic Link",
+        "fullName": "Full name",
+        "emailAddress": "Email address",
+        "password": "Password",
+        "minChars": "Minimum 6 characters",
+        "magicLinkSent": "Magic link sent! Check your inbox",
+        "accountCreated": "Account created! Check your email to confirm your registration.",
+        "enterFullName": "Please enter your full name",
+        "errorOccurred": "An error occurred",
+        "heroTitle": "Qualify your prospects",
+        "heroHighlight": "with AI",
+        "heroSubtitle": "Create smart forms that ask the right questions and automatically generate personalized audits.",
+        "feature1": "Smart forms with dynamic questions",
+        "feature2": "Automatic prospect scoring",
+        "feature3": "AI-powered personalized audit generation",
+        "feature4": "CRM integrations and automations"
+    },
+    "home": {
+        "accessEarly": "Early Access",
+        "hero": {
+            "title": "Stop wasting 30 minutes trying to understand the need.",
+            "highlight": "Let AI do it for you.",
+            "subtitle": "The pre-qualification tool that replaces lengthy client interviews with an instant diagnostic. Your AI assistant greets prospects, asks the right questions and prepares the file. You only take over to close the deal."
+        },
+        "cta": {
+            "start": "Start for free",
+            "demo": "Demo"
+        },
+        "checkline": "No credit card required • Ready in 120 seconds — Join consultants who stopped wasting time on discovery calls.",
+        "stats": {
+            "consultants": "Active consultants",
+            "diagnostics": "Diagnostics generated",
+            "satisfaction": "Satisfaction rate",
+            "time": "Average generation time"
+        },
+        "dashboardLabel": "Pretalk Dashboard",
+        "dashboard": {
+            "title": "Intuitive Interface",
+            "subtitle": "Generate your AI diagnostics in a few clicks"
+        },
+        "features": {
+            "sectionTitle": "Why your current processes make you lose deals.",
+            "sectionSubtitle": "Before / After comparison — What you lose today and what Pretalk gives back.",
+            "items": [
+                {
+                    "title": "The classic method (Painful)",
+                    "description": "Wasted time: 20-minute call just to understand basic context."
+                },
+                {
+                    "title": "The Pretalk method (Smooth)",
+                    "description": "Time saved: You arrive at meetings with context, budget and needs already analyzed."
+                },
+                {
+                    "title": "The classic method (Painful)",
+                    "description": "Zero responsiveness: The client waits 3 days for your slot."
+                },
+                {
+                    "title": "The Pretalk method (Smooth)",
+                    "description": "Immediacy: The client receives a diagnostic and an estimate at 2 AM."
+                },
+                {
+                    "title": "The classic method (Painful)",
+                    "description": "Hands empty: The client hangs up with nothing tangible."
+                },
+                {
+                    "title": "The Pretalk method (Smooth)",
+                    "description": "Wow effect: The client gets a full-branded PDF audit before talking to you. Filtering: AI validates budget upfront so you only speak to serious clients."
+                }
+            ]
+        },
+        "how": {
+            "title": "How it works",
+            "subtitle": "Activate your agent, share your link, let AI qualify and notify you.",
+            "steps": [
+                {
+                    "title": "Activate your Agent",
+                    "description": "Talk to Pretalk to describe your offering. AI builds your form and configures the sales scenario instantly."
+                },
+                {
+                    "title": "Share your Link",
+                    "description": "Add your pretalk.me/your-name link on LinkedIn, Instagram or your website. It's your new active business card."
+                },
+                {
+                    "title": "Let AI work",
+                    "description": "AI conducts the interview, generates the diagnostic and notifies you only when a prospect is qualified. You validate the report."
+                }
+            ]
+        },
+        "pricing": {
+            "title": "Pricing",
+            "titleAccent": "transparent",
+            "subtitle": "Choose the plan that fits your needs. Change at any time.",
+            "plans": {
+                "free": {
+                    "name": "FREE",
+                    "description": "Internal test",
+                    "features": [
+                        "Leads / month: 5 (Test)",
+                        "Concurrent active agents: 1",
+                        "Chat-to-Form generator: ✅",
+                        "Lead Scoring: ✅"
+                    ],
+                    "cta": "Try"
+                },
+                "starter": {
+                    "name": "STARTER",
+                    "description": "Freelancers",
+                    "features": [
+                        "Leads / month: 50",
+                        "Concurrent active agents: Unlimited",
+                        "Access to templates: ✅",
+                        "Human validation: ✅"
+                    ],
+                    "cta": "Start"
+                },
+                "pro": {
+                    "name": "PRO",
+                    "description": "Experts",
+                    "features": [
+                        "Leads / month: 500",
+                        "Unlimited forms",
+                        "Real-time AI questions: ✅",
+                        "Premium AI model: ✅"
+                    ],
+                    "cta": "Try"
+                },
+                "agency": {
+                    "name": "AGENCY",
+                    "description": "Teams",
+                    "features": [
+                        "Leads / month: Unlimited",
+                        "Custom agents included",
+                        "White-label & PDF customization: ✅",
+                        "API access & multi-user accounts"
+                    ],
+                    "cta": "Contact"
+                }
+            }
+        },
+        "ctaSection": {
+            "title": "Ready to boost your business?",
+            "subtitle": "Join over 1000 consultants already generating professional diagnostics in 30 seconds",
+            "placeholder": "Your work email",
+            "footnote": "✓ Start for free • ✓ No credit card • ✓ Setup in 2 minutes"
+        }
+        ,
+        "waitlist": {
+            "title": "Join the waitlist",
+            "subtitle": "Be the first to know when access opens.",
+            "placeholder": "Your email",
+            "success": "Thanks — we'll notify you when access opens.",
+            "errors": {
+                "invalidEmail": "Please enter a valid email",
+                "failed": "Failed to subscribe, please try again later"
+            },
+            "actions": {
+                "join": "Join",
+                "loading": "Loading..."
+            }
+        }
+        ,
+        "transform": {
+            "title": "Turn administrative busywork into business opportunity.",
+            "subtitle": "Visual cards: Magic Builder, Diagnostic Agent, PDF Report and automatic Lead Scoring.",
+            "cards": [
+                {
+                    "title": "Magic Builder (Chat-to-Form)",
+                    "description": "Forget tedious manual configuration. Describe your business and our AI generates perfect qualification questions for your niche."
+                },
+                {
+                    "title": "The Diagnostic Agent",
+                    "description": "It evaluates more than answers: it audits client maturity so you don't waste time explaining basics."
+                },
+                {
+                    "title": "The PDF Report (Human-in-the-loop)",
+                    "description": "Pretalk drafts the report, you approve the send. Keep full control while saving 90% of writing time."
+                }
+            ]
+        }
+    },
+    "footer": {
+        "productTitle": "Product",
+        "product": {
+            "features": "Features",
+            "agents": "Agent library",
+            "sampleReport": "Sample PDF report",
+            "pricing": "Pricing"
+        },
+        "resourcesTitle": "Resources",
+        "resources": {
+            "guide": "Guide: Succeed at discovery calls",
+            "tools": "Tools for consultants",
+            "blog": "Blog"
+        },
+        "supportTitle": "Support",
+        "support": {
+            "helpCenter": "Help center",
+            "contact": "Contact",
+            "legal": "Legal",
+            "privacy": "Privacy"
+        },
+        "copyright": "© 2026 Pretalk. All rights reserved.",
+        "terms": "Terms of Service",
+        "privacyPolicy": "Privacy Policy",
+        "cookies": "Cookies"
+        ,"tagline": "The AI platform that turns your reports into conversion machines."
+    },
+    "dashboard": {
+        "title": "Dashboard",
+        "greeting": "Hello, {{name}}",
+        "subtitle": "Here's what's happening on your forms today.",
+        "leadsThisMonth": "Leads This Month",
+        "activeForms": "Active Forms",
+        "automations": "Automations",
+        "conversionRate": "Conversion Rate",
+        "recentLeads": "Recent Leads",
+        "quickActions": "Quick Actions",
+        "optimizeConversion": "Optimize your conversion",
+        "optimizeDescription": "Create new forms and track your leads in real-time to maximize your results.",
+        "createForm": "Create a form",
+        "newForm": "New Form",
+        "stats": {
+            "totalLeads": "Total Leads",
+            "qualifiedLeads": "Qualified Leads",
+            "thisWeek": "this week",
+            "vsLastWeek": "vs last week"
+        },
+        "viewAll": "View all",
+        "noRecentLeads": "No recent leads",
+        "viewLeads": "View leads",
+        "configureAgent": "Configure an agent"
+    },
+    "leads": {
+        "title": "Leads & Scoring",
+        "subtitle": "Manage your prospects and analyze their conversion potential.",
+        "searchPlaceholder": "Search by name, company...",
+        "filterByStatus": "Filter by status",
+        "filterByScore": "Filter by score",
+        "allStatuses": "All statuses",
+        "allScores": "All scores",
+        "export": "Export",
+        "exportCSV": "Export CSV",
+        "newLead": "New lead",
+        "prospect": "Prospect",
+        "project": "Project",
+        "projectInsight": "Project & Insight",
+        "aiScore": "AI Score",
+        "topScore": "Top Score",
+        "mostRecent": "Most recent",
+        "noResults": "No leads found for this search.",
+        "resetFilters": "Reset filters",
+        "showingResults": "Showing {{count}} results",
+        "editAudit": "Edit audit",
+        "viewDetails": "View details",
+        "statusNew": "New",
+        "statusReviewed": "To review",
+        "statusQualified": "Qualified / Sent",
+        "statusRejected": "Rejected",
+        "columns": {
+            "contact": "Contact",
+            "source": "Source",
+            "score": "Score",
+            "status": "Status",
+            "date": "Date",
+            "actions": "Actions"
+        },
+        "status": {
+            "new": "New",
+            "contacted": "Contacted",
+            "qualified": "Qualified",
+            "proposal": "Proposal",
+            "won": "Won",
+            "lost": "Lost"
+        },
+        "score": {
+            "hot": "Hot",
+            "warm": "Warm",
+            "cold": "Cold"
+        },
+        "noLeads": "No leads yet",
+        "noLeadsDesc": "Leads will appear here when prospects fill out your forms.",
+        "details": {
+            "title": "Lead details",
+            "contactInfo": "Contact information",
+            "responses": "Form responses",
+            "aiAnalysis": "AI Analysis",
+            "timeline": "Timeline",
+            "notes": "Notes",
+            "addNote": "Add a note"
+        }
+    },
+    "forms": {
+        "title": "My Forms",
+        "subtitle": "Manage your entry points and analyze their performance.",
+        "newForm": "New Form",
+        "createForm": "Create a form",
+        "searchPlaceholder": "Search a form...",
+        "loading": "Loading your forms...",
+        "noForms": "No forms created",
+        "noFormsDesc": "Create your first form to start collecting leads.",
+        "createFirst": "Create my first form",
+        "startFromScratch": "Start from scratch or use a template",
+        "online": "Online",
+        "draft": "Draft",
+        "modified": "Modified",
+        "views": "Views",
+        "leads": "Leads",
+        "conv": "Conv.",
+        "copyPublicLink": "Copy public link",
+        "confirmDelete": "Are you sure you want to delete this form?",
+        "card": {
+            "leads": "leads",
+            "views": "views",
+            "conversion": "conversion",
+            "lastEdit": "Modified",
+            "draft": "Draft",
+            "active": "Active"
+        },
+        "actions": {
+            "edit": "Edit",
+            "preview": "Preview",
+            "duplicate": "Duplicate",
+            "share": "Share",
+            "delete": "Delete",
+            "viewLeads": "View leads"
+        },
+        "builder": {
+            "title": "Form Editor",
+            "untitled": "New Form",
+            "save": "Save",
+            "publish": "Publish",
+            "online": "Online",
+            "draft": "Draft",
+            "yourQuestions": "Your Questions",
+            "generateWithAI": "Generate questions with AI",
+            "websiteUrl": "Website URL",
+            "customerJourney": "AI Exchange Zone",
+            "tabs": {
+                "structure": "Structure",
+                "steps": "Journey",
+                "intelligence": "AI",
+                "design": "Design"
+            },
+            "saved": "Saved successfully",
+            "structure": {
+                "title": "Questions",
+                "addQuestion": "Add question",
+                "generateAI": "Generate with AI",
+                "questionTypes": {
+                    "text": "Short text",
+                    "textarea": "Long text",
+                    "email": "Email",
+                    "phone": "Phone",
+                    "url": "URL",
+                    "number": "Number",
+                    "select": "Dropdown",
+                    "radio": "Single choice",
+                    "checkbox": "Checkboxes",
+                    "date": "Date"
+                },
+                "questionLabel": "Question label",
+                "placeholder": "Placeholder",
+                "required": "Required",
+                "options": "Options (one per line)"
+            },
+            "steps": {
+                "title": "Customer Journey",
+                "subtitle": "Configure the form steps and enable Calendly-style booking.",
+                "stepsOrder": "Steps order",
+                "stepsInfo": "Reorder steps as desired.",
+                "calendar": "Appointment booking",
+                "calendarDesc": "Customer chooses a slot from your calendar",
+                "form": "Qualification form",
+                "formDesc": "Customer answers your qualification questions",
+                "ai": "Smart questions (AI)",
+                "aiDesc": "AI asks personalized questions based on responses",
+                "bookingConfig": {
+                    "title": "Calendar configuration",
+                    "subtitle": "Availability and appointment type",
+                    "connectGoogle": "Connect your Google Calendar",
+                    "connectGoogleDesc": "To use appointment booking, you need to connect your Google Calendar account first.",
+                    "goToIntegrations": "Go to Integrations",
+                    "googleMeetInfo": "Meetings via Google Meet",
+                    "googleMeetDesc": "A Google Meet link will be automatically created for each appointment",
+                    "duration": "Appointment duration",
+                    "minNotice": "Minimum notice",
+                    "maxAdvance": "Max booking advance",
+                    "timezone": "Timezone",
+                    "availability": "Your availability",
+                    "addSlot": "Add"
+                },
+                "days": {
+                    "monday": "Monday",
+                    "tuesday": "Tuesday",
+                    "wednesday": "Wednesday",
+                    "thursday": "Thursday",
+                    "friday": "Friday",
+                    "saturday": "Saturday",
+                    "sunday": "Sunday"
+                }
+            },
+            "ai": {
+                "title": "Agent Brain",
+                "subtitle": "Configure how AI should interact with your prospects.",
+                "systemPrompt": "System Prompt (Instructions)",
+                "systemPromptPlaceholder": "You are an expert consultant...",
+                "tone": "Conversation tone",
+                "tones": {
+                    "professional": "Professional",
+                    "friendly": "Friendly",
+                    "strict": "Strict",
+                    "empathetic": "Empathetic"
+                },
+                "numberOfQuestions": "Number of questions",
+                "complexity": "Question complexity",
+                "complexities": {
+                    "simple": "Simple",
+                    "intermediate": "Intermediate",
+                    "expert": "Expert"
+                },
+                "context": "Business context",
+                "contextPlaceholder": "Describe your activity, your services...",
+                "model": "AI Model"
+            },
+            "design": {
+                "title": "Appearance",
+                "subtitle": "Customize your form style.",
+                "primaryColor": "Primary color",
+                "buttonStyle": "Button style",
+                "font": "Font",
+                "backgroundColor": "Background"
+            },
+            "preview": "Preview",
+            "saving": "Saving..."
+        }
+    },
+    "agents": {
+        "title": "My AI Agents",
+        "subtitle": "Activate virtual experts or request your own clone.",
+        "tabs": {
+            "store": "Library",
+            "custom": "Custom"
+        },
+        "loading": "Loading agents...",
+        "noAgentsInLibrary": "No agents available in the library at the moment.",
+        "createCustomAgent": "Create Custom Agent",
+        "createCustomAgentDesc": "Trained on your own data and methodologies.",
+        "category": "Category",
+        "custom": {
+            "title": "Request Your Custom Agent",
+            "subtitle": "An AI clone trained with your methodologies and data for ultra-personalized recommendations.",
+            "benefits": {
+                "title": "What you get:",
+                "training": "Training on your processes and data",
+                "methodology": "Your methodology integrated",
+                "branding": "Customization to your image",
+                "support": "Dedicated support"
+            },
+            "form": {
+                "title": "Tell us what you're looking for",
+                "agentName": "Agent name",
+                "agentNamePlaceholder": "Ex: SEO Audit Agent",
+                "objective": "Main objective",
+                "objectivePlaceholder": "Describe what the agent should accomplish...",
+                "budget": "Estimated budget",
+                "timeline": "Desired timeline",
+                "timelineStandard": "Standard (2-3 weeks)",
+                "timelineUrgent": "Urgent (1 week)",
+                "timelineFlexible": "Flexible",
+                "submit": "Send request"
+            },
+            "successMessage": "Request sent successfully! We'll contact you within 24h.",
+            "errorMessage": "Error sending request."
+        }
+    },
+    "automations": {
+        "title": "Automations",
+        "subtitle": "Connect your tools and let AI handle repetitive tasks.",
+        "newWorkflow": "New Workflow",
+        "tabs": {
+            "integrations": "Integrations",
+            "workflows": "Workflows"
+        },
+        "integrations": {
+            "title": "Integrations",
+            "googleCalendar": {
+                "desc": "Sync your appointments and automatically create events with Google Meet."
+            },
+            "googleSheets": {
+                "desc": "Automatically export your leads to a spreadsheet."
+            },
+            "slack": {
+                "desc": "Receive real-time notifications about your new leads."
+            },
+            "webhook": {
+                "desc": "Connect any application via custom webhooks."
+            }
+        },
+        "googleCalendarIntegration": "Google Calendar Integration",
+        "googleCalendarIntegrationDesc": "Connect your Google Calendar to let prospects book appointments directly in your calendar.",
+        "connected": "Connected",
+        "notConnected": "Not connected",
+        "connect": "Connect",
+        "configure": "Configure",
+        "comingSoon": "Coming soon",
+        "fillAllFields": "Please fill in all fields",
+        "confirmDelete": "Are you sure you want to delete?",
+        "activeWorkflows": "Active Workflows",
+        "inactiveWorkflows": "Inactive Workflows",
+        "configuration": "Configuration",
+        "noWorkflows": "No workflow created",
+        "createFirstWorkflow": "Create your first workflow",
+        "createWorkflow": "Create a workflow",
+        "editWorkflow": "Edit workflow",
+        "workflowName": "Workflow name",
+        "workflowNamePlaceholder": "Ex: Send email to qualified leads",
+        "trigger": "Trigger (IF...)",
+        "triggerPlaceholder": "Ex: Lead becomes qualified",
+        "action": "Action (THEN...)",
+        "actionPlaceholder": "Ex: Send follow-up email",
+        "if": "IF",
+        "then": "THEN",
+        "lastRun": "Last run",
+        "workflows": {
+            "title": "Workflows",
+            "active": "Active",
+            "inactive": "Inactive",
+            "activeWorkflows": "Active Workflows",
+            "inactiveWorkflows": "Inactive Workflows",
+            "noWorkflows": "No workflows created",
+            "noWorkflowsDesc": "Create your first workflow to automate your tasks",
+            "createFirst": "Create a workflow",
+            "if": "IF",
+            "then": "THEN",
+            "lastRun": "Last run",
+            "today": "today"
+        },
+        "modal": {
+            "createTitle": "Create a workflow",
+            "editTitle": "Edit workflow",
+            "workflowName": "Workflow name",
+            "workflowNamePlaceholder": "Ex: Send email to qualified leads",
+            "trigger": "Trigger (IF...)",
+            "triggerPlaceholder": "Ex: Lead becomes qualified",
+            "action": "Action (THEN...)",
+            "actionPlaceholder": "Ex: Send follow-up email",
+            "create": "Create",
+            "update": "Update",
+            "saving": "Saving..."
+        }
+    },
+    "settings": {
+        "title": "Settings",
+        "subtitle": "Manage your profile, subscription and white label.",
+        "tabs": {
+            "profile": "My Profile",
+            "billing": "Subscription",
+            "domain": "White Label",
+            "notifications": "Notifications"
+        },
+        "profile": {
+            "title": "Personal Information",
+            "subtitle": "Update your photo and contact details.",
+            "firstName": "First name",
+            "lastName": "Last name",
+            "email": "Email",
+            "phone": "Phone",
+            "role": "Job title",
+            "avatar": "Profile photo",
+            "changeAvatar": "Change photo",
+            "dragDrop": "Drag and drop an image or click to browse",
+            "save": "Save",
+            "saveSuccess": "Changes saved!"
+        },
+        "billing": {
+            "title": "Subscription",
+            "subtitle": "Manage your plan and view your invoices.",
+            "currentPlan": "Current plan",
+            "freePlan": "Free",
+            "proPlan": "Pro",
+            "upgradePro": "Upgrade to Pro",
+            "invoices": "Invoices",
+            "noInvoices": "No invoices"
+        },
+        "domain": {
+            "title": "White Label",
+            "subtitle": "Customize the experience for your clients.",
+            "customDomain": "Custom domain",
+            "customDomainPlaceholder": "audits.yoursite.com",
+            "customDomainHelp": "Configure your own domain for public forms.",
+            "logo": "Company logo",
+            "logoHelp": "This logo will appear on your forms and PDF reports.",
+            "dragDropLogo": "Drag and drop your logo here",
+            "save": "Save"
+        },
+        "notifications": {
+            "title": "Notification preferences",
+            "subtitle": "Choose how you want to be notified.",
+            "newLead": "New lead",
+            "newLeadDesc": "Receive an email when a prospect fills out a form",
+            "weeklyReport": "Weekly report",
+            "weeklyReportDesc": "Summary of your performance every Monday",
+            "marketing": "News and tips",
+            "marketingDesc": "Receive our best practices and product news",
+            "save": "Save"
+        },
+        "logout": "Logout"
+    },
+    "publicForm": {
+        "poweredBy": "Powered by",
+        "step": "Step",
+        "of": "of",
+        "continueButton": "Continue",
+        "submitButton": "Submit",
+        "submitting": "Submitting...",
+        "aiThinking": "AI is thinking...",
+        "errorLoading": "Error loading form",
+        "formNotFound": "Form not found",
+        "slugMissing": "Slug missing",
+        "calendar": {
+            "title": "Book your slot",
+            "selectSlot": "Select a slot",
+            "noSlots": "No slots available",
+            "duration": "Duration",
+            "timezone": "Timezone",
+            "googleMeet": "Google Meet meeting"
+        },
+        "bookingInfo": {
+            "title": "Your details",
+            "name": "Your full name",
+            "email": "Your email",
+            "phone": "Your phone",
+            "company": "Your company"
+        },
+        "success": {
+            "title": "Thank you!",
+            "subtitle": "Your responses have been recorded.",
+            "message": "We'll get back to you very soon.",
+            "withBooking": "Your appointment has been confirmed.",
+            "bookingDetails": "Appointment details",
+            "meetingLink": "Meeting link"
+        },
+        "loading": {
+            "form": "Loading form...",
+            "questions": "Generating questions..."
+        }
+    },
+    "onboarding": {
+        "title": "Welcome to Pretalk!",
+        "subtitle": "Let's set up your tool in a few steps.",
+        "steps": {
+            "expertise": {
+                "title": "Expertise area",
+                "description": "Let's configure your AI persona"
+            },
+            "service": {
+                "title": "Your service",
+                "description": "Customize your offer"
+            },
+            "testDrive": {
+                "title": "Test Drive",
+                "description": "Discover the AI magic"
+            },
+            "ready": {
+                "title": "Ready!",
+                "description": "Your tool is operational"
+            }
+        },
+        "expertise": {
+            "title": "What is your area of expertise?",
+            "subtitle": "Choose the area that best matches your services",
+            "marketing": {
+                "title": "Marketing / SEO",
+                "desc": "Visibility audits, digital strategies, SEO"
+            },
+            "tech": {
+                "title": "Tech / Development",
+                "desc": "Technical audits, performance, architecture"
+            },
+            "sales": {
+                "title": "Sales / Business",
+                "desc": "Commercial diagnostics, sales processes"
+            },
+            "other": {
+                "title": "Other",
+                "desc": "Specialized or custom domain"
+            }
+        },
+        "service": {
+            "title": "Describe your main service",
+            "serviceName": "Name of your flagship service",
+            "serviceNamePlaceholder": "Ex: Complete SEO Audit, Commercial Diagnostic...",
+            "logoUpload": "Your company logo (optional)",
+            "dragDrop": "Drag and drop your logo or click to browse"
+        },
+        "testDrive": {
+            "title": "Let's try AI together!",
+            "subtitle": "Answer these questions as if you were a prospect:",
+            "challenge": "What is your main challenge right now?",
+            "challengePlaceholder": "Describe your current problem...",
+            "goal": "What result do you expect?",
+            "goalPlaceholder": "What would be ideal for you?",
+            "generate": "Generate my AI questions",
+            "generating": "AI is analyzing your responses...",
+            "result": "Here are the questions AI would ask your prospects:",
+            "tryAgain": "Try with other responses"
+        },
+        "ready": {
+            "title": "You're ready!",
+            "subtitle": "Your Pretalk tool is configured and operational.",
+            "summary": "Summary",
+            "expertise": "Domain",
+            "service": "Service",
+            "nextSteps": "Next steps",
+            "step1": "Create your first form",
+            "step2": "Customize AI questions",
+            "step3": "Share with your prospects",
+            "goToDashboard": "Go to dashboard"
+        },
+        "navigation": {
+            "back": "Back",
+            "continue": "Continue",
+            "skip": "Skip"
+        }
+    },
+    "errors": {
+        "generic": "An error occurred",
+        "tryAgain": "Please try again",
+        "notFound": "Page not found",
+        "notFoundDesc": "The page you're looking for doesn't exist.",
+        "backHome": "Back to home",
+        "unauthorized": "Unauthorized access",
+        "sessionExpired": "Session expired",
+        "networkError": "Connection error",
+        "saveError": "Error saving",
+        "deleteError": "Error deleting",
+        "validation": {
+            "required": "This field is required",
+            "email": "Invalid email",
+            "phone": "Invalid phone number",
+            "url": "Invalid URL",
+            "minLength": "Minimum {{min}} characters",
+            "maxLength": "Maximum {{max}} characters"
+        }
+    },
+    "notifications": {
+        "title": "Notifications",
+        "markAllRead": "Mark all as read",
+        "noNotifications": "No notifications",
+        "newLead": "New lead",
+        "leadQualified": "Lead qualified",
+        "formSubmission": "New submission",
+        "bookingConfirmed": "Appointment confirmed"
+    },
+    "landing": {
+        "nav": {
+            "features": "Features",
+            "testimonials": "Testimonials",
+            "pricing": "Pricing",
+            "demo": "Demo",
+            "login": "Login",
+            "tryFree": "Try for free"
+        },
+        "hero": {
+            "badge": "New: Claude 4 AI integrated",
+            "title": "Qualify your prospects",
+            "titleHighlight": "10x faster",
+            "titleEnd": "with AI",
+            "subtitle": "Pretalk automatically generates personalized diagnostics that transform your visitors into customers. Create your first AI form in 5 minutes.",
+            "cta": "Get started for free",
+            "demo": "Book a demo",
+            "noCreditCard": "No credit card required",
+            "stats": {
+                "consultants": "Consultants",
+                "leadsProcessed": "Leads processed",
+                "timeSaved": "Time saved"
+            }
+        },
+        "features": {
+            "sectionTitle": "Features",
+            "title": "Everything you need to",
+            "titleHighlight": "automate your audits",
+            "ai": {
+                "title": "Generative AI",
+                "desc": "Generate personalized diagnostics in seconds with our advanced AI."
+            },
+            "automation": {
+                "title": "Automation",
+                "desc": "Integrated n8n workflows to automate your end-to-end processes."
+            },
+            "pdf": {
+                "title": "Professional PDFs",
+                "desc": "Customized reports with your branding, automatically generated and sent."
+            },
+            "analytics": {
+                "title": "Built-in Analytics",
+                "desc": "Track your performance and optimize your audits in real-time."
+            },
+            "security": {
+                "title": "Enterprise Security",
+                "desc": "Your data and your clients' data are protected by bank-level encryption."
+            },
+            "multiUser": {
+                "title": "Multi-users",
+                "desc": "Collaborate as a team with granular roles and permissions."
+            }
+        },
+        "testimonials": {
+            "sectionTitle": "Testimonials",
+            "title": "They transformed their business",
+            "titleHighlight": "with Pretalk"
+        },
+        "pricing": {
+            "sectionTitle": "Pricing",
+            "title": "Simple pricing,",
+            "titleHighlight": "no surprises",
+            "monthly": "Monthly",
+            "yearly": "Yearly",
+            "perMonth": "/month",
+            "popular": "Popular",
+            "plans": {
+                "starter": {
+                    "name": "Starter",
+                    "price": "$29",
+                    "description": "Perfect to get started",
+                    "cta": "Get started for free"
+                },
+                "professional": {
+                    "name": "Professional",
+                    "price": "$89",
+                    "description": "Our most popular plan",
+                    "cta": "Try 14 days free"
+                },
+                "enterprise": {
+                    "name": "Enterprise",
+                    "price": "Custom",
+                    "description": "For large teams",
+                    "cta": "Contact us"
+                }
+            }
+        },
+        "cta": {
+            "title": "Ready to transform your audits?",
+            "subtitle": "Join consultants who save time with Pretalk.",
+            "button": "Get started for free",
+            "noCreditCard": "No credit card • Setup in 5 minutes"
+        },
+        "footer": {
+            "description": "The AI platform for consultants who want to qualify more prospects in less time.",
+            "product": "Product",
+            "features": "Features",
+            "pricing": "Pricing",
+            "integrations": "Integrations",
+            "changelog": "Changelog",
+            "company": "Company",
+            "about": "About",
+            "blog": "Blog",
+            "careers": "Careers",
+            "contact": "Contact",
+            "legal": "Legal",
+            "privacy": "Privacy",
+            "terms": "Terms",
+            "cookies": "Cookies",
+            "copyright": "© 2024 Pretalk. All rights reserved."
+        }
+    },
+    "errors": {
+        "saveError": "Save error",
+        "deleteError": "Delete error",
+        "formTitleRequired": "Form title is required",
+        "formQuestionsRequired": "Please add at least one question to the form",
+        "colorRequired": "Please choose a primary color",
+        "saveFailed": "Save failed. Please try again.",
+        "generateFailed": "Generation error"
+    }
+}

@@ -1,0 +1,38 @@
+---
+import '../../components/ReactApp/index.css';
+import LegalTemplate from '../../components/ReactApp/components/layout/LegalTemplate';
+---
+
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Confidentialité - PreTalk</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-white text-black">
+    <LegalTemplate title="Politique de" badge="Confidentialité" lastUpdated="8 avril 2026" client:load>
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">1. Collecte des données</h2>
+        <p>Nous collectons les informations nécessaires à la fourniture du service : email, nom, et données professionnelles soumises dans les formulaires.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">2. Utilisation de l'IA</h2>
+        <p>Vos données et celles de vos prospects sont traitées par nos agents IA pour générer des audits et des scores. Nous utilisons des APIs sécurisées (OpenAI, Anthropic) via des protocoles garantissant que vos données ne sont pas utilisées pour l'entraînement de modèles publics.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">3. Droits des utilisateurs</h2>
+        <p>Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et de suppression de vos données personnelles. Vous pouvez exercer ces droits en nous écrivant à privacy@pretalk.me.</p>
+      </section>
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-dark">4. Cookies</h2>
+        <p>Nous utilisons uniquement des cookies techniques nécessaires au fonctionnement du service et à la mesure d'audience anonymisée.</p>
+      </section>
+    </LegalTemplate>
+  </body>
+</html>

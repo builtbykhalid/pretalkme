@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Audit Bold Impact</title>
+<style>
+:root{--pc:{{primaryColor}};--ac:#0A0A0A;--line:#dfdfdf;--light:#f8f8f8}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:Arial,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;color:#111}
+@page{size:5.8in 8.3in;margin:0}
+.page{width:5.8in;min-height:8.3in;background:#fff;position:relative;page-break-after:always}
+.page:last-child{page-break-after:auto}
+.header{background:#0A0A0A;color:#fff;padding:.24in .5in .18in}
+.top{display:flex;justify-content:space-between;align-items:center}
+.kicker{margin-top:8px;font-size:7px;letter-spacing:.14em;text-transform:uppercase;color:#d4d4d4}
+.title{font-family:"Arial Black",Arial,sans-serif;font-size:29px;line-height:1.05;margin-top:10px;max-width:4.3in}
+.sub{font-size:9px;line-height:1.6;color:#e5e5e5;margin-top:8px}
+.meta{font-size:8px;color:#bdbdbd;margin-top:10px}
+.body{padding:.2in .5in .18in}
+.section{margin-bottom:14px;page-break-inside:avoid;break-inside:avoid}
+.num{font-family:"Arial Black",Arial,sans-serif;color:var(--pc,#1782C5);font-size:24px;line-height:1}
+.h3{font-family:"Arial Black",Arial,sans-serif;font-size:12px;color:#111;margin:4px 0 6px}
+.txt{font-size:9px;line-height:1.68;color:#1f2937}
+.chart{border:1px solid var(--line);padding:10px;background:#fff;margin:12px 0}
+.chart img{width:2.05in;display:block;margin:0 auto}
+.footer{position:absolute;left:0;right:0;bottom:0;background:#0A0A0A;color:#fff;padding:8px .5in;display:flex;justify-content:space-between;align-items:center;font-size:7px}
+.closing{padding:.58in .5in .3in;background:linear-gradient(165deg,#0a0a0a,#191919);color:#fff;position:relative}
+.closing h2{font-family:"Arial Black",Arial,sans-serif;font-size:26px;line-height:1.1;max-width:4.4in}
+.closing p{margin-top:10px;font-size:10px;line-height:1.65;color:#d8d8d8}
+.consultant{margin-top:14px;border:1px solid #2e2e2e;border-radius:8px;padding:10px;background:rgba(255,255,255,.03)}
+.consultant .n{font-size:11px;font-weight:700;margin-top:6px}
+.consultant .t{font-size:8px;color:#c6c6c6}
+.consultant .e{font-size:8px;color:var(--pc,#1782C5);margin-top:3px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="header">
+    <div class="top">
+      <div>{{logoTag}}</div>
+      <div style="font-size:8px;color:#d8d8d8">{{companyName}}</div>
+    </div>
+    <div class="kicker">Bold Impact Audit</div>
+    <div class="title">{{coverTitle}}</div>
+    <div class="sub">{{coverSubtitle}}</div>
+    <div class="meta">{{clientName}} - {{clientCompany}} - {{date}}</div>
+  </div>
+  <div class="body">
+    <div class="chart"><img src="{{chartImageUrl}}" alt="Radar chart" /></div>
+    <div class="section">
+      <div class="num">01</div>
+      <div class="h3">Constats prioritaires</div>
+      <div class="txt">{{auditBlocksHtml}}</div>
+    </div>
+  </div>
+  <div class="footer">
+    <span>Propulse par PreTalk</span>
+    <span>{{pretalkLogo}}</span>
+  </div>
+</div>
+
+<div class="page closing">
+  {{closingImageUrl}}
+  <h2>Passer de l'analyse a l'impact.</h2>
+  <p>{{closingCta}}</p>
+  <div class="consultant">
+    <div>{{consultantAvatar}}</div>
+    <div class="n">{{consultantName}}</div>
+    <div class="t">{{consultantTitle}}</div>
+    <div class="e">{{consultantEmail}}</div>
+    <div style="margin-top:6px">{{consultantProfileLink}}</div>
+  </div>
+  <div class="footer">
+    <span>Propulse par PreTalk</span>
+    <span>{{pretalkLogo}}</span>
+  </div>
+</div>
+</body>
+</html>

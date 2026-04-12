@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{coverTitle}} - {{clientCompany}}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: 600px 750px;
+            margin: 0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background-color: #121212; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 50px 20px;
+            margin: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .page {
+            width: 100%;
+            max-width: 600px;
+            height: 750px; 
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+            background-color: #ffffff;
+            flex-shrink: 0;
+            page-break-after: always;
+            break-after: page;
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        .page:last-child {
+            page-break-after: auto;
+            break-after: auto;
+        }
+
+        @media print {
+            body {
+                display: block;
+                background-color: #ffffff;
+                margin: 0;
+                padding: 0;
+                gap: 0;
+                align-items: initial;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            .page {
+                width: 600px;
+                max-width: 600px;
+                height: 750px;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .page.content-page {
+                height: auto;
+                overflow: visible;
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+        }
+        
+        /* --- FOOTER GLOBAL --- */
+        /* Cover / TOC / CTA: absolute at bottom of fixed-height page */
+        .footer-container {
+            position: absolute;
+            bottom: 30px;
+            left: 40px;
+            right: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 10;
+        }
+        /* Content pages: in-flow after content (height is auto, absolute won't reach true bottom) */
+        .content-page .footer-container {
+            position: relative;
+            bottom: auto;
+            left: auto;
+            right: auto;
+            margin-top: 28px;
+            padding-top: 12px;
+        }
+        .bg-light.content-page .footer-container {
+            border-top: 1px solid rgba(0,0,0,0.08);
+            color: #555;
+        }
+        .bg-dark.content-page .footer-container {
+            border-top: 1px solid rgba(255,255,255,0.12);
+            color: rgba(255,255,255,0.7);
+        }
+        .footer-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .footer-right .logo-wrap {
+            display: flex;
+            align-items: center;
+            height: 16px;
+        }
+        .footer-right .logo-wrap svg, 
+        .footer-right .logo-wrap img {
+            height: 100%;
+            width: auto;
+        }
+
+        /* --- COUVERTURE --- */
+        .page-cover {
+            background: linear-gradient(135deg, #2b1168 0%, #46258a 50%, #30176d 100%);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        .cover-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 30px;
+            margin-bottom: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .cover-header svg,
+        .cover-header img {
+            height: 100%;
+            width: auto;
+            fill: white;
+            margin-right: 8px;
+        }
+        .cover-number-container {
+            position: relative;
+            min-height: 350px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .cover-number {
+            font-size: 340px;
+            font-weight: 800;
+            color: transparent;
+            -webkit-text-stroke: 4px #af8dff;
+            background: linear-gradient(180deg, #af8dff 0%, #6e40c9 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            line-height: 1;
+            margin: 0;
+            text-shadow: 0 0 20px rgba(175, 141, 255, 0.4);
+        }
+        .cover-badge {
+            position: absolute;
+            bottom: 30px;
+            right: 15px;
+            background: white;
+            color: black;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transform: rotate(-5deg);
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: left;
+            line-height: 1.3;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .cover-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-top: 10px;
+            margin-bottom: 15px;
+        }
+        .cover-subtitle {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #d1c4e9;
+            padding: 0 20px;
+            line-height: 1.5;
+        }
+
+        /* --- SOMMAIRE --- */
+        .page-toc {
+            background: #f8f9fa;
+            color: #2b1168;
+            padding: 60px 40px;
+        }
+        .toc-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+        .toc-list { list-style: none; }
+        .toc-item {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .toc-number {
+            color: #af8dff;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+
+        /* --- CONTENU --- */
+        .content-page {
+            padding: 50px 40px;
+            text-align: left;
+        }
+        .bg-light { background: #ffffff; color: #1a1a1a; }
+        .bg-dark { background: #3d2482; color: #ffffff; }
+        
+        .bg-light .footer-container { color: #1a1a1a; }
+        .bg-dark .footer-container, .page-cover .footer-container, .page-cta .footer-container { color: #ffffff; }
+        .bg-light .footer-right svg { fill: #1a1a1a; }
+        .bg-dark .footer-right svg, .page-cover .footer-right svg, .page-cta .footer-right svg { fill: #ffffff; }
+        
+        .watermark {
+            position: absolute !important;
+            top: 20px;
+            right: 30px;
+            font-size: 120px;
+            font-weight: 800;
+            line-height: 1;
+            z-index: 0;
+        }
+        .bg-light .watermark { color: #f4effd; }
+        .bg-dark .watermark { color: #5234a6; }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 10;
+        }
+
+        .content-wrapper img {
+            width: 100% !important;
+            height: 160px !important;
+            object-fit: cover !important;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .chapter-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: block;
+        }
+
+        .content-title { font-size: 2.2rem; font-weight: 700; line-height: 1.2; margin-bottom: 20px; max-width: 85%; }
+        .section-text { font-size: 0.95rem; line-height: 1.6; margin-bottom: 15px; }
+        .section-text * { line-height: inherit; }
+        .section-text p { margin: 0 0 12px 0; }
+        .section-text p:last-child { margin-bottom: 0; }
+        .bg-light .section-text { color: #444; }
+        .bg-dark .section-text { color: #e0d7f5; }
+
+        .content-wrapper ul { list-style: none; padding: 0; }
+        .content-wrapper li { display: flex; align-items: flex-start; margin-bottom: 15px; font-size: 0.95rem; line-height: 1.5; }
+        .content-wrapper li::before { content: "✓"; display: flex; justify-content: center; align-items: center; min-width: 20px; height: 20px; background: #ff8a00; color: white; border-radius: 50%; margin-right: 12px; font-size: 12px; font-weight: bold; flex-shrink: 0; }
+        
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            background: #fff4ca;
+            color: #000;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .bullet-list { list-style: none; }
+        .bullet-item { display: flex; align-items: flex-start; margin-bottom: 15px; font-size: 0.9rem; line-height: 1.5; }
+        .bullet-icon { min-width: 20px; height: 20px; background: #ff8a00; border-radius: 50%; display: flex; justify-content: center; align-items: center; margin-right: 12px; margin-top: 3px; }
+        .bullet-icon svg { width: 12px; height: 12px; fill: white; }
+        .bullet-item strong { font-weight: 700; display: block; margin-bottom: 3px; font-size: 0.95rem; }
+        .bg-light .bullet-item strong { color: #1a1a1a; }
+        .bg-dark .bullet-item strong { color: #ffffff; }
+
+        /* --- CTA PAGE (BLOC FINAL) --- */
+        .page-cta {
+            background: linear-gradient(135deg, #1e0947 0%, #30176d 100%);
+            color: white;
+            padding: 0; 
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+        .cta-hero {
+            width: 100%;
+            height: 280px; 
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .cta-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to bottom, rgba(30,9,71,0) 0%, rgba(30,9,71,1) 100%);
+        }
+        .cta-body {
+            padding: 30px 40px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .cta-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            color: #ffffff;
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+        .cta-content {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 35px;
+            color: #d1c4e9;
+        }
+        .cta-button {
+            background: #ffffff;
+            color: #2b1168;
+            padding: 16px 30px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-block;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+        }
+        .cta-date { font-size: 0.9rem; opacity: 0.6; }
+    </style>
+</head>
+<body>
+
+    <div class="page page-cover">
+        <div class="cover-header">
+            <svg viewBox="0 0 24 24" style="height:16px;width:auto;"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            PRETALK
+        </div>
+        <div class="cover-number-container">
+            <div class="cover-number">{{coverChaptersCount}}</div>
+            <div class="cover-badge">{{coverBadgeText}}</div>
+        </div>
+        <h1 class="cover-title">{{coverTitle}}</h1>
+        <p class="cover-subtitle">{{coverSubtitle}}</p>
+        
+        <div class="footer-container">
+            <div class="footer-left">{{consultantName}}</div>
+            <div class="footer-right">
+                by <span class="logo-wrap">
+                    <svg style="height: 16px; width: auto; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="page page-toc">
+        <h2 class="toc-title">Sommaire de l'audit</h2>
+        <ul class="toc-list">
+            {{tocHtml}}
+        </ul>
+        
+        <div class="footer-container">
+            <div class="footer-left">{{consultantName}}</div>
+            <div class="footer-right">
+                by <span class="logo-wrap">
+                    <svg style="height: 16px; width: auto; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </span>
+            </div>
+        </div>
+    </div>
+
+    {{auditBlocksHtml}}
+
+    <div class="page page-cta">
+        <div class="cta-hero" style="background-image: url('https://images.unsplash.com/photo-1552581234-26160f608093?auto=format&fit=crop&w=600&q=80');"></div>
+        
+        <div class="cta-body">
+            <h2 class="cta-title">Passez à l'action.</h2>
+            <div class="cta-content">
+                <strong>{{clientName}}</strong>, {{closingCta}}
+            </div>
+            
+            <a href="{{consultantProfileLink}}" class="cta-button">Réserver l'Appel Stratégique</a>
+            <div class="cta-date">Généré le {{date}}</div>
+        </div>
+        
+        <div class="footer-container">
+            <div class="footer-left">{{consultantName}}</div>
+            <div class="footer-right">
+                by <span class="logo-wrap">
+                    <svg style="height: 16px; width: auto; fill: currentColor;" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                </span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,7 @@
+# Personas Cibles - Pretalk
+
+| Persona | Profil & Secteur | Points de Douleur (Pain Points) | Cas d'Usage Principal sur Pretalk | Fonctionnalités Clés Utilisées |
+| :--- | :--- | :--- | :--- | :--- |
+| **Le Consultant High-Ticket** | Stratégie, Finance, Management. Vend des missions complexes et coûteuses. | Perte de temps sur des appels de découverte avec des prospects hors budget. Besoin de justifier une tarification premium. | Arriver au premier rendez-vous avec un dossier d'analyse de l'entreprise cible pour imposer son autorité d'emblée. | Audit IA (Scraping, Scoring, Market Research), Générateur PDF, Calendrier. |
+| **L'Agence Solo (Freelance Tech/Marketing)** | Solopreneur (Design, Dev, Growth). Gère un volume élevé de requêtes entrantes. | Empilement d'outils coûteux (Typeform, Calendly, Stripe, Linktree). Image parfois perçue comme moins solide qu'une agence classique. | Centraliser son tunnel d'acquisition sur une seule interface haut de gamme et automatiser le tri des leads. | Profil Premium (Vitrine digital), Form Builder via prompt, Gestion financière. |
+| **Le Coach / Conseiller Expert** | Coaching exécutif, Vente, RH. Forte dimension psychologique et relationnelle. | Difficulté à cerner le problème réel du prospect avant la séance. Manque de temps pour le suivi administratif. | Faire interagir le prospect avec une IA conversationnelle dans le formulaire pour creuser ses besoins réels en temps réel. | Formulaires dynamiques avec IA en temps réel, Bibliothèque d'agents IA, Calendrier permanent. |

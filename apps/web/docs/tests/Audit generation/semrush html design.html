@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semrush - 5 Biggest Shifts in AI Search</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+        body {
+            background-color: #1e1e1e;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 40px 20px;
+        }
+        .page {
+            width: 100%;
+            max-width: 600px;
+            height: 750px;
+            position: relative;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Page 1 : Cover */
+        .page-1 {
+            background: linear-gradient(135deg, #2b1168 0%, #46258a 50%, #30176d 100%);
+            color: white;
+            text-align: center;
+            padding: 40px;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+        .logo-container svg {
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            fill: white;
+        }
+        .cover-number-container {
+            position: relative;
+            margin-top: 20px;
+        }
+        .cover-number {
+            font-size: 280px;
+            font-weight: 800;
+            color: #af8dff;
+            line-height: 1;
+            margin: 0;
+        }
+        .cover-badge {
+            position: absolute;
+            bottom: 40px;
+            right: 10px;
+            background: white;
+            color: black;
+            padding: 12px 20px;
+            border-radius: 8px;
+            transform: rotate(-5deg);
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: left;
+            line-height: 1.3;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .cover-title {
+            font-size: 2.8rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .cover-subtitle {
+            font-size: 1rem;
+            font-weight: 400;
+            color: #d1c4e9;
+            padding: 0 20px;
+            line-height: 1.5;
+        }
+
+        /* Page 2 : Sommaire */
+        .page-2 {
+            background: #ffffff;
+            color: #2b1168;
+            padding: 50px 40px;
+        }
+        .toc-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 40px;
+        }
+        .toc-list {
+            list-style: none;
+        }
+        .toc-item {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+        }
+        .toc-number {
+            color: #af8dff;
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-right: 15px;
+            line-height: 1;
+        }
+
+        /* Pages 3 & 4 : Content Structure */
+        .content-page {
+            padding: 60px 40px;
+            text-align: left;
+        }
+        .bg-light { background: #ffffff; color: #1a1a1a; }
+        .bg-dark { background: #3d2482; color: #ffffff; }
+        
+        .watermark {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 120px;
+            font-weight: 800;
+            line-height: 1;
+            z-index: 1;
+        }
+        .bg-light .watermark { color: #f4effd; }
+        .bg-dark .watermark { color: #5234a6; }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        .content-title {
+            font-size: 2.4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            max-width: 90%;
+        }
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+        .section-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .bg-light .section-text { color: #333; }
+        .bg-dark .section-text { color: #e0d7f5; }
+        
+        .action-button {
+            display: inline-flex;
+            align-items: center;
+            background: #fff4ca;
+            color: #000;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+        .action-button span { margin-right: 10px; font-size: 1.5rem; }
+        
+        .bullet-list { list-style: none; }
+        .bullet-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .bullet-icon {
+            min-width: 20px;
+            height: 20px;
+            background: #ff8a00;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 12px;
+            margin-top: 3px;
+        }
+        .bullet-icon svg { width: 12px; height: 12px; fill: white; }
+        .bullet-item strong { font-weight: 700; }
+        .bg-light .bullet-item { color: #333; }
+        .bg-dark .bullet-item { color: #fff; }
+        
+        .footer-logo {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .bg-light .footer-logo { color: #1a1a1a; }
+        .bg-dark .footer-logo { color: #ffffff; }
+
+    </style>
+</head>
+<body>
+
+    <div class="page page-1">
+        <div class="logo-container">
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            SEMRUSH
+        </div>
+        <div class="cover-number-container">
+            <div class="cover-number">5</div>
+            <div class="cover-badge">And what<br><strong>marketers</strong><br>should <strong>do next</strong></div>
+        </div>
+        <h1 class="cover-title">biggest shifts<br>in AI Search 👉</h1>
+        <p class="cover-subtitle">SEO is still critical but now AI is shaping what buyers see (and trust) before they click</p>
+    </div>
+
+    <div class="page page-2">
+        <h2 class="toc-title">Sommaire</h2>
+        <ul class="toc-list">
+            <li class="toc-item">
+                <span class="toc-number">1</span>
+                <span>You now have a "Second Gatekeeper"</span>
+            </li>
+            <li class="toc-item">
+                <span class="toc-number">2</span>
+                <span>AI may use your content, but not mention your brand</span>
+            </li>
+            <li class="toc-item" style="opacity: 0.5;">
+                <span class="toc-number">3</span>
+                <span>(Shift 3 - À venir)</span>
+            </li>
+            <li class="toc-item" style="opacity: 0.5;">
+                <span class="toc-number">4</span>
+                <span>(Shift 4 - À venir)</span>
+            </li>
+            <li class="toc-item" style="opacity: 0.5;">
+                <span class="toc-number">5</span>
+                <span>(Shift 5 - À venir)</span>
+            </li>
+        </ul>
+    </div>
+
+    <div class="page content-page bg-light">
+        <div class="watermark">1</div>
+        <div class="content-wrapper">
+            <h2 class="content-title">You now have a<br>"Second Gatekeeper"</h2>
+            
+            <h3 class="section-title">What's happening:</h3>
+            <p class="section-text">Google remains the primary driver of web traffic, but now there's a second layer deciding what people see first: <strong>AI answers</strong>.</p>
+            
+            <h3 class="section-title">What it means for marketers:</h3>
+            <p class="section-text">Not all research leads to a visit anymore. But the visits that happen are higher intent. AI answers filter out casual browsers, so clicks come from users who are comparing options, evaluating brands, and are ready to convert.</p>
+            
+            <div class="action-button">
+                <span>💫</span> Do this next:
+            </div>
+            
+            <ul class="bullet-list">
+                <li class="bullet-item">
+                    <div class="bullet-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                    <div><strong>Track better metrics:</strong> Focus on lead quality, conversions, and engaged visits. Not just raw traffic.</div>
+                </li>
+                <li class="bullet-item">
+                    <div class="bullet-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                    <div><strong>Optimize for two worlds:</strong> Make sure your brand shows up in <strong>search results + AI answers</strong> (not just one).</div>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-logo">by <strong>Semrush</strong></div>
+    </div>
+
+    <div class="page content-page bg-dark">
+        <div class="watermark">2</div>
+        <div class="content-wrapper">
+            <h2 class="content-title">AI may use your<br>content, but not<br>mention your brand</h2>
+            
+            <h3 class="section-title">What's happening:</h3>
+            <p class="section-text">In many industries, 90%+ of AI-cited pages don't get real brand credit or traffic.</p>
+            
+            <h3 class="section-title">What it means for marketers:</h3>
+            <p class="section-text">You're doing the work, but don't get the clicks.</p>
+            
+            <div class="action-button">
+                <span>💫</span> Do this next:
+            </div>
+            
+            <ul class="bullet-list">
+                <li class="bullet-item">
+                    <div class="bullet-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                    <div><strong>Start tracking AI visibility:</strong> Track where your brand shows up inside AI tools, not just on Google.<br>(Semrush One and Semrush AIO can help here)</div>
+                </li>
+                <li class="bullet-item">
+                    <div class="bullet-icon"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
+                    <div><strong>Create content that makes it easier for AI to cite you by name.</strong></div>
+                </li>
+            </ul>
+        </div>
+        <div class="footer-logo">by <strong>Semrush</strong></div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,1022 @@
+{
+  "name": "Pretalk - Augmented Onboarding (Auto-Config v6.0 - Async)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "onboarding-augmented",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "*"
+        }
+      },
+      "id": "8fdac5de-33b1-4018-86b9-60c76feb2455",
+      "name": "Webhook Trigger Onboarding",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        4736,
+        7728
+      ],
+      "webhookId": "522d2b66-6cda-49c5-a856-3ea692c20545"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-userid",
+              "leftValue": "={{ $json.body.user_id }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "2f957b71-6906-4c3a-92ba-3c2ec1af86b6",
+      "name": "Validate Input",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        4976,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || $input.first().json;\nif (body.url) return [{ json: { ...body, _route: 'url' } }];\nif (body.pdf_url) return [{ json: { ...body, _route: 'document' } }];\nif (body.audio_base64) return [{ json: { ...body, _route: 'audio' } }];\nreturn [{ json: { ...body, _route: 'text' } }];"
+      },
+      "id": "d5793a73-e95d-41ee-810f-bef45656b143",
+      "name": "Input Splitter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5216,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "route-url",
+                    "leftValue": "={{ $json._route }}",
+                    "rightValue": "url",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "url"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "route-doc",
+                    "leftValue": "={{ $json._route }}",
+                    "rightValue": "document",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "document"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "route-audio",
+                    "leftValue": "={{ $json._route }}",
+                    "rightValue": "audio",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "id": "f1e4db2e-927c-442d-9344-4d4babd36075",
+      "name": "Route by Input Type",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        5456,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst body = $('Webhook Trigger Onboarding').first().json.body || {};\nconst jinaContent = items[0]?.json?.data?.content || items[0]?.json?.content || items[0]?.json?.text || JSON.stringify(items[0]?.json || '');\nreturn [{ json: { ...body, extracted_content: jinaContent, input_type: 'url' } }];"
+      },
+      "id": "467976c5-8797-4b16-92eb-51bca202fe0e",
+      "name": "Set URL Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5936,
+        7488
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.pdf_url }}",
+        "options": {
+          "timeout": 60000
+        }
+      },
+      "id": "4fa6cea1-15a0-410d-8e12-5da1c14420d9",
+      "name": "Fetch PDF Binary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5488,
+        7632
+      ],
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nif (!item.binary) throw new Error('No binary data received from PDF URL');\nconst binaryKeys = Object.keys(item.binary);\nif (binaryKeys.length === 0) throw new Error('Binary object is empty');\nif (!item.binary.data) {\n  item.binary.data = item.binary[binaryKeys[0]];\n}\nif (!item.binary.data.data) {\n  throw new Error('Binary data property invalid: ' + JSON.stringify(item.binary.data));\n}\nreturn [item];"
+      },
+      "id": "24954f5a-0945-43af-96da-a9073f940fe2",
+      "name": "Validate PDF Binary",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5728,
+        7632
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "id": "aa70f546-c41b-4f73-93ce-a302c0b875c1",
+      "name": "Extract PDF Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        5968,
+        7632
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst body = $('Webhook Trigger Onboarding').first().json.body || {};\nconst pdfText = items[0]?.json?.text || items[0]?.json?.content || '';\nif (!pdfText) throw new Error('PDF extraction returned no text');\nreturn [{ json: { ...body, extracted_content: String(pdfText).substring(0, 15000), input_type: 'document' } }];"
+      },
+      "id": "f4385042-746c-43c8-a836-994b2754a2f4",
+      "name": "Set PDF Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6208,
+        7632
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const item = $input.first();\nconst base64Data = item.json.audio_base64;\nif (!base64Data) throw new Error('audio_base64 is missing');\nreturn [{\n  json: { locale: item.json.locale || 'fr' },\n  binary: {\n    data: {\n      data: base64Data,\n      mimeType: 'audio/webm',\n      fileName: 'recording.webm'\n    }\n  }\n}];"
+      },
+      "id": "8064ff2c-541e-43fc-8f61-88a93660711b",
+      "name": "Decode Audio Base64",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5488,
+        7888
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/audio/transcriptions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Bearer {{ $credentials.groqApi.apiKey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "multipart-form-data",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "parameterType": "formBinaryData",
+              "name": "file",
+              "inputDataFieldName": "data"
+            },
+            {
+              "name": "model",
+              "value": "whisper-large-v3"
+            },
+            {
+              "name": "response_format",
+              "value": "json"
+            },
+            {
+              "name": "language",
+              "value": "={{ $json.locale || 'fr' }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "id": "b133aeff-3468-43a6-95bc-cba89f3d65b7",
+      "name": "Groq Whisper (Audio→Text)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        5728,
+        7888
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst body = $('Webhook Trigger Onboarding').first().json.body || {};\nconst transcript = items[0]?.json?.text || items[0]?.json?.transcription || 'Audio transcription unavailable';\nreturn [{ json: { ...body, extracted_content: transcript, input_type: 'audio' } }];"
+      },
+      "id": "0fb036bd-0a93-440d-8568-2886b90a8c5e",
+      "name": "Set Audio Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5968,
+        7888
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $('Webhook Trigger Onboarding').first().json.body || {};\nconst text = body.text || body.content || '';\nreturn [{ json: { ...body, extracted_content: text, input_type: 'text' } }];"
+      },
+      "id": "bc0232d4-e5d9-436b-8c17-475df08cacb5",
+      "name": "Set Text Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        5488,
+        8096
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\nconst first = items[0].json;\nconst combined = items\n  .map(i => {\n    const label = i.json.input_type ? '[' + i.json.input_type.toUpperCase() + ']' : '';\n    return (label ? label + '\\n' : '') + (i.json.extracted_content || '');\n  })\n  .filter(Boolean)\n  .join('\\n\\n---\\n\\n');\nreturn [{ json: { ...first, extracted_content: combined } }];"
+      },
+      "id": "1a645a30-1aa2-44ec-a782-09ffeec3288d",
+      "name": "Combine Content",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6400,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================================\n// PROFILE & SERVICES BUILDER — n8n Code Node\n// Version 2.0 — Fixes: double-brace bomb, thinking tag,\n//               hardcoded French, weak branding rules,\n//               generic service naming, flat base_prompts\n// ============================================================\n\nconst body = $input.first().json;\nconst extractedContent = body.extracted_content || '';\nconst inputType        = body.input_type        || 'text';\nconst userId           = body.user_id           || '';\n\n// ────────────────────────────────────────────────────────────\n// 1. LANGUAGE MAPPING\n//    Fix: form_prompts were hardcoded in French regardless of locale.\n//    Now all output text follows the consultant's locale.\n// ────────────────────────────────────────────────────────────\nconst LANGUAGE_MAP = {\n  en: 'English',  fr: 'French',   es: 'Spanish',\n  ar: 'Arabic',   pt: 'Portuguese', de: 'German',\n  it: 'Italian',  nl: 'Dutch',    tr: 'Turkish',\n  ru: 'Russian',  zh: 'Chinese',  ja: 'Japanese',\n  pl: 'Polish',   sv: 'Swedish',  ko: 'Korean'\n};\nconst locale   = body.locale || 'fr';\nconst language = LANGUAGE_MAP[locale] || 'French';\n\n// ────────────────────────────────────────────────────────────\n// 2. CONSULTANT PROFILE CONTEXT\n// ────────────────────────────────────────────────────────────\nconst consultantProfile = body.consultant_profile || {};\nconst website           = consultantProfile.website         || '';\nconst socialNetworks    = consultantProfile.social_networks || {};\n\n// ────────────────────────────────────────────────────────────\n// 3. SYSTEM BLOCK\n//    Single, unified identity. No competing persona tags.\n//    Combines strategic + copywriting + branding authority.\n// ────────────────────────────────────────────────────────────\nconst systemContent =\n  `You are a world-class Personal Branding Strategist, Marketing Copywriter, and Business Positioning Expert. ` +\n  `You operate at the intersection of LinkedIn authority-building, high-converting UX copywriting, and consulting business strategy. ` +\n  `Your mission: analyze raw content from a consultant (website, bio, LinkedIn, portfolio), ` +\n  `extract their unique expertise and value proposition, ` +\n  `then synthesize a professional profile and a catalog of 3 AI-augmented services ` +\n  `that are positioning-sharp, conversion-optimized, and tailored to their specific domain and ideal client.`;\n\n// ────────────────────────────────────────────────────────────\n// 4. INSTRUCTIONS BLOCK\n//    Comprehensive branding rules for title, bio, services.\n//    Fix: removed <thinking> tag. Model reasons internally.\n//    Fix: form_prompts are now language-dynamic via template literals.\n// ────────────────────────────────────────────────────────────\nconst instructionsContent = `\nAnalyze the extracted content thoroughly, then generate a complete professional profile with 3 services and 2 form prompts.\nReason internally about the best positioning strategy for this consultant's domain, audience, and differentiators. Then output ONLY the JSON — no preamble, no explanation, no markdown fences.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSECTION 1 — PROFILE\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n① JOB TITLE — The single most important positioning line.\n   Hard limit: 4 to 6 words. NEVER use vague words like \"Expert\", \"Professional\", \"Specialist\", \"Guru\" alone.\n   Use one of these proven formulas:\n\n   Formula A — AUDIENCE + TRANSFORMATION:\n     \"[Verb] + [Audience] + [Outcome]\"\n     e.g. \"Growing Revenue for B2B Founders\"\n          \"Helping Clinics Attract More Patients\"\n          \"Turning Ideas Into Funded Startups\"\n\n   Formula B — METHOD + DOMAIN (for technical/niche consultants):\n     \"[Method/Tool] + [Domain] + [Authority Word]\"\n     e.g. \"Data-Driven Marketing Strategist\"\n          \"Lean Operations Advisor for Manufacturers\"\n          \"Executive Coach for C-Suite Leaders\"\n\n   Formula C — NICHE IDENTITY (for hyper-specialized consultants):\n     \"[Niche] + [Role] | [Secondary Signal]\"\n     e.g. \"SaaS Pricing Consultant | 3× Exit Founder\"\n          \"Healthcare Compliance Strategist | 15 Yrs HHS\"\n          \"Real Estate Investment Coach | 200+ Deals\"\n\n   RULES:\n   - Pick the formula that best fits the consultant's extracted content.\n   - If they have a specific audience (doctors, founders, SMEs, athletes...) → Formula A.\n   - If their method or tool is their differentiator → Formula B.\n   - If they have strong niche credibility → Formula C.\n   - NEVER generate generic titles like \"Business Consultant\", \"Marketing Expert\", \"Coach & Speaker\".\n\n② BIO — Maximum 220 characters (2 tight sentences). No fluff. No adjectives without proof.\n   Use this 3-part LinkedIn/Instagram bio formula:\n\n   Part 1 — THE HOOK (sentence 1): Who you help + The core problem you solve.\n     Pattern: \"I help [specific audience] [overcome specific problem / achieve specific outcome].\"\n     e.g. \"I help independent financial advisors stop losing clients to robo-advisors.\"\n          \"I help e-commerce founders scale past €1M without burning their margin.\"\n          \"I help HR directors reduce turnover by fixing the onboarding experience.\"\n\n   Part 2 — THE EDGE (sentence 2): Your unique method OR credibility proof OR urgency signal.\n     Pattern: \"[Via X method / After Y years / Having done Z] → [specific result or CTA].\"\n     e.g. \"With a proprietary 12-week system — no generic advice, just measurable results.\"\n          \"After auditing 80+ clinics — I know exactly where the revenue leaks are.\"\n          \"Book a free 20-min call to see if we're a fit.\"\n\n   RULES:\n   - NEVER start with \"I am a...\" or \"Welcome to my...\" — start with \"I help\" or a bold outcome statement.\n   - NEVER use vague adjectives: passionate, dynamic, motivated, experienced, results-driven.\n   - If credibility proof exists in the extracted content (years, clients, revenue, certifications) → use it in Part 2.\n   - If no credibility proof found → use the method angle in Part 2.\n   - Keep total bio under 220 characters STRICTLY.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSECTION 2 — SERVICE CATALOG (exactly 3 services)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nThe 3 services form a VALUE LADDER. Each service has a specific role:\n\nSERVICE 1 — FLAGSHIP (type: \"global\")\n  Role: The consultant's core offer. Broad appeal. Builds trust and authority.\n  Positioning: This is what they're KNOWN for. Think \"signature program\" or \"full engagement\".\n  Naming rule: Use TRANSFORMATION-FIRST naming. Name the outcome, not the process.\n    - BAD: \"Strategic Consulting\", \"Business Audit\", \"Coaching Package\"\n    - GOOD: \"Revenue Growth Accelerator\", \"Practice Scale Blueprint\", \"The Founders Clarity System\"\n  Description: MAX 130 characters. Formula: \"[Result] for [audience] who [pain point/situation].\"\n  base_prompt: This is a SYSTEM PROMPT for an AI Agent acting as this service. Write in first person.\n    Must include: (1) role declaration, (2) analytical framework/methodology, (3) expected deliverables, (4) tone and interaction style.\n    e.g. \"I am [Name]'s AI advisor for [Service Name]. My role is to qualify prospects and assess their fit for this engagement.\n         I analyze their situation using the [Framework] methodology: I evaluate X, then Y, then Z.\n         My deliverables include: a gap analysis, a priority roadmap, and a first-action recommendation.\n         I communicate in a direct, strategic tone — no generic advice, only context-specific insights.\"\n\nSERVICE 2 — QUICK WIN (type: \"specific\")\n  Role: The low-commitment entry point. Resolves one specific, urgent pain point fast.\n  Positioning: Easier to say yes to. Creates trust before the flagship offer.\n  Naming rule: Use SPEED + RESULT naming. Signals fast value.\n    - BAD: \"Initial Consultation\", \"Discovery Session\"\n    - GOOD: \"90-Min Clarity Sprint\", \"The 5-Day Audit\", \"Quick Revenue Diagnostic\"\n  Description: MAX 130 characters. Emphasize speed and specificity. \"In [timeframe], we [deliver X] so you can [immediate benefit].\"\n  base_prompt: Same 4-part structure as Service 1 but focused on rapid diagnosis. Shorter analytical scope.\n\nSERVICE 3 — PREMIUM / DEEP DIVE (type: \"specific\")\n  Role: The high-investment, high-transformation offer. For clients who want full commitment.\n  Positioning: Signals expertise depth. Justifies premium pricing. Usually longer engagement.\n  Naming rule: Use DEPTH + AUTHORITY naming. Signals mastery and completeness.\n    - BAD: \"Advanced Package\", \"Premium Plan\", \"Full Service\"\n    - GOOD: \"The Full-Stack Brand Overhaul\", \"12-Week Executive Mastery\", \"Complete Practice Transformation\"\n  Description: MAX 130 characters. Emphasize completeness and high-value outcome. \"A full [transformation type] for [audience] ready to [bold goal].\"\n  base_prompt: Same 4-part structure. Focus on depth of analysis, multi-week methodology, premium deliverables.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSERVICE WRITING RULES (apply to all 3)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  - name: MAX 5 words. Outcome-first or transformation-first. Never process-first.\n  - description: MAX 130 characters. Lead with the prospect's pain or desired outcome. End with the deliverable or result.\n  - base_prompt: ALWAYS in 1st person (\"I am...\", \"I analyze...\", \"I deliver...\").\n    Minimum structure: role → framework → deliverables → tone. MAX 300 characters.\n  - NEVER mention prices, fees, or rates in any field.\n  - NEVER use the words: \"holistic\", \"tailored\", \"bespoke\", \"cutting-edge\", \"synergy\", \"leverage\" (as a verb), \"game-changer\".\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nSECTION 3 — FORM PROMPTS (exactly 3)\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\nGenerate EXACTLY 3 form generation prompts — no more, no less.\nGenerating 1 or 2 form_prompts is a CRITICAL schema violation that breaks the downstream system.\nObject at index 0 MUST be the Quick Qualification prompt.\nObject at index 1 MUST be the Strategic Audit prompt.\\nObject at index 2 MUST be the Client Need Deep Dive prompt.\nDefine ONLY the business objective and prospect context for each.\nDo NOT include question count, structure, or formatting rules in these prompts (a separate system handles that).\nFocus purely on WHAT needs to be uncovered about the prospect.\n\n  Form 1 — QUICK QUALIFICATION:\n    Objective: Surface immediate context, urgency level, and investment readiness.\n    The prompt must tell the form AI what signals indicate a qualified vs unqualified lead.\n    Write it in ${language}.\n\n  Form 2 — STRATEGIC AUDIT:\n    Objective: Deeply assess maturity, structural weaknesses, growth opportunities, and decision timeline.\n    The prompt must tell the form AI what depth of insight is needed to prepare a meaningful first conversation.\n    Write it in ${language}.\n\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\nEXECUTION RULES\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n  - ALL user-visible text values MUST be generated in ${language}.\n  - Infer the consultant's domain, ideal client, and differentiation from the extracted content.\n  - If the extracted content is sparse, use the consultant's job title and website URL to make educated assumptions.\n  - Every generated line must feel like it was written by a senior copywriter — not an AI completing a template.\n  - Output ONLY a valid raw JSON object. No preamble. No explanation. No markdown. Just JSON.\n`.trim();\n\n// ────────────────────────────────────────────────────────────\n// 5. OUTPUT FORMAT SCHEMA\n//    Fix: built as array of strings → joined without any\n//    brace escaping here. Selective escaping applied later\n//    only on dynamic user-input parts (system + context).\n//    This prevents the {{ {{ }} }} corruption bug.\n// ────────────────────────────────────────────────────────────\nconst outputFormatLines = [\n  '{',\n  '  \"profile\": {',\n  '    \"full_name\": \"Extracted or inferred full name\",',\n  '    \"job_title\": \"4 to 6 words — use a proven formula (see instructions)\",',\n  '    \"company_name\": \"Company name if found in content, else empty string\",',\n  '    \"bio\": \"2 sentences, max 220 characters — hook + edge formula\"',\n  '  },',\n  '  \"services\": [',\n  '    {',\n  '      \"type\": \"global\",',\n  '      \"name\": \"Flagship outcome-first name (max 5 words)\",',\n  '      \"description\": \"Pain point → deliverable, max 130 characters\",',\n  '      \"base_prompt\": \"I am... My framework is... I deliver... I communicate...\"',\n  '    },',\n  '    {',\n  '      \"type\": \"specific\",',\n  '      \"name\": \"Quick-win service name (max 5 words)\",',\n  '      \"description\": \"Speed + specific result, max 130 characters\",',\n  '      \"base_prompt\": \"I am... I diagnose... I deliver... I communicate...\"',\n  '    },',\n  '    {',\n  '      \"type\": \"specific\",',\n  '      \"name\": \"Premium deep-dive name (max 5 words)\",',\n  '      \"description\": \"Full transformation for committed clients, max 130 characters\",',\n  '      \"base_prompt\": \"I am... My methodology covers... I deliver... I communicate...\"',\n  '    }',\n  '  ],',\n  '  \"form_prompts\": [',\n  '    {',\n  '      \"title\": \"Quick Qualification title in ' + language + '\",',\n  '      \"prompt\": \"Quick qualification form prompt — objective + prospect context only, written in ' + language + '\"',\n  '    },',\n  '    {',\n  '      \"title\": \"Strategic Audit title in ' + language + '\",',\n  '      \"prompt\": \"Deep audit form prompt — maturity + weaknesses + growth opportunities, written in ' + language + '\"',\n  '    },',\n  '    {',\n  '      \"title\": \"Client Need Deep Dive title in ' + language + '\",',\n  '      \"prompt\": \"Exploration deep dive on a specific pain point or project need, written in ' + language + '\"',\n  '    }',\n  '  ]',\n  '}'\n];\nconst outputFormatContent = outputFormatLines.join('\\n');\n\n// ────────────────────────────────────────────────────────────\n// 6. CONTEXT BLOCK\n//    Contains user-supplied data → may contain { } characters\n//    → this is the ONLY part that gets brace-escaped.\n// ────────────────────────────────────────────────────────────\nlet contextContent =\n  `CONSULTANT SOURCES:\\n` +\n  `  Website   : ${website              || 'Not provided'}\\n` +\n  `  LinkedIn  : ${socialNetworks.linkedin || 'Not provided'}\\n` +\n  `  Twitter   : ${socialNetworks.twitter  || 'Not provided'}\\n` +\n  `  GitHub    : ${socialNetworks.github   || 'Not provided'}\\n` +\n  `  Input type: ${inputType}\\n\\n` +\n  `EXTRACTED CONTENT:\\n` +\n  extractedContent.substring(0, 15000);\n\n// ────────────────────────────────────────────────────────────\n// 7. SELECTIVE BRACE ESCAPING\n//    Fix: previously, the entire assembled prompt (including\n//    the static schema) was escaped. {{ in the schema example\n//    became {{{{ → model reproduced {{{{ in its output → JSON.parse() crash.\n//\n//    Now: ONLY systemContent and contextContent are escaped.\n//    These are the only parts that may contain user-supplied { }.\n//    instructionsContent and outputFormatContent are static,\n//    controlled strings with no { } that need escaping.\n// ────────────────────────────────────────────────────────────\nconst safeSystem  = systemContent.replace(/\\{/g, '{{').replace(/\\}/g, '}}');\nconst safeContext = contextContent.replace(/\\{/g, '{{').replace(/\\}/g, '}}');\n\n// ────────────────────────────────────────────────────────────\n// 8. FINAL PROMPT ASSEMBLY\n//    Tag <s> used for the system identity block (compatible\n//    with most LLM APIs that recognize <s> as system).\n//    No <persona> tag — no identity conflict.\n// ────────────────────────────────────────────────────────────\nconst generatedPrompt =\n  `<s>\\n${safeSystem}\\n</s>\\n\\n` +\n  `<instructions>\\n${instructionsContent}\\n</instructions>\\n\\n` +\n  `<output_format>\\n${outputFormatContent}\\n</output_format>\\n\\n` +\n  `<context>\\n${safeContext}\\n</context>`;\n\nreturn [{\n  json: {\n    ...body,\n    generated_prompt: generatedPrompt,\n    user_id: userId,\n    locale: locale\n  }\n}];"
+      },
+      "id": "05a157e1-7843-41a4-aef0-0bb9ac109f46",
+      "name": "Prepare Master Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        6624,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.generated_prompt }}"
+      },
+      "id": "8fc8d643-7008-403b-8569-5d9f5c1258da",
+      "name": "Gemini LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.4,
+      "position": [
+        6848,
+        7728
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "d8a112e8-efce-4aa0-bf75-5d1a7763de43",
+      "name": "Gemini Flash Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        6848,
+        7936
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "jVByyt2HtLmjXejx",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nlet content = response.text || response.message?.content || JSON.stringify(response);\n\n// Nettoyage Markdown sécurisé\ncontent = content.replace(/<thinking>[\\s\\S]*?<\\/thinking>/gi, '').trim();\ncontent = content.replace(/\\x60\\x60\\x60json\\n?/g, '').replace(/\\x60\\x60\\x60\\n?/g, '').trim();\n\nlet parsed;\ntry {\n    const s = content.indexOf('{');\n    const e = content.lastIndexOf('}');\n    parsed = JSON.parse(s !== -1 && e > s ? content.substring(s, e + 1) : content);\n} catch (err) {\n    return [{ json: { _error: 'PARSE_FAILED', profile: {}, services: [], form_prompts: [], user_id: $('Prepare Master Prompt').first().json.user_id } }];\n}\n\nreturn [{ json: { ...parsed, user_id: $('Prepare Master Prompt').first().json.user_id, locale: $('Prepare Master Prompt').first().json.locale } }];"
+      },
+      "id": "5536d634-473f-422a-a42e-91fd9544107b",
+      "name": "Parse AI Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7088,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst profile = data.profile || {};\n\nreturn [{\n  json: {\n    id: data.user_id,\n    full_name: profile.full_name || 'Consultant',\n    job_title: profile.job_title || '',\n    company_name: profile.company_name || '',\n    bio: profile.bio || ''\n  }\n}];"
+      },
+      "id": "ce3581b9-0b6c-4741-a55b-2e3f87de6d9f",
+      "name": "1. Prepare Profile",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7296,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "profiles",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "full_name",
+              "fieldValue": "={{ $json.full_name }}"
+            },
+            {
+              "fieldId": "job_title",
+              "fieldValue": "={{ $json.job_title }}"
+            },
+            {
+              "fieldId": "company_name",
+              "fieldValue": "={{ $json.company_name }}"
+            },
+            {
+              "fieldId": "bio",
+              "fieldValue": "={{ $json.bio }}"
+            }
+          ]
+        }
+      },
+      "id": "5bebcbca-2bcd-4afd-be55-2be04379fa44",
+      "name": "Update Profile",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        7504,
+        7728
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsedData = $('Parse AI Output').first().json;\nconst services = parsedData.services || [];\n\nif (services.length === 0) {\n  throw new Error('No services generated by Gemini');\n}\n\nconst uuid = () => 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => { const r = Math.random() * 16 | 0; return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16); });\n\nreturn services.map(svc => ({\n  json: {\n    id: uuid(),\n    user_id: parsedData.user_id,\n    consultant_id: parsedData.user_id,\n    name: svc.name || 'Service',\n    description: svc.description || '',\n    base_prompt: svc.base_prompt || '',\n    service_type: svc.type || 'specific',\n    price_type: 'quote',\n    is_active: true,\n    show_on_public_profile: true\n  }\n}));"
+      },
+      "id": "d6906c67-a463-4f54-8025-aa9c247d9b18",
+      "name": "2. Prepare Service",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        7696,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "services",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "id",
+              "fieldValue": "={{ $json.id }}"
+            },
+            {
+              "fieldId": "consultant_id",
+              "fieldValue": "={{ $json.consultant_id }}"
+            },
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.name }}"
+            },
+            {
+              "fieldId": "description",
+              "fieldValue": "={{ $json.description }}"
+            },
+            {
+              "fieldId": "price_type",
+              "fieldValue": "={{ $json.price_type }}"
+            },
+            {
+              "fieldId": "is_active",
+              "fieldValue": "={{ $json.is_active }}"
+            },
+            {
+              "fieldId": "show_on_public_profile",
+              "fieldValue": "={{ $json.show_on_public_profile }}"
+            }
+          ]
+        }
+      },
+      "id": "1edb239a-8514-4be3-934b-cdb54ade02eb",
+      "name": "Create Service",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        7904,
+        7728
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "xmqiwANoR0Iu58Sr",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsedData = $('Parse AI Output').first().json;\nconst userId = parsedData.user_id || '';\nconst items = $input.all();\nreturn [{ json: { success: true, user_id: userId, services_created: items.length, timestamp: new Date().toISOString(), status: 'processing' } }];"
+      },
+      "id": "b2aee088-a936-4db0-a37c-9b01cf9de36d",
+      "name": "Aggregate Services",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        8016,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: true, user_id: $('Parse AI Output').first().json.user_id, status: 'generating_forms', timestamp: new Date().toISOString(), message: 'Configuration réussie. Génération des formulaires en cours...' } }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "5723a48c-e3b1-41e4-b7b2-bdba623f6426",
+      "name": "3. Respond (Async Fire & Forget)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        8096,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const parsedData = $('Parse AI Output').first().json;\nconst webhookData = $('Webhook Trigger Onboarding').first().json.body;\nconst profile = parsedData.profile || {};\nconst services = parsedData.services || [];\nconst globalService = services.find(s => s.type === 'global') || services[0] || {};\nconst formPrompts = parsedData.form_prompts || [];\nconst locale = parsedData.locale || 'fr';\nconst consultantProfile = webhookData.consultant_profile || {};\n\n// FIX: slice(0,2) ensures the Forms workflow is triggered EXACTLY twice,\n// regardless of how many form_prompts Gemini generated.\nreturn formPrompts.slice(0, 3).map(fp => {\n  return {\n    json: {\n      locale: locale,\n      consultant_profile: {\n        full_name: profile.full_name,\n        job_title: profile.job_title,\n        bio: profile.bio,\n        company_name: profile.company_name,\n        website: consultantProfile.website || '',\n        social_networks: consultantProfile.social_networks || {},\n        specialties: profile.specialties || ''\n      },\n      active_service: {\n        name: globalService.name,\n        description: globalService.description,\n        base_prompt: globalService.base_prompt\n      },\n      ai_config: {\n        tone: \"professional\",\n        // FIX: fp.numberOfQuestions never existed → always undefined → dead code removed.\n        // Now inferred from the form title: \"audit\" → advanced, everything else → intermediate.\n        questionComplexity: (fp.title || '').toLowerCase().includes('audit') ? \"advanced\" : \"intermediate\",\n        systemPrompt: globalService.base_prompt\n      },\n      form_title: fp.title || 'Qualification Form',\n      prompt: fp.prompt,\n      user_id: parsedData.user_id\n    }\n  };\n});"
+      },
+      "id": "7fe65dae-b022-41e4-a878-2f16b3aa1b4b",
+      "name": "4. Prepare Form Payloads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        8304,
+        7728
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://backand.pretalk.me/webhook/generate-forms",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "locale",
+              "value": "={{ $json.locale }}"
+            },
+            {
+              "name": "consultant_profile",
+              "value": "={{ $json.consultant_profile }}"
+            },
+            {
+              "name": "active_service",
+              "value": "={{ $json.active_service }}"
+            },
+            {
+              "name": "ai_config",
+              "value": "={{ $json.ai_config }}"
+            },
+            {
+              "name": "form_title",
+              "value": "={{ $json.form_title }}"
+            },
+            {
+              "name": "prompt",
+              "value": "={{ $json.prompt }}"
+            },
+            {
+              "name": "user_id",
+              "value": "={{ $json.user_id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 3000,
+          "allowUnauthorizedCerts": false
+        }
+      },
+      "id": "22ffe3c9-4381-4d4a-bfd4-76836a189b1e",
+      "name": "Trigger Form Generator",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        8496,
+        7728
+      ],
+      "retryOnFail": false,
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { success: false, error: 'INVALID_REQUEST', message: 'user_id is required', status: 'error', timestamp: new Date().toISOString() } }}",
+        "options": {
+          "responseCode": 400,
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "name": "Access-Control-Allow-Origin",
+                "value": "*"
+              }
+            ]
+          }
+        }
+      },
+      "id": "4164ec75-82aa-43f2-8db6-d1ed6c897ecc",
+      "name": "Error Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        5216,
+        7936
+      ]
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.url }}",
+        "options": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.jinaAi",
+      "typeVersion": 1,
+      "position": [
+        5488,
+        7488
+      ],
+      "id": "34650468-8c8b-497d-857f-de1cee82d85b",
+      "name": "Read URL content",
+      "credentials": {
+        "jinaAiApi": {
+          "id": "yWPzQwiaf7jvMqIo",
+          "name": "Jina AI account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Trigger Onboarding": {
+      "main": [
+        [
+          {
+            "node": "Validate Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Input": {
+      "main": [
+        [
+          {
+            "node": "Input Splitter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Error Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Input Splitter": {
+      "main": [
+        [
+          {
+            "node": "Route by Input Type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Input Type": {
+      "main": [
+        [
+          {
+            "node": "Read URL content",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Fetch PDF Binary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Decode Audio Base64",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set Text Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set URL Content": {
+      "main": [
+        [
+          {
+            "node": "Combine Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch PDF Binary": {
+      "main": [
+        [
+          {
+            "node": "Validate PDF Binary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate PDF Binary": {
+      "main": [
+        [
+          {
+            "node": "Extract PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract PDF Text": {
+      "main": [
+        [
+          {
+            "node": "Set PDF Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set PDF Content": {
+      "main": [
+        [
+          {
+            "node": "Combine Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Whisper (Audio→Text)": {
+      "main": [
+        [
+          {
+            "node": "Set Audio Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decode Audio Base64": {
+      "main": [
+        [
+          {
+            "node": "Groq Whisper (Audio→Text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Audio Content": {
+      "main": [
+        [
+          {
+            "node": "Combine Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Text Content": {
+      "main": [
+        [
+          {
+            "node": "Combine Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine Content": {
+      "main": [
+        [
+          {
+            "node": "Prepare Master Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Master Prompt": {
+      "main": [
+        [
+          {
+            "node": "Gemini LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Flash Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gemini LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Output": {
+      "main": [
+        [
+          {
+            "node": "1. Prepare Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1. Prepare Profile": {
+      "main": [
+        [
+          {
+            "node": "Update Profile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Profile": {
+      "main": [
+        [
+          {
+            "node": "3. Respond (Async Fire & Forget)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "2. Prepare Service": {
+      "main": [
+        [
+          {
+            "node": "Create Service",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Service": {
+      "main": [
+        [
+          {
+            "node": "Aggregate Services",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Services": {
+      "main": [
+        []
+      ]
+    },
+    "3. Respond (Async Fire & Forget)": {
+      "main": [
+        [
+          {
+            "node": "4. Prepare Form Payloads",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "2. Prepare Service",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "4. Prepare Form Payloads": {
+      "main": [
+        [
+          {
+            "node": "Trigger Form Generator",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read URL content": {
+      "main": [
+        [
+          {
+            "node": "Set URL Content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "f09bcd5e-9f83-43fc-ad18-0b12ce29d1f7",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "2c355d27ede989f7b1e1885f7782160f22306c3e196fcab0510a37446bea4285"
+  },
+  "id": "chByDnAEPBID0xxz",
+  "tags": [
+    {
+      "updatedAt": "2026-02-17T11:32:16.540Z",
+      "createdAt": "2026-02-17T11:32:16.540Z",
+      "id": "AkMeZasep98HCHxU",
+      "name": "Pretalk"
+    },
+    {
+      "updatedAt": "2026-03-08T22:32:18.041Z",
+      "createdAt": "2026-03-08T22:32:18.041Z",
+      "id": "OkP5SCEsl2cf1x0w",
+      "name": "Onboarding"
+    }
+  ]
+}
