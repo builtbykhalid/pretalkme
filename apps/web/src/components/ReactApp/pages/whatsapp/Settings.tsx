@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useApp } from '../../context/AppContext';
 import { 
   Users, 
   Link as LinkIcon, 
@@ -24,6 +25,7 @@ import {
 export default function Settings() {
   const [activeTab, setActiveTab] = useState<'general' | 'team' | 'integrations'>('general');
   const navigate = useNavigate();
+   const { config, updateTenantConfig } = useApp();
 
   return (
     <div className="flex flex-col h-full bg-[#F0F2F5] p-6 md:p-8 overflow-y-auto scrollbar-hide">
@@ -60,7 +62,14 @@ export default function Settings() {
 
          {/* Content Area */}
          <div className="lg:col-span-9 space-y-10 pb-20 animate-slideIn">
-            {activeTab === 'general' && <GeneralSettings />}
+                  {activeTab === 'general' && (
+                     <GeneralSettings
+                        modeFreelance={config?.mode_freelance === true}
+                        onToggleModeFreelance={async (value: boolean) => {
+                           await updateTenantConfig({ mode_freelance: value });
+                        }}
+                     />
+                  )}
             {activeTab === 'team' && <TeamSettings />}
             {activeTab === 'integrations' && <IntegrationsSettings />}
          </div>
@@ -94,7 +103,24 @@ function MenuLink({ active, icon: Icon, label, onClick }: any) {
 }
 
 /* ─── GENERAL ─── */
-function GeneralSettings() {
+function GeneralSettings({
+   modeFreelance,
+   onToggleModeFreelance,
+}: {
+   modeFreelance: boolean;
+   onToggleModeFreelance: (value: boolean) => Promise<void>;
+}) {
+   const [savingMode, setSavingMode] = useState(false);
+
+   const handleToggle = async () => {
+      setSavingMode(true);
+      try {
+         await onToggleModeFreelance(!modeFreelance);
+      } finally {
+         setSavingMode(false);
+      }
+   };
+
   return (
     <div className="space-y-8 animate-slideIn">
        <section className="bg-white rounded-[24px] border border-[#D1D7DB] shadow-sm p-8">
@@ -113,6 +139,32 @@ function GeneralSettings() {
              <button className="bg-[#111B21] text-white px-8 py-3 rounded-xl font-bold text-sm shadow-xl hover:brightness-125 transition-all">Enregistrer les modifications</button>
           </div>
        </section>
+
+          <section className="bg-white rounded-[24px] border border-[#D1D7DB] shadow-sm p-8">
+             <div className="flex items-center justify-between gap-4">
+                <div>
+                   <h3 className="text-xl font-bold text-[#111B21] mb-1">Mode Freelance</h3>
+                   <p className="text-[#667781] text-sm">
+                      Active le pipeline Dossiers de Service et le bouton Creer Devis dans l'inbox.
+                   </p>
+                </div>
+                <button
+                   onClick={handleToggle}
+                   disabled={savingMode}
+                   className={`px-4 py-2.5 rounded-xl text-sm font-bold transition-all disabled:opacity-60 ${
+                      modeFreelance
+                         ? 'bg-[#E7F3EF] text-[#00A884] border border-[#BBF7D0]'
+                         : 'bg-[#F0F2F5] text-[#54656F] border border-[#D1D7DB]'
+                   }`}
+                >
+                   {savingMode
+                      ? 'Mise a jour...'
+                      : modeFreelance
+                         ? 'Desactiver'
+                         : 'Activer'}
+                </button>
+             </div>
+          </section>
 
        <div className="p-8 bg-rose-50 rounded-[24px] border border-rose-100 border-l-[6px] border-l-rose-500">
           <h3 className="text-[16px] font-bold text-rose-800 mb-1">Zone de Danger</h3>
@@ -187,16 +239,18 @@ function TeamSettings() {
 function IntegrationsSettings() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 animate-slideIn">
+          <IntegrationCard name="WhatsApp QR" desc="Scannez un QR code pour connecter un compte WhatsApp Web" icon={LinkIcon} status="Disconnected" actionLabel="Ouvrir" actionPath="/settings/wa-connect" />
        <IntegrationCard name="WhatsApp API" desc="Connectez votre numéro Meta Cloud" icon={Mail} status="Connected" />
        <IntegrationCard name="YouCan sync" desc="Synchronisez vos produits et commandes" icon={Store} status="Connected" />
-       <IntegrationCard name="Google Sheets" desc="Gérez vos stocks via un tableur" icon={Database} status="Disconnected" />
-       <IntegrationCard name="ElevenLabs" desc="Voix IA ultra-réalistes" icon={Volume2} status="Warning" />
-       <IntegrationCard name="Webhooks" desc="Envoyez vos données vers d'autres apps" icon={ExternalLink} status="Disconnected" />
+          <IntegrationCard name="Google Sheets" desc="Gérez vos stocks via un tableur" icon={Database} status="Disconnected" actionLabel="Configurer" actionPath="/settings/google-sheets" />
+          <IntegrationCard name="Confirmations commandes" desc="Templates WhatsApp pour commandes e-commerce" icon={Bell} status="Disconnected" actionLabel="Gérer" actionPath="/settings/order-confirmations" />
+          <IntegrationCard name="Widget web" desc="Intégrez le chatbot sur votre site" icon={Globe} status="Disconnected" actionLabel="Configurer" actionPath="/settings/widget" />
     </div>
   );
 }
 
-function IntegrationCard({ name, desc, icon: Icon, status }: any) {
+function IntegrationCard({ name, desc, icon: Icon, status, actionLabel, actionPath }: any) {
+   const navigate = useNavigate();
   return (
     <div className="bg-white p-8 rounded-[24px] border border-[#D1D7DB] shadow-sm flex flex-col justify-between hover:shadow-md transition-all group">
        <div>
@@ -210,10 +264,10 @@ function IntegrationCard({ name, desc, icon: Icon, status }: any) {
           <p className="text-[#667781] text-[15px] leading-relaxed">{desc}</p>
        </div>
        <div className="mt-10 pt-6 border-t border-[#F0F2F5] flex items-center justify-between">
-          <button className="text-[13px] font-bold text-[#111B21] hover:text-[#00A884] flex items-center gap-2 group/btn">
+          <button onClick={() => actionPath ? navigate(actionPath) : undefined} className="text-[13px] font-bold text-[#111B21] hover:text-[#00A884] flex items-center gap-2 group/btn">
              Gérer <ArrowRight size={16} className="group-hover/btn:translate-x-1 transition-transform" />
           </button>
-          <button className="text-[12px] font-bold text-rose-500 hover:text-rose-700">Déconnecter</button>
+          <button className="text-[12px] font-bold text-rose-500 hover:text-rose-700">{actionLabel || 'Déconnecter'}</button>
        </div>
     </div>
   );

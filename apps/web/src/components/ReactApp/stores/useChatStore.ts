@@ -10,7 +10,7 @@ interface ChatStore {
 
   setConversations: (conversations: Conversation[]) => void;
   updateConversation: (id: string, updates: Partial<Conversation>) => void;
-  setMessages: (messages: Message[]) => void; // For active conversation
+  setMessages: (messages: Message[], convId?: string) => void;
   addMessage: (message: Message) => void;     // For active conversation
   setActiveConversation: (id: string | null) => void;
   setTyping: (conversationId: string, typing: boolean) => void;
@@ -33,17 +33,18 @@ export const useChatStore = create<ChatStore>((set) => ({
       ),
     })),
 
-  setMessages: (messages) =>
+  setMessages: (messages, convId) =>
     set((state) => {
-      if (!state.activeConversationId) return state;
+      const id = convId || state.activeConversationId;
+      if (!id) return state;
       return {
-        messages: { ...state.messages, [state.activeConversationId]: messages },
+        messages: { ...state.messages, [id]: messages },
       };
     }),
 
   addMessage: (message) =>
     set((state) => {
-      const convId = state.activeConversationId || message.conversationId;
+      const convId = state.activeConversationId || message.conversationId || (message as any).conversation_id;
       if (!convId) return state;
       return {
         messages: {

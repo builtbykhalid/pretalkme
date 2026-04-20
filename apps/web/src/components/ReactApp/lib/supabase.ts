@@ -1,14 +1,63 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, type SupportedStorage } from '@supabase/supabase-js'
+
+// ==========================================
+// Cross-subdomain Cookie Storage
+// Writes the Supabase session into a cookie scoped to .pretalk.me so that
+// both app.pretalk.me (WhatsApp) and pretalk.me/app (Consultant) share the
+// same auth session without re-login.
+// Falls back to localStorage when running on localhost.
+// ==========================================
+const COOKIE_NAME = 'sb-pretalk-auth';
+const IS_PROD = typeof window !== 'undefined' && window.location.hostname.endsWith('pretalk.me');
+const COOKIE_DOMAIN = IS_PROD ? '.pretalk.me' : '';
+
+function setCookie(name: string, value: string, days = 365) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    const domainPart = COOKIE_DOMAIN ? `; domain=${COOKIE_DOMAIN}` : '';
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/${domainPart}; SameSite=Lax${IS_PROD ? '; Secure' : ''}`;
+}
+
+function getCookie(name: string): string | null {
+    const match = document.cookie.split('; ').find(row => row.startsWith(name + '='));
+    return match ? decodeURIComponent(match.split('=')[1]) : null;
+}
+
+function deleteCookie(name: string) {
+    const domainPart = COOKIE_DOMAIN ? `; domain=${COOKIE_DOMAIN}` : '';
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${domainPart}`;
+}
+
+const cookieStorage: SupportedStorage = {
+    getItem(key: string) {
+        if (typeof document === 'undefined') return null;
+        return getCookie(`${COOKIE_NAME}-${key}`);
+    },
+    setItem(key: string, value: string) {
+        if (typeof document === 'undefined') return;
+        setCookie(`${COOKIE_NAME}-${key}`, value);
+    },
+    removeItem(key: string) {
+        if (typeof document === 'undefined') return;
+        deleteCookie(`${COOKIE_NAME}-${key}`);
+    },
+};
 
 // Configuration - use environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// In dev mode with mock auth, use service role key to bypass RLS for local testing
+const devServiceRoleKey = import.meta.env.DEV && import.meta.env.VITE_USE_REAL_AUTH !== 'true'
+  ? import.meta.env.VITE_SUPABASE_SERVICE_ROLE_KEY
+  : null;
 
 const rawUrl = supabaseUrl;
-const rawAnonKey = supabaseAnonKey;
+const rawAnonKey = devServiceRoleKey || supabaseAnonKey;
 
-if (!rawUrl || !rawAnonKey) {
+if (!rawUrl || !supabaseAnonKey) {
     console.error('[Supabase] Missing environment variables VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
+}
+if (devServiceRoleKey) {
+    console.info('[Supabase] DEV MODE: using service role key (RLS bypassed)');
 }
 
 const resolvedSupabaseUrl = rawUrl || '';
@@ -120,16 +169,15 @@ export const directApi = {
     }
 };
 
-// Create Supabase client with auth enabled
-// Configure cookieOptions for proper cross-subdomain cookie storage when
-// running on pretalk.me (preprod/prod). For local development, cookies are
-// not forced.
-// Create Supabase client with auth enabled (keep auth options minimal)
+// Create Supabase client — uses cookie storage in prod (cross-subdomain SSO)
+// and falls back to localStorage on localhost.
 export const supabase = createClient(resolvedSupabaseUrl, resolvedSupabaseAnonKey, {
     auth: {
         persistSession: true,
         autoRefreshToken: true,
         detectSessionInUrl: true,
+        storage: IS_PROD ? cookieStorage : undefined,
+        storageKey: IS_PROD ? COOKIE_NAME : undefined,
     }
 });
 

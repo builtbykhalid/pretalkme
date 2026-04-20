@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useChatStore } from '../../stores/useChatStore';
 import { supabase } from '../../lib/supabase';
 import { 
@@ -20,6 +20,9 @@ import {
   StickyNote
 } from 'lucide-react';
 
+const IS_PROD = typeof window !== 'undefined' && window.location.hostname.endsWith('pretalk.me');
+const CRM_BASE = IS_PROD ? 'https://pretalk.me/app' : 'http://localhost:5174';
+
 const PIPELINE_STAGES = [
   { value: 'new', label: '🆕 Nouveau', color: 'bg-indigo-50 text-indigo-700 border-indigo-100' },
   { value: 'qualified', label: '✅ Qualifié', color: 'bg-emerald-50 text-emerald-700 border-emerald-100' },
@@ -30,15 +33,38 @@ const PIPELINE_STAGES = [
 ];
 
 export function ContactPanel({ conversationId }: { conversationId: string }) {
-  const { conversations, updateConversation } = useChatStore();
+  const conversations = useChatStore(state => state.conversations);
+  const updateConversation = useChatStore(state => state.updateConversation);
   const conversation = conversations.find(c => c.id === conversationId);
   const [newTag, setNewTag] = useState('');
+  const [sharedContact, setSharedContact] = useState<any | null>(null);
+  const sectionBorderClass = 'border-b-8';
 
-  if (!conversation) return null;
-
-  const contact = conversation.contact || {};
+  const contact = conversation?.contact || {};
   const tags = contact.tags || [];
   const currentStage = contact.pipeline_stage || 'new';
+
+  useEffect(() => {
+    const loadSharedContact = async () => {
+      if (!contact.id) {
+        setSharedContact(null);
+        return;
+      }
+
+      const { data } = await (supabase as any)
+        .schema('shared')
+        .from('contacts')
+        .select('id, crm_lead_id, full_name, phone, email')
+        .eq('wa_contact_id', contact.id)
+        .limit(1);
+
+      setSharedContact(data?.[0] || null);
+    };
+
+    loadSharedContact().catch(() => setSharedContact(null));
+  }, [contact.id]);
+
+  if (!conversation) return null;
 
   const handleUpdateContact = async (updates: any) => {
     if (!contact.id) return;
@@ -68,14 +94,14 @@ export function ContactPanel({ conversationId }: { conversationId: string }) {
 
   return (
     <div className="flex flex-col h-full bg-[#FAFAFA]">
-      <div className="h-[60px] px-6 py-2 bg-[#F0F2F5] flex items-center justify-between shrink-0 border-b border-[#E9EDEF]">
+      <div className="h-15 px-6 py-2 bg-[#F0F2F5] flex items-center justify-between shrink-0 border-b border-[#E9EDEF]">
          <h3 className="text-[16px] text-[#111B21] font-medium">Informations Contact</h3>
          <div className="text-[#54656F] cursor-pointer hover:bg-[#D1D7DB] p-1.5 rounded-full transition-colors"><X size={24} /></div>
       </div>
 
       <div className="flex-1 overflow-y-auto scrollbar-hide">
         {/* Profile Card */}
-        <div className="bg-white px-8 py-8 flex flex-col items-center border-b-[8px] border-[#F0F2F5]">
+        <div className="bg-white px-8 py-8 flex flex-col items-center border-b-8 border-[#F0F2F5]">
            <div className="w-44 h-44 bg-[#DFE5E7] rounded-full overflow-hidden mb-6 shrink-0 flex items-center justify-center text-white text-6xl font-bold shadow-sm">
              {contact.avatar_url ? (
                 <img src={contact.avatar_url} alt="" className="w-full h-full object-cover" />
@@ -90,8 +116,8 @@ export function ContactPanel({ conversationId }: { conversationId: string }) {
         </div>
 
         {/* CRM Sections — Pipeline Stage */}
-        <div className="bg-white px-8 py-6 border-b-[8px] border-[#F0F2F5]">
-           <div className="flex items-center gap-2 mb-4 text-[#00A884] font-bold text-[12px] uppercase tracking-[0.1em]">
+        <div className={`bg-white px-8 py-6 ${sectionBorderClass} border-[#F0F2F5]`}>
+           <div className="flex items-center gap-2 mb-4 text-[#00A884] font-bold text-[12px] uppercase tracking-widest">
               <Layers size={16} /> Étape du Pipeline
            </div>
            <div className="relative">
@@ -113,8 +139,8 @@ export function ContactPanel({ conversationId }: { conversationId: string }) {
         </div>
 
         {/* CRM Sections — Tags */}
-        <div className="bg-white px-8 py-6 border-b-[8px] border-[#F0F2F5]">
-           <div className="flex items-center gap-2 mb-4 text-[#00A884] font-bold text-[12px] uppercase tracking-[0.1em]">
+        <div className="bg-white px-8 py-6 border-b-8 border-[#F0F2F5]">
+           <div className="flex items-center gap-2 mb-4 text-[#00A884] font-bold text-[12px] uppercase tracking-widest">
               <TagIcon size={16} /> Tags CRM
            </div>
            <div className="flex flex-wrap gap-2 mb-4">
@@ -147,8 +173,8 @@ export function ContactPanel({ conversationId }: { conversationId: string }) {
         </div>
 
         {/* Timeline (Static for now, but following design) */}
-        <div className="bg-white px-8 py-6 border-b-[8px] border-[#F0F2F5]">
-           <div className="flex items-center gap-2 mb-5 text-[#00A884] font-bold text-[12px] uppercase tracking-[0.1em]">
+        <div className="bg-white px-8 py-6 border-b-8 border-[#F0F2F5]">
+           <div className="flex items-center gap-2 mb-5 text-[#00A884] font-bold text-[12px] uppercase tracking-widest">
               <History size={16} /> Parcours IA & Agent
            </div>
            <div className="space-y-6">
@@ -179,6 +205,19 @@ export function ContactPanel({ conversationId }: { conversationId: string }) {
 
         {/* Safety Actions */}
         <div className="bg-white border-t border-[#F0F2F5] pb-10">
+           {sharedContact?.crm_lead_id && (
+             <div className="px-8 py-5 border-b border-[#F0F2F5]">
+               <div className="text-[12px] font-bold text-[#8696A0] uppercase tracking-wider mb-2">Profil Consultant</div>
+               <a
+                 href={`${CRM_BASE}/leads/${sharedContact.crm_lead_id}`}
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 className="inline-flex items-center gap-2 text-[14px] font-bold text-[#00A884] hover:underline"
+               >
+                 <ChevronRight size={14} className="rotate-180" /> Voir le dossier consultant
+               </a>
+             </div>
+           )}
            <PanelItem icon={<Ban size={20} />} label="Bloquer le contact" danger />
            <PanelItem icon={<Flag size={20} />} label="Signaler le contact" danger />
            <PanelItem icon={<Trash2 size={20} />} label="Supprimer la discussion" danger />
@@ -191,7 +230,7 @@ export function ContactPanel({ conversationId }: { conversationId: string }) {
 function TimelineEvent({ type, time, label, desc, warning }: { type: 'ai' | 'human', time: string, label: string, desc: string, warning?: boolean }) {
   return (
     <div className="flex gap-4 relative">
-       <div className={`w-0.5 h-full absolute left-[15.5px] top-6 bottom-[-24px] ${warning ? 'bg-rose-100' : 'bg-indigo-50'} -z-0`} />
+      <div className={`w-0.5 h-full absolute left-[15.5px] top-6 -bottom-6 ${warning ? 'bg-rose-100' : 'bg-indigo-50'} z-0`} />
        <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 z-10 shadow-sm border ${
          warning ? 'bg-[#EA0038] text-white border-rose-600' : type === 'ai' ? 'bg-[#53BDEB] text-white border-blue-400' : 'bg-[#00A884] text-white border-[#008f6f]'
        }`}>

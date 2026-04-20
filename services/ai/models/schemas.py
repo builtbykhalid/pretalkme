@@ -7,6 +7,10 @@ class AITask(BaseModel):
     message_id: str
     text_message: Optional[str] = None
     audio_url: Optional[str] = None  # R2 URL of the voice note
+    image_url: Optional[str] = None
+    image_mime_type: Optional[str] = None
+    pdf_url: Optional[str] = None
+    pdf_filename: Optional[str] = None
 
 class FunctionCall(BaseModel):
     name: str

@@ -1,6 +1,4 @@
-import { useState } from 'react';
 import { 
-  CreditCard, 
   Zap, 
   MessageSquare, 
   Send, 
@@ -10,8 +8,7 @@ import {
   ChevronRight, 
   ShieldCheck,
   Star,
-  Target,
-  ZapOff
+   Target
 } from 'lucide-react';
 
 export default function Billing() {

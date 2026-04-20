@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { WhatsappModule } from './modules/whatsapp/whatsapp.module';
 import { ConversationsModule } from './modules/conversations/conversations.module';
 // BillingModule désactivé temporairement — Stripe non configuré pour dev
@@ -17,10 +18,18 @@ import { EmailModule } from './modules/email/email.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { RabbitmqModule } from './infrastructure/rabbitmq/rabbitmq.module';
+import { OrdersModule } from './modules/orders/orders.module';
+import { GoogleSheetsModule } from './modules/google-sheets/google-sheets.module';
+import { WaConnectModule } from './modules/wa-connect/wa-connect.module';
+import { WidgetModule } from './modules/widget/widget.module';
+import { ChannelsModule } from './modules/channels/channels.module';
+import { ProposalsModule } from './modules/proposals/proposals.module';
+import { ContractsModule } from './modules/contracts/contracts.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     AuthModule,
     RabbitmqModule,
     EmailModule,
@@ -35,6 +44,13 @@ import { RabbitmqModule } from './infrastructure/rabbitmq/rabbitmq.module';
     AiModule,
     TenantsModule,
     DashboardModule,
+    GoogleSheetsModule,
+    OrdersModule,
+    WaConnectModule,
+    WidgetModule,
+    ChannelsModule,
+    ProposalsModule,
+    ContractsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

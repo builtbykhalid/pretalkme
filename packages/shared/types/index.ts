@@ -5,4 +5,6 @@ export * from './contact';
 export * from './order';
 export * from './product';
 export * from './ai-run';
+export * from './ai-task';
+export * from './channel';
 export * from './plan';

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { supabase } from '../../infrastructure/supabase/supabase.client';
-import { WhatsappService } from '../whatsapp/whatsapp.service';
+import { CampaignWorker } from './campaign.worker';
 
 @Injectable()
 export class CampaignsService {
-  constructor(private readonly whatsappService: WhatsappService) {}
+  constructor(private readonly campaignWorker: CampaignWorker) {}
 
   async findAll(tenantId: string) {
     const { data, error } = await supabase
@@ -29,33 +29,41 @@ export class CampaignsService {
   }
 
   async startCampaign(tenantId: string, campaignId: string) {
-    // 1. Get campaign and contacts
-    const { data: campaign } = await supabase.from('campaigns').select('*').eq('id', campaignId).single();
-    const { data: contacts } = await supabase.from('contacts').select('*').eq('tenant_id', tenantId);
+    await this.campaignWorker.startCampaign(tenantId, campaignId);
+    return { success: true, status: 'running' };
+  }
 
-    // 2. Mark campaign as running
-    await supabase.from('campaigns').update({ status: 'running' }).eq('id', campaignId);
+  async pauseCampaign(campaignId: string) {
+    await this.campaignWorker.pauseCampaign(campaignId);
+    return { success: true, status: 'paused' };
+  }
 
-    // 3. Batch send (simplified for demo)
-    for (const contact of (contacts || [])) {
-      // In real scenario, this would be queued in RabbitMQ to handle Meta rate limits
-      // For now, call WhatsappService
-      await this.whatsappService.sendManualMessage({
-        tenant_id: tenantId,
-        conversation_id: 'campaign_temp', // Needs actual conv
-        text_response: `Bonjour ${contact.name}, voici notre offre spéciale !`,
-      });
-      
-      await supabase.from('campaign_contacts').upsert({
-        campaign_id: campaignId,
-        contact_id: contact.id,
-        tenant_id: tenantId,
-        status: 'sent',
-        sent_at: new Date().toISOString()
-      });
-    }
+  async resumeCampaign(tenantId: string, campaignId: string) {
+    await this.campaignWorker.resumeCampaign(tenantId, campaignId);
+    return { success: true, status: 'running' };
+  }
 
-    await supabase.from('campaigns').update({ status: 'completed' }).eq('id', campaignId);
-    return { success: true };
+  async getCampaignContacts(tenantId: string, campaignId: string) {
+    const { data, error } = await supabase
+      .from('campaign_contacts')
+      .select('*, contacts(id, name, phone)')
+      .eq('tenant_id', tenantId)
+      .eq('campaign_id', campaignId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return data;
+  }
+
+  async getCampaignStats(tenantId: string, campaignId: string) {
+    const { data: campaign, error } = await supabase
+      .from('campaigns')
+      .select('id, status, sent_count, delivered_count, failed_count, completed_at')
+      .eq('tenant_id', tenantId)
+      .eq('id', campaignId)
+      .single();
+
+    if (error) throw error;
+    return campaign;
   }
 }

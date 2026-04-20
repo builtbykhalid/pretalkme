@@ -13,9 +13,14 @@ import AIAgent from './pages/whatsapp/AIAgent';
 import AILogs from './pages/whatsapp/AILogs';
 import Analytics from './pages/whatsapp/Analytics';
 import Settings from './pages/whatsapp/Settings';
+import WAConnect from './pages/whatsapp/WAConnect';
+import GoogleSheetsSettings from './pages/whatsapp/GoogleSheetsSettings';
+import OrderConfirmationsSettings from './pages/whatsapp/OrderConfirmationsSettings';
+import WidgetSettings from './pages/whatsapp/WidgetSettings';
 import Developer from './pages/whatsapp/Developer';
 import Billing from './pages/whatsapp/Billing';
 import Onboarding from './pages/whatsapp/Onboarding';
+import ServiceCases from './pages/whatsapp/ServiceCases';
 import { AuthProvider } from './context/AuthContext';
 import { AppProvider } from './context/AppContext';
 import { NotificationProvider } from './context/NotificationContext';
@@ -50,8 +55,13 @@ export default function WhatsappAppContainer() {
                     <Route path="/ai-agent/logs" element={<AILogs />} />
                     <Route path="/analytics" element={<Analytics />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/settings/wa-connect" element={<WAConnect />} />
+                    <Route path="/settings/google-sheets" element={<GoogleSheetsSettings />} />
+                    <Route path="/settings/order-confirmations" element={<OrderConfirmationsSettings />} />
+                    <Route path="/settings/widget" element={<WidgetSettings />} />
                     <Route path="/settings/billing" element={<Billing />} />
                     <Route path="/developer" element={<Developer />} />
+                    <Route path="/service-cases" element={<ServiceCases />} />
                   </Route>
                 </Routes>
                 <Toaster position="top-right" />

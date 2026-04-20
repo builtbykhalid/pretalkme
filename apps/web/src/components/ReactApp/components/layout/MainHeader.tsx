@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Logo from '../ui/Logo';
-import { Bell, User as UserIcon, LogOut, LayoutDashboard } from 'lucide-react';
+import { LogOut, LayoutDashboard } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface MainHeaderProps {

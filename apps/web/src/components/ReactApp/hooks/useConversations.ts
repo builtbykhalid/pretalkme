@@ -8,7 +8,8 @@ export function useConversations() {
   const { setConversations, updateConversation } = useChatStore();
 
   const fetchConversations = useCallback(async () => {
-    if (!tenantId) return;
+    if (!tenantId) { console.log('[useConversations] tenantId is null, skipping'); return; }
+    console.log('[useConversations] Fetching for tenant:', tenantId);
 
     try {
       const { data, error } = await supabase
@@ -18,17 +19,18 @@ export function useConversations() {
           contact:contacts (*)
         `)
         .eq('tenant_id', tenantId)
-        .order('last_message_at', { ascending: false });
+        .order('last_message_at', { ascending: false, nullsFirst: false });
 
+      console.log('[useConversations] Result:', { data, error });
       if (error) throw error;
-      
-      // Map to the frontend type expected by the store
-      const mapped = data.map(conv => ({
+
+      const mapped = (data || []).map(conv => ({
         ...conv,
         contact_name: conv.contact?.name,
         contact_phone: conv.contact?.phone,
       }));
 
+      console.log('[useConversations] Mapped conversations:', mapped.length);
       setConversations(mapped);
     } catch (err) {
       console.error('useConversations: Fetch error', err);
@@ -40,7 +42,9 @@ export function useConversations() {
 
     if (!tenantId) return;
 
-    // Real-time subscription
+    // Polling fallback every 5s for new conversations/updates
+    const poll = setInterval(fetchConversations, 5000);
+
     const channel = supabase
       .channel('public:conversations')
       .on(
@@ -53,13 +57,14 @@ export function useConversations() {
         },
         (payload) => {
           if (payload.eventType === 'INSERT' || payload.eventType === 'UPDATE') {
-            fetchConversations(); // Simpler to refetch for now to get joins
+            fetchConversations();
           }
         }
       )
       .subscribe();
 
     return () => {
+      clearInterval(poll);
       supabase.removeChannel(channel);
     };
   }, [tenantId, fetchConversations]);

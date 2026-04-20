@@ -21,4 +21,24 @@ export class CampaignsController {
   start(@Req() req, @Param('id') id: string) {
     return this.campaignsService.startCampaign(req.tenantId, id);
   }
+
+  @Post(':id/pause')
+  pause(@Param('id') id: string) {
+    return this.campaignsService.pauseCampaign(id);
+  }
+
+  @Post(':id/resume')
+  resume(@Req() req, @Param('id') id: string) {
+    return this.campaignsService.resumeCampaign(req.tenantId, id);
+  }
+
+  @Get(':id/contacts')
+  contacts(@Req() req, @Param('id') id: string) {
+    return this.campaignsService.getCampaignContacts(req.tenantId, id);
+  }
+
+  @Get(':id/stats')
+  stats(@Req() req, @Param('id') id: string) {
+    return this.campaignsService.getCampaignStats(req.tenantId, id);
+  }
 }

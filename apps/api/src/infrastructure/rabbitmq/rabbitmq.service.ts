@@ -8,25 +8,41 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
   private channel: any;
 
   async onModuleInit() {
+    await this.connect();
+  }
+
+  private async connect() {
     try {
       const url = process.env.RABBITMQ_URL || 'amqp://localhost';
       this.connection = await amqp.connect(url);
       this.channel = await this.connection.createChannel();
 
-      // Ensure all required queues exist (Plan 06 MODULE 4)
+      // Reconnect automatically on error or close
+      this.connection.on('error', (err) => {
+        console.error('RabbitMQ connection error, reconnecting...', err.message);
+        this.channel = null;
+        setTimeout(() => this.connect(), 3000);
+      });
+      this.connection.on('close', () => {
+        console.warn('RabbitMQ connection closed, reconnecting...');
+        this.channel = null;
+        setTimeout(() => this.connect(), 3000);
+      });
+
       const queues = [
-        'whatsapp.inbound', 
-        'ai.tasks', 
-        'ai.results', 
-        'whatsapp.outbound', 
+        'whatsapp.inbound',
+        'whatsapp.inbound.qr',
+        'ai.tasks',
+        'ai.results',
+        'whatsapp.outbound',
+        'campaign.tasks',
         'dlq.rejected'
       ];
-      
+
       for (const queue of queues) {
         await this.channel.assertQueue(queue, { durable: true });
       }
 
-      // Start listening for AI results (Plan 06 MODULE 4)
       this.channel.consume('ai.results', async (msg) => {
         if (!msg) return;
         const result = JSON.parse(msg.content.toString());
@@ -36,7 +52,8 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
 
       console.log('RabbitMQ: Connection established and listening for ai.results');
     } catch (error) {
-      console.error('RabbitMQ Init Error:', error);
+      console.error('RabbitMQ Init Error:', error.message, '- retrying in 3s');
+      setTimeout(() => this.connect(), 3000);
     }
   }
 
@@ -93,6 +110,16 @@ export class RabbitmqService implements OnModuleInit, OnModuleDestroy {
 
   // Helper to consume (to be expanded in specific modules)
   async consume(queue: string, callback: (data: any) => Promise<void>) {
+    // Wait for channel to be ready (handles parallel onModuleInit calls)
+    let retries = 0;
+    while (!this.channel && retries < 30) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+      retries++;
+    }
+    if (!this.channel) {
+      console.error(`RabbitMQ: channel never became ready for queue ${queue}`);
+      return;
+    }
     await this.channel.consume(queue, async (msg) => {
       if (msg) {
         const data = JSON.parse(msg.content.toString());

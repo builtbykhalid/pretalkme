@@ -20,9 +20,9 @@ export default function Inbox() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F0F2F5] p-0 md:p-4 lg:p-6 lg:pb-0">
-      <div className="flex w-full max-w-[1600px] mx-auto bg-white shadow-lg overflow-hidden h-full">
+      <div className="flex w-full max-w-400 mx-auto bg-white shadow-lg overflow-hidden h-full">
         {/* Column 1: Conversations List */}
-        <div className={`w-full md:w-[400px] border-r border-[#E9EDEF] flex flex-col ${conversationId ? 'hidden md:flex' : 'flex'}`}>
+        <div className={`w-full md:w-100 border-r border-[#E9EDEF] flex flex-col ${conversationId ? 'hidden md:flex' : 'flex'}`}>
           <ConversationList />
         </div>
 
@@ -31,12 +31,12 @@ export default function Inbox() {
           {conversationId ? (
             <div className="flex-1 flex flex-col min-h-0 bg-white">
               {/* Top: Chat (60%) */}
-              <div className="flex-[6] min-h-0 flex flex-col border-b border-[#E9EDEF]">
+              <div className="flex-6 min-h-0 flex flex-col border-b border-[#E9EDEF]">
                 <ChatPanel conversationId={conversationId} />
               </div>
               
               {/* Bottom: Contact CRM Panel (40%) */}
-              <div className="flex-[4] min-h-0 flex flex-col bg-[#FAFAFA]">
+              <div className="flex-4 min-h-0 flex flex-col bg-[#FAFAFA]">
                 <ContactPanel conversationId={conversationId} />
               </div>
             </div>

@@ -3,16 +3,23 @@ import { useChatStore } from '../../stores/useChatStore';
 import { supabase } from '../../lib/supabase';
 import { useApp } from '../../context/AppContext';
 import { useMessages } from '../../hooks/useMessages';
-import { MoreVertical, Search, Video, Smile, Plus, Mic, CheckCheck, Bot, User, HandHelping, RotateCcw, StickyNote, MessageSquare } from 'lucide-react';
+import { MoreVertical, Search, Video, Smile, Plus, CheckCheck, Bot, User, HandHelping, RotateCcw, StickyNote, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { AudioPlayer } from './AudioPlayer';
+import { OrderPanel } from './OrderPanel';
+import { DevisModal } from './DevisModal';
 
 export function ChatPanel({ conversationId }: { conversationId: string }) {
   const [isAiThinking, setIsAiThinking] = useState(false);
-  const messages = useChatStore(state => state.messages[conversationId] || []);
-  const { conversations, updateConversation } = useChatStore();
+  const [devisOpen, setDevisOpen] = useState(false);
+  const rawMessages = useChatStore(state => state.messages[conversationId]);
+  const messages = rawMessages || [];
+  const conversations = useChatStore(state => state.conversations);
+  const updateConversation = useChatStore(state => state.updateConversation);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { config } = useApp();
   const conversation = conversations.find(c => c.id === conversationId);
+  const isFreelance = config?.mode_freelance === true;
 
   // Real-time messages hook
   useMessages(conversationId);
@@ -44,16 +51,40 @@ export function ChatPanel({ conversationId }: { conversationId: string }) {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
            <HITLControls conversation={conversation} onUpdate={(updates) => updateConversation(conversation.id, updates)} />
-           <div className="h-8 w-px bg-[#D1D7DB] mx-2 hidden md:block" />
-           <div className="flex items-center gap-4 text-[#54656F]">
+           <OrderPanel conversationId={conversation.id} contactId={conversation.contact_id} />
+
+           {/* Freelance mode — Créer Devis */}
+           {isFreelance && (
+             <button
+               onClick={() => setDevisOpen(true)}
+               className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#F0FDF4] border border-[#BBF7D0] text-[#00A884] rounded-full text-[12px] font-bold hover:bg-[#DCFCE7] transition-all"
+               title="Créer un devis depuis cette conversation"
+             >
+               <FileText size={14} />
+               Créer Devis
+             </button>
+           )}
+
+           <div className="h-8 w-px bg-[#D1D7DB] mx-1 hidden md:block" />
+           <div className="flex items-center gap-1 text-[#54656F]">
               <button className="hover:bg-[#D1D7DB] p-2 rounded-full transition-colors"><Video size={20} /></button>
               <button className="hover:bg-[#D1D7DB] p-2 rounded-full transition-colors"><Search size={20} /></button>
               <button className="hover:bg-[#D1D7DB] p-2 rounded-full transition-colors"><MoreVertical size={20} /></button>
            </div>
         </div>
       </header>
+
+      {/* Devis Modal */}
+      {devisOpen && (
+        <DevisModal
+          conversationId={conversationId}
+          contactId={conversation.contact_id}
+          contactName={conversation.contact_name || conversation.contact_phone || 'Contact'}
+          onClose={() => setDevisOpen(false)}
+        />
+      )}
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-4 space-y-1 relative z-10 scrollbar-hide">
@@ -170,23 +201,33 @@ function TypingIndicator() {
 function MessageInput({ conversationId }: { conversationId: string }) {
   const [text, setText] = useState('');
   const [isNote, setIsNote] = useState(false);
+  const [sending, setSending] = useState(false);
   const { tenantId } = useApp();
+  const addMessage = useChatStore(state => state.addMessage);
 
   const handleSend = async () => {
-    if (!text.trim() || !tenantId) return;
-    
-    try {
-      const { error } = await supabase.from('messages').insert({
-        tenant_id: tenantId,
-        conversation_id: conversationId,
-        direction: 'outbound',
-        type: isNote ? 'note' : 'text',
-        content: text,
-        created_at: new Date().toISOString()
-      });
+    if (!text.trim() || !tenantId || sending) return;
+    const content = text;
+    setText('');
+    setSending(true);
 
-      if (!error) setText('');
-    } catch (err) { console.error('Failed to send message', err); }
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+      const res = await fetch(`${apiUrl}/conversations/${conversationId}/send`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tenant_id: tenantId, text: content, type: isNote ? 'note' : 'text' }),
+      });
+      const result = await res.json();
+      if (result.message) {
+        addMessage({ ...result.message, conversationId });
+      }
+    } catch (err) {
+      console.error('Failed to send message', err);
+      setText(content);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (

@@ -5,7 +5,8 @@ import { useApp } from '../context/AppContext';
 
 export function useMessages(conversationId: string | null) {
   const { tenantId } = useApp();
-  const { addMessage, setMessages } = useChatStore();
+  const addMessage = useChatStore(state => state.addMessage);
+  const setMessages = useChatStore(state => state.setMessages);
 
   const fetchMessages = useCallback(async () => {
     if (!conversationId || !tenantId) return;
@@ -18,7 +19,7 @@ export function useMessages(conversationId: string | null) {
         .order('created_at', { ascending: true });
 
       if (error) throw error;
-      setMessages(data);
+      setMessages(data, conversationId);
     } catch (err) {
       console.error('useMessages: Fetch error', err);
     }
@@ -28,6 +29,9 @@ export function useMessages(conversationId: string | null) {
     fetchMessages();
 
     if (!conversationId || !tenantId) return;
+
+    // Polling fallback (Supabase realtime requires replication enabled on tables)
+    const poll = setInterval(fetchMessages, 3000);
 
     const channel = supabase
       .channel(`public:messages:${conversationId}`)
@@ -46,6 +50,7 @@ export function useMessages(conversationId: string | null) {
       .subscribe();
 
     return () => {
+      clearInterval(poll);
       supabase.removeChannel(channel);
     };
   }, [conversationId, tenantId, fetchMessages, addMessage]);

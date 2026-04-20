@@ -3,6 +3,7 @@ import { createHmac, timingSafeEqual } from 'crypto';
 import { supabase } from '../../infrastructure/supabase/supabase.client';
 import { RabbitmqService } from '../../infrastructure/rabbitmq/rabbitmq.service';
 import { ConversationsService } from '../conversations/conversations.service';
+import { ConversationsGateway } from '../conversations/conversations.gateway';
 import axios from 'axios';
 
 @Injectable()
@@ -10,6 +11,7 @@ export class WhatsappService implements OnModuleInit {
   constructor(
     private readonly rabbitmqService: RabbitmqService,
     private readonly conversationsService: ConversationsService,
+    private readonly gateway: ConversationsGateway,
   ) {}
 
   async onModuleInit() {
@@ -17,6 +19,43 @@ export class WhatsappService implements OnModuleInit {
     await this.rabbitmqService.consume('whatsapp.outbound', async (data) => {
       await this.sendManualMessage(data);
     });
+  }
+
+  async sendAgentMessage(tenantId: string, conversationId: string, text: string, type: 'text' | 'note') {
+    // Save message to DB
+    const { data: message } = await supabase.from('messages').insert({
+      tenant_id: tenantId,
+      conversation_id: conversationId,
+      direction: 'outbound',
+      type,
+      content: text,
+    }).select().single();
+
+    // Mark conversation as human-controlled
+    await supabase.from('conversations')
+      .update({ ai_active: false, status: 'open' })
+      .eq('id', conversationId);
+
+    // Notes are internal — don't send via Meta
+    if (type === 'note') return { success: true, message };
+
+    // Send via Meta
+    const { data: tenant } = await supabase.from('tenants')
+      .select('wa_phone_id, meta_token')
+      .eq('id', tenantId)
+      .single();
+
+    if (!tenant?.meta_token) return { success: true, message, sent: false };
+
+    const conversation = await this.conversationsService.findOne(tenantId, conversationId);
+    const toPhone = conversation.contact.phone;
+
+    await this.sendTextMessage(tenant.wa_phone_id, tenant.meta_token, toPhone, text);
+
+    // Notify WebSocket clients
+    this.gateway.emitNewMessage(tenantId, message);
+
+    return { success: true, message, sent: true };
   }
 
   async sendManualMessage(data: any) {
@@ -98,7 +137,7 @@ export class WhatsappService implements OnModuleInit {
     // 1. Identify tenant by phone_number_id
     const { data: tenant, error: tenantError } = await supabase
       .from('tenants')
-      .select('id, ai_enabled')
+      .select('id, ai_enabled, meta_token')
       .eq('wa_phone_id', phoneNumberId)
       .single();
 
@@ -116,45 +155,110 @@ export class WhatsappService implements OnModuleInit {
     // 4. Save the message
     const message = await this.saveMessage(tenant.id, conversation.id, metaMsg);
 
+    let audioUrl: string | null = null;
+    let imageUrl: string | null = null;
+    let imageMimeType: string | null = null;
+    let pdfUrl: string | null = null;
+    let pdfFilename: string | null = null;
+
+    if (metaMsg.type === 'audio' && metaMsg.audio?.id) {
+      audioUrl = await this.downloadAndUploadMedia(tenant.meta_token, metaMsg.audio.id, 'audio');
+    }
+
+    if (metaMsg.type === 'image' && metaMsg.image?.id) {
+      imageUrl = await this.downloadAndUploadMedia(tenant.meta_token, metaMsg.image.id, 'image');
+      imageMimeType = metaMsg.image.mime_type || 'image/jpeg';
+    }
+
+    if (metaMsg.type === 'document' && metaMsg.document?.id) {
+      const filename = metaMsg.document.filename || 'document.pdf';
+      if (filename.toLowerCase().endsWith('.pdf')) {
+        pdfUrl = await this.downloadAndUploadMedia(tenant.meta_token, metaMsg.document.id, 'document');
+        pdfFilename = filename;
+      }
+    }
+
     // 5. Handle AI processing if enabled
     if (tenant.ai_enabled && conversation.ai_active) {
       await this.rabbitmqService.publish('ai.tasks', {
-        tenantId: tenant.id,
-        conversationId: conversation.id,
-        messageId: message.id,
-        textMessage: metaMsg.text?.body || null,
-        audioUrl: null, // To be implemented with media download logic
+        tenant_id: tenant.id,
+        conversation_id: conversation.id,
+        message_id: message.id,
+        text_message: metaMsg.text?.body || null,
+        audio_url: audioUrl,
+        image_url: imageUrl,
+        image_mime_type: imageMimeType,
+        pdf_url: pdfUrl,
+        pdf_filename: pdfFilename,
       });
     }
 
-    // 6. Notify Gateway (to be implemented)
+    // 6. Notify Gateway
+    this.gateway.emitNewMessage(tenant.id, message);
+  }
+
+  private async downloadAndUploadMedia(token: string, mediaId: string, type: 'audio' | 'image' | 'document') {
+    try {
+      const mediaInfo = await axios.get(`https://graph.facebook.com/v25.0/${mediaId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      return mediaInfo.data?.url || null;
+    } catch (error) {
+      console.error(`WhatsappService: Failed to resolve ${type} media ${mediaId}`, error?.response?.data || error?.message || error);
+      return null;
+    }
   }
 
   private async upsertContact(tenantId: string, metaMsg: any) {
     const phone = metaMsg.from;
+    const fullName = metaMsg.contacts?.[0]?.profile?.name || phone;
+
+    // Select-then-insert to avoid needing a UNIQUE constraint
+    const { data: existing } = await supabase
+      .from('contacts')
+      .select()
+      .eq('tenant_id', tenantId)
+      .eq('wa_id', phone)
+      .maybeSingle();
+
+    if (existing) {
+      await supabase.from('contacts').update({ name: fullName }).eq('id', existing.id);
+      return existing;
+    }
+
     const { data: contact, error } = await supabase
       .from('contacts')
-      .upsert({
-        tenant_id: tenantId,
-        phone,
-        name: metaMsg.contacts?.[0]?.profile?.name || phone,
-        wa_id: phone,
-      }, { onConflict: 'tenant_id,phone' })
+      .insert({ tenant_id: tenantId, phone, name: fullName, wa_id: phone })
       .select()
       .single();
-    
+
     if (error) throw error;
+
+    supabase.rpc('sync_wa_contact', {
+      p_tenant_id: tenantId,
+      p_wa_contact_id: contact.id,
+      p_phone: phone,
+      p_full_name: fullName,
+    }).then(({ error: syncError }) => {
+      if (syncError) console.warn('WhatsappService: shared.sync_wa_contact failed', syncError.message);
+    });
+
     return contact;
   }
 
   private async upsertConversation(tenantId: string, contactId: string) {
+    const { data: existing } = await supabase
+      .from('conversations')
+      .select()
+      .eq('tenant_id', tenantId)
+      .eq('contact_id', contactId)
+      .maybeSingle();
+
+    if (existing) return existing;
+
     const { data: conv, error } = await supabase
       .from('conversations')
-      .upsert({
-        tenant_id: tenantId,
-        contact_id: contactId,
-        status: 'open',
-      }, { onConflict: 'tenant_id,contact_id' })
+      .insert({ tenant_id: tenantId, contact_id: contactId, status: 'open' })
       .select()
       .single();
 
@@ -169,9 +273,8 @@ export class WhatsappService implements OnModuleInit {
         tenant_id: tenantId,
         conversation_id: conversationId,
         direction: 'inbound',
-        type: metaMsg.type === 'text' ? 'text' : 'image', // simplified
+        type: metaMsg.type === 'text' ? 'text' : 'image',
         content: metaMsg.text?.body || '',
-        meta_id: metaMsg.id,
       })
       .select()
       .single();

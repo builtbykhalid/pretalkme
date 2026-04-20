@@ -74,4 +74,20 @@ export class ConversationsGateway implements OnGatewayConnection, OnGatewayDisco
   emitAIThinking(tenantId: string, conversationId: string) {
     this.server.to(`tenant:${tenantId}`).emit('ai.thinking', { conversationId });
   }
+
+  emitToTenant(tenantId: string, event: string, payload: any) {
+    this.server.to(`tenant:${tenantId}`).emit(event, payload);
+  }
+
+  emitWAQRUpdated(tenantId: string, qrBase64: string) {
+    this.server.to(`tenant:${tenantId}`).emit('wa.qr_updated', { tenantId, qrBase64 });
+  }
+
+  emitWAStatusChanged(tenantId: string, status: string) {
+    this.server.to(`tenant:${tenantId}`).emit('wa.status_changed', { tenantId, status });
+  }
+
+  emitCampaignProgress(tenantId: string, payload: { campaignId: string; sentCount: number; total: number; failedCount: number }) {
+    this.server.to(`tenant:${tenantId}`).emit('campaign.progress', payload);
+  }
 }

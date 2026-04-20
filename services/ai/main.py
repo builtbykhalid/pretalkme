@@ -3,6 +3,7 @@ import os
 import json
 import time
 import aio_pika
+from supabase import create_client
 from fastapi import FastAPI, BackgroundTasks
 from dotenv import load_dotenv
 
@@ -12,11 +13,29 @@ from models.schemas import AITask, AIResult
 from pipeline.stt import transcribe_from_url
 from pipeline.llm_router import call_llm
 from pipeline.tts import generate_and_upload_tts
-from utils.r2 import upload_to_r2
+from pipeline.vision import analyze_image, extract_pdf_text
+from utils.r2 import download_from_r2
 
 app = FastAPI(title="Pretalk Hub AI Service")
 
 RABBITMQ_URL = os.getenv("RABBITMQ_URL", "amqp://guest:guest@localhost/")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY", "")
+SUPABASE_URL = os.getenv("SUPABASE_URL", "")
+SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "")
+
+supabase_client = None
+if SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY:
+    supabase_client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+
+
+def save_message_analysis(message_id: str | None, field_name: str, value: str):
+    if not supabase_client or not message_id or not value:
+        return
+
+    try:
+        supabase_client.table("messages").update({field_name: value}).eq("id", message_id).execute()
+    except Exception as exc:
+        print(f"Failed to persist {field_name} for message {message_id}: {exc}")
 
 async def process_ai_task(task_data: dict, channel: aio_pika.Channel):
     """Main AI Pipeline Logic."""
@@ -38,13 +57,40 @@ async def process_ai_task(task_data: dict, channel: aio_pika.Channel):
             text_input = stt_result["text"]
             stt_text = text_input
 
+        # 1.b Vision (If image)
+        image_context = ""
+        if task.image_url and OPENAI_API_KEY:
+            image_bytes = await download_from_r2(task.image_url)
+            image_context = await analyze_image(
+                image_bytes,
+                task.image_mime_type or "image/jpeg",
+                text_input or "",
+                OPENAI_API_KEY,
+            )
+            if not text_input:
+                text_input = "[Image envoyee par le client]"
+            save_message_analysis(task.message_id, "image_description", image_context)
+
+        # 1.c PDF text extraction (If PDF)
+        pdf_context = ""
+        if task.pdf_url:
+            pdf_bytes = await download_from_r2(task.pdf_url)
+            pdf_context = await extract_pdf_text(pdf_bytes)
+            if not text_input:
+                text_input = f"[Document PDF envoye: {task.pdf_filename or 'document.pdf'}]"
+            save_message_analysis(task.message_id, "pdf_extracted_text", pdf_context)
+
         if not text_input:
             print("Empty input, skipping.")
             return
 
         # 2. LLM Call
         # TODO: Fetch real system prompt and context from Supabase/Redis
-        system_prompt = "Tu es un assistant commercial pour une boutique WhatsApp. Réponds poliment et aide le client."
+        system_prompt = "Tu es un assistant commercial pour une boutique WhatsApp. Reponds poliment et aide le client."
+        if image_context:
+            system_prompt += f"\n\n[CONTENU IMAGE PARTAGEE PAR LE CLIENT]\n{image_context}"
+        if pdf_context:
+            system_prompt += f"\n\n[CONTENU DOCUMENT PDF PARTAGE]\n{pdf_context[:2000]}"
         messages = [{"role": "user", "content": text_input}]
         
         response_text, function_calls, confidence, model_used = await call_llm(

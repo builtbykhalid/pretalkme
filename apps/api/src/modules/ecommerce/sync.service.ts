@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { supabase } from '../../infrastructure/supabase/supabase.client';
 import { YoucanClient } from './youcan.client';
+import { OrderConfirmationService } from './order-confirmation.service';
 
 @Injectable()
 export class SyncService {
-  constructor(private readonly youcanClient: YoucanClient) {}
+  constructor(
+    private readonly youcanClient: YoucanClient,
+    private readonly orderConfirmationService: OrderConfirmationService,
+  ) {}
 
   async syncTenant(tenantId: string) {
     // 1. Fetch active integration for the tenant
@@ -60,5 +64,44 @@ export class SyncService {
     }
 
     return { products: products.length, orders: orders.length };
+  }
+
+  async handleNewOrder(tenantId: string, payload: any) {
+    const { data: contact } = await supabase
+      .from('contacts')
+      .upsert(
+        {
+          tenant_id: tenantId,
+          wa_id: payload.contact_phone,
+          phone: payload.contact_phone,
+          name: payload.contact_name || payload.contact_phone,
+        },
+        { onConflict: 'tenant_id,wa_id' },
+      )
+      .select()
+      .single();
+
+    const { data: order, error } = await supabase
+      .from('orders')
+      .upsert(
+        {
+          tenant_id: tenantId,
+          platform: payload.platform,
+          external_id: payload.external_id,
+          contact_id: contact?.id || null,
+          total: payload.total || 0,
+          items_json: payload.items || [],
+          status: payload.status || 'new',
+          source: 'webhook',
+        },
+        { onConflict: 'tenant_id,platform,external_id' },
+      )
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    await this.orderConfirmationService.sendConfirmation(tenantId, order.id, order.status || 'new');
+    return order;
   }
 }

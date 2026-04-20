@@ -10,7 +10,14 @@ async function bootstrap() {
 
   // CORS configuration
   app.enableCors({
-    origin: process.env.CORS_ORIGIN || '*',
+    origin: [
+      'https://pretalk.me',
+      'https://app.pretalk.me',
+      'https://preprod.pretalk.me',
+      'https://app.preprod.pretalk.me',
+      /^http:\/\/localhost:\d+$/,
+      process.env.CORS_ORIGIN || '',
+    ],
     credentials: true,
   });
 

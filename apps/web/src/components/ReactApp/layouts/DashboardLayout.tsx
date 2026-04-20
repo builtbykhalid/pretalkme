@@ -50,7 +50,8 @@ export default function DashboardLayout() {
       )}
 
       {/* Main Content */}
-      <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-60' : 'md:ml-20'} flex flex-col min-w-0`}>
+      {/* ml = AppSwitcher(40px) + Sidebar(256px open / 80px collapsed) */}
+      <div className={`flex-1 transition-all duration-300 ${isSidebarOpen ? 'md:ml-74' : 'md:ml-30'} flex flex-col min-w-0`}>
         <AnnouncementRenderer />
         {!isImmersivePage && (
           <Header

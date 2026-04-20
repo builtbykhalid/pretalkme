@@ -1,6 +1,6 @@
 import React from 'react';
 import { AuthProvider } from '../../context/AuthContext';
-import { AppProvider } from '../context/AppContext';
+import { AppProvider } from '../../context/AppContext';
 import MainHeader from '../layout/MainHeader';
 import MainFooter from '../layout/MainFooter';
 import UnifiedCTA from '../layout/UnifiedCTA';

@@ -1,13 +1,23 @@
-import { Controller, Get, Post, Query, Body, Headers, HttpCode, Res } from '@nestjs/common';
+import { Controller, Get, Post, Param, Query, Body, Headers, HttpCode, Res } from '@nestjs/common';
 import type { Response } from 'express';
 import { WhatsappService } from './whatsapp.service';
 
-@Controller('webhook')
+@Controller()
 export class WhatsappController {
   constructor(private readonly whatsappService: WhatsappService) {}
 
+  // Agent sends manual message from dashboard
+  @Post('conversations/:conversationId/send')
+  @HttpCode(200)
+  async sendMessage(
+    @Param('conversationId') conversationId: string,
+    @Body() body: { tenant_id: string; text: string; type?: 'text' | 'note' }
+  ) {
+    return this.whatsappService.sendAgentMessage(body.tenant_id, conversationId, body.text, body.type || 'text');
+  }
+
   // Verification webhook Meta (GET)
-  @Get('meta')
+  @Get('webhook/meta')
   verifyWebhook(@Query() query: any, @Res() res: Response) {
     const mode = query['hub.mode'];
     const token = query['hub.verify_token'];
@@ -20,7 +30,7 @@ export class WhatsappController {
   }
 
   // Reception messages Meta (POST)
-  @Post('meta')
+  @Post('webhook/meta')
   @HttpCode(200)
   async receiveWebhook(
     @Body() body: any,

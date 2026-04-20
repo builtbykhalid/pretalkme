@@ -45,8 +45,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (userError || !userData) {
         console.warn('AppProvider: User not found in users table. Retrying with mock if dev.');
         // If dev mode, we might need to seed a user or use default
-        if (import.meta.env.DEV && !import.meta.env.VITE_USE_REAL_AUTH) {
-           setTenantId('00000000-0000-0000-0000-000000000000');
+        if (import.meta.env.DEV && import.meta.env.VITE_USE_REAL_AUTH !== 'true') {
+           setTenantId(import.meta.env.VITE_DEV_TENANT_ID || '0497e239-559e-4d90-998a-6feaa05fa0ad');
            setAgentRole('owner');
         }
         setInitializing(false);
