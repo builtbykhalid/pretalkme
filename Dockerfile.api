@@ -31,7 +31,8 @@ RUN npm run build
 FROM node:20-slim
 WORKDIR /app
 COPY --from=builder /app/apps/api/dist ./dist
-COPY --from=builder /app/apps/api/node_modules ./node_modules
+# npm workspaces hoists all deps to root node_modules, not apps/api/node_modules
+COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/apps/api/package.json .
 ENV NODE_ENV=production
 ENV PORT=4000
