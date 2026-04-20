@@ -45,7 +45,10 @@ export class WhatsappService implements OnModuleInit {
       .eq('id', tenantId)
       .single();
 
-    if (!tenant?.meta_token) return { success: true, message, sent: false };
+    if (!tenant?.meta_token) {
+      console.warn(`sendAgentMessage: tenant ${tenantId} has no meta_token — message saved but not sent`);
+      return { success: true, message, sent: false };
+    }
 
     const conversation = await this.conversationsService.findOne(tenantId, conversationId);
     const toPhone = conversation.contact.phone;
@@ -104,7 +107,9 @@ export class WhatsappService implements OnModuleInit {
         { headers: { Authorization: `Bearer ${token}` } }
       );
     } catch (e) {
-      console.error('Meta API Error:', e.response?.data || e.message);
+      const detail = e.response?.data || e.message;
+      console.error('Meta API Error:', JSON.stringify(detail));
+      throw new Error(`Meta API Error: ${JSON.stringify(detail)}`);
     }
   }
 
