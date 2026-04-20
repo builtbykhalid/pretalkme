@@ -3,7 +3,7 @@ import { useChatStore } from '../../stores/useChatStore';
 import { supabase } from '../../lib/supabase';
 import { useApp } from '../../context/AppContext';
 import { useMessages } from '../../hooks/useMessages';
-import { MoreVertical, Search, Video, Smile, Plus, CheckCheck, Bot, User, HandHelping, RotateCcw, StickyNote, FileText } from 'lucide-react';
+import { MoreVertical, Search, Phone, Smile, Plus, CheckCheck, Bot, User, HandHelping, RotateCcw, StickyNote, FileText, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { AudioPlayer } from './AudioPlayer';
 import { OrderPanel } from './OrderPanel';
@@ -12,6 +12,9 @@ import { DevisModal } from './DevisModal';
 export function ChatPanel({ conversationId }: { conversationId: string }) {
   const [isAiThinking, setIsAiThinking] = useState(false);
   const [devisOpen, setDevisOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [callCopied, setCallCopied] = useState(false);
   const rawMessages = useChatStore(state => state.messages[conversationId]);
   const messages = rawMessages || [];
   const conversations = useChatStore(state => state.conversations);
@@ -21,7 +24,6 @@ export function ChatPanel({ conversationId }: { conversationId: string }) {
   const conversation = conversations.find(c => c.id === conversationId);
   const isFreelance = config?.mode_freelance === true;
 
-  // Real-time messages hook
   useMessages(conversationId);
 
   useEffect(() => {
@@ -29,6 +31,18 @@ export function ChatPanel({ conversationId }: { conversationId: string }) {
   }, [messages]);
 
   if (!conversation) return null;
+
+  const filteredMessages = searchQuery.trim()
+    ? messages.filter((m: any) => m.content?.toLowerCase().includes(searchQuery.toLowerCase()))
+    : messages;
+
+  const handleCall = () => {
+    const phone = conversation.contact_phone;
+    if (!phone) return;
+    navigator.clipboard.writeText(phone).catch(() => {});
+    setCallCopied(true);
+    setTimeout(() => setCallCopied(false), 2000);
+  };
 
   return (
     <div className="flex-1 flex flex-col min-w-0 bg-[#EFEAE2] relative overflow-hidden h-full">
@@ -69,12 +83,50 @@ export function ChatPanel({ conversationId }: { conversationId: string }) {
 
            <div className="h-8 w-px bg-[#D1D7DB] mx-1 hidden md:block" />
            <div className="flex items-center gap-1 text-[#54656F]">
-              <button className="hover:bg-[#D1D7DB] p-2 rounded-full transition-colors"><Video size={20} /></button>
-              <button className="hover:bg-[#D1D7DB] p-2 rounded-full transition-colors"><Search size={20} /></button>
+              <button
+                onClick={handleCall}
+                title={callCopied ? 'Numéro copié !' : 'Appeler (copie le numéro)'}
+                className={`hover:bg-[#D1D7DB] p-2 rounded-full transition-colors relative ${callCopied ? 'text-[#00A884]' : ''}`}
+              >
+                <Phone size={20} />
+                {callCopied && (
+                  <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#111B21] text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
+                    Copié !
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => { setSearchOpen(v => !v); setSearchQuery(''); }}
+                className={`hover:bg-[#D1D7DB] p-2 rounded-full transition-colors ${searchOpen ? 'bg-[#D1D7DB]' : ''}`}
+              >
+                <Search size={20} />
+              </button>
               <button className="hover:bg-[#D1D7DB] p-2 rounded-full transition-colors"><MoreVertical size={20} /></button>
            </div>
         </div>
       </header>
+
+      {/* Search bar */}
+      {searchOpen && (
+        <div className="px-4 py-2 bg-white border-b border-[#E9EDEF] flex items-center gap-2 z-10 shrink-0">
+          <Search size={16} className="text-[#54656F]" />
+          <input
+            autoFocus
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+            placeholder="Rechercher dans les messages..."
+            className="flex-1 text-sm bg-transparent border-none outline-none text-[#111B21] placeholder:text-[#667781]"
+          />
+          {searchQuery && (
+            <span className="text-xs text-[#667781]">
+              {filteredMessages.length} résultat{filteredMessages.length !== 1 ? 's' : ''}
+            </span>
+          )}
+          <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}>
+            <X size={16} className="text-[#54656F]" />
+          </button>
+        </div>
+      )}
 
       {/* Devis Modal */}
       {devisOpen && (
@@ -88,8 +140,8 @@ export function ChatPanel({ conversationId }: { conversationId: string }) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-6 md:px-10 py-4 space-y-1 relative z-10 scrollbar-hide">
-        {messages.map((msg: any) => (
-          <MessageBubble key={msg.id} message={msg} />
+        {filteredMessages.map((msg: any) => (
+          <MessageBubble key={msg.id} message={msg} highlight={searchQuery} />
         ))}
         {isAiThinking && <TypingIndicator />}
         <div ref={messagesEndRef} className="h-4" />
@@ -134,7 +186,17 @@ function HITLControls({ conversation, onUpdate }: { conversation: any, onUpdate:
   );
 }
 
-function MessageBubble({ message }: { message: any }) {
+function highlightText(text: string, query: string) {
+  if (!query.trim()) return text;
+  const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'));
+  return parts.map((part, i) =>
+    part.toLowerCase() === query.toLowerCase()
+      ? <mark key={i} className="bg-yellow-200 rounded px-0.5">{part}</mark>
+      : part
+  );
+}
+
+function MessageBubble({ message, highlight = '' }: { message: any; highlight?: string }) {
   const isOutbound = message.direction === 'outbound';
   if (message.type === 'note') return <InternalNote message={message} />;
 
@@ -153,7 +215,7 @@ function MessageBubble({ message }: { message: any }) {
             ) : message.type === 'audio' ? (
               <AudioPlayer url={message.media_url} />
             ) : (
-              message.content
+              highlightText(message.content || '', highlight)
             )}
           </div>
           

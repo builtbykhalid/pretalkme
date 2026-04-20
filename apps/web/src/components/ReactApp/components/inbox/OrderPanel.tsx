@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { ShoppingCart, Plus, Minus, X } from 'lucide-react';
 import { useApi } from '../../hooks/useApi';
 
@@ -83,9 +84,9 @@ export function OrderPanel({ conversationId, contactId }: OrderPanelProps) {
         <ShoppingCart size={14} /> Creer commande
       </button>
 
-      {open && (
-        <div className="fixed inset-0 z-100 bg-black/30 flex justify-end">
-          <div className="w-full max-w-120 h-full bg-white border-l border-[#D1D7DB] shadow-xl p-4 flex flex-col">
+      {open && createPortal(
+        <div className="fixed inset-0 z-[9999] bg-black/30 flex justify-end">
+          <div className="w-full max-w-md h-full bg-white border-l border-[#D1D7DB] shadow-xl p-4 flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-[#111B21]">Nouvelle commande</h3>
               <button onClick={() => setOpen(false)} className="p-2 rounded-lg hover:bg-[#F0F2F5]">
@@ -147,7 +148,8 @@ export function OrderPanel({ conversationId, contactId }: OrderPanelProps) {
               </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
