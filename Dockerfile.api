@@ -11,6 +11,9 @@ COPY services/wa-sessions/package*.json ./services/wa-sessions/
 # Full install — includes devDependencies (tsc, nest cli, etc.)
 RUN npm ci
 
+# Make root workspace binaries available (nest, tsc live in root node_modules/.bin)
+ENV PATH="/app/node_modules/.bin:${PATH}"
+
 # Copy source for the packages we need to build
 COPY packages/shared ./packages/shared
 COPY apps/api ./apps/api
