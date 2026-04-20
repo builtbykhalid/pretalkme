@@ -8,8 +8,9 @@ COPY apps/web/package*.json ./apps/web/
 COPY packages/shared/package*.json ./packages/shared/
 COPY services/wa-sessions/package*.json ./services/wa-sessions/
 
-# Full install — includes devDependencies (tsc, nest cli, etc.)
-RUN npm ci
+# Override NODE_ENV so npm installs devDependencies (tsc, nest cli, etc.)
+# Coolify injects NODE_ENV=production at build time which skips devDeps
+RUN NODE_ENV=development npm ci
 
 # Make root workspace binaries available (nest, tsc live in root node_modules/.bin)
 ENV PATH="/app/node_modules/.bin:${PATH}"
