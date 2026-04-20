@@ -1,19 +1,21 @@
 FROM node:20-slim AS builder
 WORKDIR /app
 
-# Copy workspace manifests first (layer caching)
+# Copy all workspace package manifests (required for npm ci to match lock file)
 COPY package*.json ./
-COPY packages/shared/package*.json ./packages/shared/
 COPY apps/api/package*.json ./apps/api/
+COPY apps/web/package*.json ./apps/web/
+COPY packages/shared/package*.json ./packages/shared/
+COPY services/wa-sessions/package*.json ./services/wa-sessions/
 
-# Install deps for API and shared package only
-RUN npm ci --workspace=@pretalkme/shared --workspace=apps/api --include-workspace-root
+# Full install — includes devDependencies (tsc, nest cli, etc.)
+RUN npm ci
 
-# Copy source
+# Copy source for the packages we need to build
 COPY packages/shared ./packages/shared
 COPY apps/api ./apps/api
 
-# Build shared package first (API depends on it)
+# Build shared first (API depends on its types)
 WORKDIR /app/packages/shared
 RUN npm run build
 
@@ -21,7 +23,7 @@ RUN npm run build
 WORKDIR /app/apps/api
 RUN npm run build
 
-# Production image
+# Slim production image
 FROM node:20-slim
 WORKDIR /app
 COPY --from=builder /app/apps/api/dist ./dist
